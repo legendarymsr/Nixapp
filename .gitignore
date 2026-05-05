@@ -1,0 +1,15 @@
+# Gradle build artifacts
+.gradle/
+build/
+app/build/
+
+# Local Android SDK
+local.properties
+
+# IDE files
+.idea/
+*.iml
+.DS_Store
+
+# Keep releases folder tracked
+!releases/
