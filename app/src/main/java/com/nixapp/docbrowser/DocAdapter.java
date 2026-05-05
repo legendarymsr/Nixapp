@@ -2,6 +2,9 @@ package com.nixapp.docbrowser;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,25 +42,50 @@ public class DocAdapter extends RecyclerView.Adapter<DocAdapter.ViewHolder> {
         holder.title.setText(doc.title);
         holder.subtitle.setText(doc.subtitle);
         holder.docIcon.setText(doc.iconLetter);
-        holder.docTag.setText(doc.tag);
+        holder.docTag.setText(doc.tag.toUpperCase());
 
-        // Apply per-doc banner color
-        holder.cardBanner.setBackgroundColor(ContextCompat.getColor(context, doc.bannerColorRes));
+        int accent = ContextCompat.getColor(context, doc.accentColorRes);
+        int accentDim = ContextCompat.getColor(context, doc.bannerColorRes);
+        int cardBg = ContextCompat.getColor(context, R.color.surface_card);
 
-        // Apply accent to online button
-        holder.btnReadOnline.setBackgroundTintList(
-                android.content.res.ColorStateList.valueOf(
-                        ContextCompat.getColor(context, doc.accentColorRes)));
+        // Gradient banner: accent dim top → card background bottom
+        GradientDrawable gradient = new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[]{ accentDim, cardBg });
+        holder.bannerGradient.setBackground(gradient);
 
-        // Offline status badge
+        // Thin accent separator line
+        holder.accentLine.setBackgroundColor(accentDim);
+
+        // Icon box: semi-transparent accent tint with rounded corners
+        GradientDrawable iconBg = new GradientDrawable();
+        iconBg.setShape(GradientDrawable.RECTANGLE);
+        iconBg.setCornerRadius(dpToPx(10));
+        iconBg.setColor(Color.argb(200,
+                Color.red(accentDim), Color.green(accentDim), Color.blue(accentDim)));
+        holder.iconCircle.setBackground(iconBg);
+        holder.docIcon.setTextColor(accent);
+
+        // Online button: accent color fill
+        holder.btnReadOnline.setBackgroundTintList(ColorStateList.valueOf(accent));
+        holder.btnReadOnline.setIconTint(ColorStateList.valueOf(Color.WHITE));
+
+        // Offline/download button state
         boolean downloaded = OfflineStorage.isDownloaded(context, doc.title);
+        holder.offlineStatusRow.setVisibility(downloaded ? View.VISIBLE : View.GONE);
+
         if (downloaded) {
-            holder.offlineStatusRow.setVisibility(View.VISIBLE);
             holder.btnDownload.setText(context.getString(R.string.read_offline));
+            holder.btnDownload.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_offline_read));
         } else {
-            holder.offlineStatusRow.setVisibility(View.GONE);
             holder.btnDownload.setText(context.getString(R.string.download_offline));
+            holder.btnDownload.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_download));
         }
+        holder.btnDownload.setIconTint(ColorStateList.valueOf(
+                ContextCompat.getColor(context, R.color.text_secondary)));
+        holder.btnDownload.setTextColor(ContextCompat.getColor(context, R.color.text_primary));
+        holder.btnDownload.setStrokeColor(ColorStateList.valueOf(
+                ContextCompat.getColor(context, R.color.divider)));
 
         holder.btnReadOnline.setOnClickListener(v -> {
             Intent intent = new Intent(context, DocBrowserActivity.class);
@@ -86,20 +114,26 @@ public class DocAdapter extends RecyclerView.Adapter<DocAdapter.ViewHolder> {
         });
     }
 
+    private int dpToPx(int dp) {
+        return Math.round(dp * context.getResources().getDisplayMetrics().density);
+    }
+
     @Override
     public int getItemCount() {
         return docs.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        FrameLayout cardBanner;
+        FrameLayout iconCircle;
+        View bannerGradient, accentLine, offlineStatusRow;
         TextView docIcon, docTag, title, subtitle;
         MaterialButton btnReadOnline, btnDownload;
-        View offlineStatusRow;
 
         ViewHolder(View itemView) {
             super(itemView);
-            cardBanner = itemView.findViewById(R.id.card_banner);
+            bannerGradient = itemView.findViewById(R.id.banner_gradient);
+            accentLine = itemView.findViewById(R.id.accent_line);
+            iconCircle = itemView.findViewById(R.id.icon_circle);
             docIcon = itemView.findViewById(R.id.doc_icon);
             docTag = itemView.findViewById(R.id.doc_tag);
             title = itemView.findViewById(R.id.doc_title);

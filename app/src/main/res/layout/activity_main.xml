@@ -5,36 +5,37 @@
     android:orientation="vertical"
     android:background="@color/bg_dark">
 
-    <!-- Header -->
+    <!-- Gradient header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/surface_dark"
+        android:background="@drawable/header_gradient"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="18dp">
+        android:paddingTop="22dp"
+        android:paddingBottom="20dp">
 
+        <!-- Title row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- Logo circle -->
+            <!-- Rounded-square logo -->
             <FrameLayout
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="@drawable/header_logo_bg"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:background="@drawable/rounded_logo_bg"
                 android:layout_marginEnd="14dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="N"
-                    android:textSize="22sp"
+                    android:text="Nd"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/nixos_blue"
                     android:fontFamily="sans-serif-medium" />
@@ -51,7 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/app_name"
-                    android:textSize="22sp"
+                    android:textSize="23sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
                     android:fontFamily="sans-serif-medium"
@@ -60,11 +61,70 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/app_subtitle"
+                    android:text="Documentation Browser"
                     android:textSize="12sp"
                     android:textColor="@color/text_secondary"
                     android:layout_marginTop="1dp" />
             </LinearLayout>
+        </LinearLayout>
+
+        <!-- Platform chips row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="14dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:gravity="center"
+                android:text="NixOS"
+                android:textSize="11sp"
+                android:textColor="@color/nixos_blue"
+                android:background="@drawable/chip_platform_bg"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:gravity="center"
+                android:text="Nixpkgs"
+                android:textSize="11sp"
+                android:textColor="@color/nixpkgs_cyan"
+                android:background="@drawable/chip_platform_bg"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:gravity="center"
+                android:text="Guix"
+                android:textSize="11sp"
+                android:textColor="@color/guix_orange"
+                android:background="@drawable/chip_platform_bg"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:gravity="center"
+                android:text="Cookbook"
+                android:textSize="11sp"
+                android:textColor="@color/cookbook_green"
+                android:background="@drawable/chip_platform_bg"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:fontFamily="sans-serif-medium" />
         </LinearLayout>
     </LinearLayout>
 
