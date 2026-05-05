@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,29 +24,36 @@ import androidx.appcompat.widget.Toolbar;
 
 public class DocBrowserActivity extends AppCompatActivity {
 
-    public static final String EXTRA_URL = "url";
-    public static final String EXTRA_TITLE = "title";
+    public static final String EXTRA_URL     = "url";
+    public static final String EXTRA_TITLE   = "title";
     public static final String EXTRA_OFFLINE = "offline";
 
-    private WebView webView;
-    private ProgressBar progressBar;
+    private WebView      webView;
+    private ProgressBar  progressBar;
     private LinearLayout findBar;
-    private EditText findInput;
-    private TextView findCount;
-    private boolean isOffline;
+    private EditText     findInput;
+    private TextView     findCount;
+    private boolean      isOffline;
 
-    private static final String DARK_MODE_JS =
-            "javascript:(function(){" +
-            "var s=document.createElement('style');" +
-            "s.innerHTML='*{background-color:#1a1a1a!important;color:#e0e0e0!important}" +
-            "a{color:#7cb3ff!important}" +
-            "pre,code,tt{background:#252525!important;color:#c5f0a4!important;border-color:#444!important}" +
-            "table{border-color:#444!important}" +
-            "th{background:#2a2a2a!important}" +
-            "img{opacity:0.85}" +
-            "input,select,textarea{background:#2a2a2a!important;color:#e0e0e0!important;border-color:#555!important}';" +
-            "document.head.appendChild(s);" +
-            "})()";
+    // Applied via JS after page load for online pages (offline pages already have CSS injected)
+    private static final String DARK_JS =
+        "(function(){" +
+        "if(document.getElementById('nixdoc-dark'))return;" + // already injected offline
+        "var s=document.createElement('style');s.id='nixdoc-dark';" +
+        "s.textContent='" +
+            "html,body,*{background:#111!important;color:#ddd!important;border-color:#333!important}" +
+            "a{color:#7cb3ff!important}a:visited{color:#b088ff!important}" +
+            "code,pre,tt,.verbatim,.programlisting,.screen{background:#1e1e1e!important;" +
+            "color:#c5f0a4!important;border:1px solid #333!important}" +
+            "table{border-collapse:collapse}th{background:#222!important}" +
+            "img{opacity:.85;filter:brightness(.9)}" +
+            "input,select,textarea{background:#1e1e1e!important;color:#ddd!important}" +
+            "nav,header,.sidebar,.toc{background:#161616!important}" +
+            ".note,.warning,.tip,.caution{background:#1a1a0a!important;" +
+            "border-left:4px solid #666!important}" +
+        "';" +
+        "document.head.appendChild(s);" +
+        "})()";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -55,9 +61,9 @@ public class DocBrowserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doc_browser);
 
-        String url = getIntent().getStringExtra(EXTRA_URL);
+        String url   = getIntent().getStringExtra(EXTRA_URL);
         String title = getIntent().getStringExtra(EXTRA_TITLE);
-        isOffline = getIntent().getBooleanExtra(EXTRA_OFFLINE, false);
+        isOffline    = getIntent().getBooleanExtra(EXTRA_OFFLINE, false);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -67,12 +73,13 @@ public class DocBrowserActivity extends AppCompatActivity {
         }
 
         progressBar = findViewById(R.id.progress_bar);
-        webView = findViewById(R.id.web_view);
-        findBar = findViewById(R.id.find_bar);
-        findInput = findViewById(R.id.find_input);
-        findCount = findViewById(R.id.find_count);
-        ImageButton findPrev = findViewById(R.id.btn_find_prev);
-        ImageButton findNext = findViewById(R.id.btn_find_next);
+        webView     = findViewById(R.id.web_view);
+        findBar     = findViewById(R.id.find_bar);
+        findInput   = findViewById(R.id.find_input);
+        findCount   = findViewById(R.id.find_count);
+
+        ImageButton findPrev  = findViewById(R.id.btn_find_prev);
+        ImageButton findNext  = findViewById(R.id.btn_find_next);
         ImageButton findClose = findViewById(R.id.btn_find_close);
 
         setupWebView();
@@ -85,70 +92,69 @@ public class DocBrowserActivity extends AppCompatActivity {
             return false;
         });
         findInput.addTextChangedListener(new android.text.TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
+            @Override public void onTextChanged(CharSequence s, int st, int b, int c) {
                 performFind(s.toString());
             }
             @Override public void afterTextChanged(android.text.Editable s) {}
         });
 
-        findPrev.setOnClickListener(v -> webView.findNext(false));
-        findNext.setOnClickListener(v -> webView.findNext(true));
+        findPrev.setOnClickListener(v  -> webView.findNext(false));
+        findNext.setOnClickListener(v  -> webView.findNext(true));
         findClose.setOnClickListener(v -> closeFindBar());
 
-        if (url != null) {
-            webView.loadUrl(url);
-        }
+        if (url != null) webView.loadUrl(url);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private void setupWebView() {
-        WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setLoadWithOverviewMode(true);
-        settings.setUseWideViewPort(true);
-        settings.setBuiltInZoomControls(true);
-        settings.setDisplayZoomControls(false);
-        settings.setSupportZoom(true);
-        settings.setTextZoom(100);
+        WebSettings s = webView.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setLoadWithOverviewMode(true);
+        s.setUseWideViewPort(true);
+        s.setBuiltInZoomControls(true);
+        s.setDisplayZoomControls(false);
+        s.setSupportZoom(true);
+        s.setTextZoom(100);
 
-        if (isOffline) {
-            settings.setAllowFileAccess(true);
-            settings.setAllowContentAccess(true);
+        // Offline file access
+        s.setAllowFileAccess(true);
+        s.setAllowContentAccess(true);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            s.setAllowUniversalAccessFromFileURLs(true);
+            s.setAllowFileAccessFromFileURLs(true);
         }
 
+        // System dark mode forcing
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             webView.setForceDarkAllowed(true);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            settings.setAlgorithmicDarkeningAllowed(true);
+            s.setAlgorithmicDarkeningAllowed(true);
         }
 
-        webView.setBackgroundColor(Color.parseColor("#1a1a1a"));
+        webView.setBackgroundColor(Color.parseColor("#111111"));
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                progressBar.setProgress(newProgress);
-                progressBar.setVisibility(newProgress < 100 ? View.VISIBLE : View.GONE);
+            public void onProgressChanged(WebView view, int p) {
+                progressBar.setProgress(p);
+                progressBar.setVisibility(p < 100 ? View.VISIBLE : View.GONE);
             }
-
             @Override
-            public void onReceivedTitle(WebView view, String title) {
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().setSubtitle(title);
-                }
+            public void onReceivedTitle(WebView view, String t) {
+                if (getSupportActionBar() != null) getSupportActionBar().setSubtitle(t);
             }
         });
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                String url = request.getUrl().toString();
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest req) {
+                String url = req.getUrl().toString();
                 if (isOffline && !url.startsWith("file://")) {
                     Toast.makeText(DocBrowserActivity.this,
-                            "Offline mode: cannot open external link", Toast.LENGTH_SHORT).show();
+                            "Offline — external links blocked", Toast.LENGTH_SHORT).show();
                     return true;
                 }
                 return false;
@@ -156,26 +162,22 @@ public class DocBrowserActivity extends AppCompatActivity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                // Inject dark CSS for sites that don't support dark mode natively
-                view.evaluateJavascript(DARK_MODE_JS.replace("javascript:", ""), null);
+                // Inject dark CSS via JS for online pages; offline pages already have it embedded
+                view.evaluateJavascript(DARK_JS, null);
             }
         });
 
-        webView.setFindListener((activeMatchOrdinal, numberOfMatches, isDoneCounting) -> {
-            if (isDoneCounting) {
-                findCount.setText(numberOfMatches == 0 ? "No results" :
-                        (activeMatchOrdinal + 1) + " / " + numberOfMatches);
+        webView.setFindListener((ordinal, total, done) -> {
+            if (done) {
+                findCount.setText(total == 0 ? "No results"
+                        : (ordinal + 1) + " / " + total);
             }
         });
     }
 
-    private void performFind(String query) {
-        if (query.isEmpty()) {
-            webView.clearMatches();
-            findCount.setText("");
-        } else {
-            webView.findAllAsync(query);
-        }
+    private void performFind(String q) {
+        if (q.isEmpty()) { webView.clearMatches(); findCount.setText(""); }
+        else webView.findAllAsync(q);
     }
 
     private void closeFindBar() {
@@ -184,53 +186,34 @@ public class DocBrowserActivity extends AppCompatActivity {
         findInput.setText("");
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_browser, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        } else if (id == R.id.action_find) {
-            findBar.setVisibility(findBar.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-            if (findBar.getVisibility() == View.VISIBLE) {
-                findInput.requestFocus();
-            }
-            return true;
-        } else if (id == R.id.action_refresh) {
-            webView.reload();
-            return true;
-        } else if (id == R.id.action_back) {
-            if (webView.canGoBack()) webView.goBack();
-            return true;
-        } else if (id == R.id.action_forward) {
-            if (webView.canGoForward()) webView.goForward();
+        if      (id == android.R.id.home)   { onBackPressed(); return true; }
+        else if (id == R.id.action_find)    {
+            boolean show = findBar.getVisibility() != View.VISIBLE;
+            findBar.setVisibility(show ? View.VISIBLE : View.GONE);
+            if (show) findInput.requestFocus();
             return true;
         }
+        else if (id == R.id.action_refresh) { webView.reload();             return true; }
+        else if (id == R.id.action_back)    { if (webView.canGoBack())  webView.goBack();    return true; }
+        else if (id == R.id.action_forward) { if (webView.canGoForward()) webView.goForward(); return true; }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (findBar.getVisibility() == View.VISIBLE) {
-            closeFindBar();
-        } else if (webView.canGoBack()) {
-            webView.goBack();
-        } else {
-            super.onBackPressed();
-        }
+    @Override public void onBackPressed() {
+        if (findBar.getVisibility() == View.VISIBLE)  closeFindBar();
+        else if (webView.canGoBack())                 webView.goBack();
+        else                                          super.onBackPressed();
     }
 
-    @Override
-    protected void onDestroy() {
-        if (webView != null) {
-            webView.destroy();
-        }
+    @Override protected void onDestroy() {
+        if (webView != null) webView.destroy();
         super.onDestroy();
     }
 }

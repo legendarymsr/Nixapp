@@ -30,6 +30,18 @@
     <color name="cookbook_green_dim">#0D2E1E</color>
     <color name="cookbook_green_glow">#0F3522</color>
 
+    <color name="gentoo_purple">#A67AC5</color>
+    <color name="gentoo_purple_dim">#2A1E3D</color>
+
+    <color name="arch_blue">#1793D1</color>
+    <color name="arch_blue_dim">#0D2236</color>
+
+    <color name="lfs_red">#E06832</color>
+    <color name="lfs_red_dim">#3A1A08</color>
+
+    <color name="blfs_teal">#3DA89E</color>
+    <color name="blfs_teal_dim">#0D2B28</color>
+
     <!-- Generic accent (browser toolbar) -->
     <color name="accent">#7CB3FF</color>
     <color name="accent_dark">#5A8FD6</color>

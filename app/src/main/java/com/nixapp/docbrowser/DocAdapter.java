@@ -1,11 +1,17 @@
 package com.nixapp.docbrowser;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -28,85 +34,188 @@ public class DocAdapter extends RecyclerView.Adapter<DocAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_doc, parent, false);
-        return new ViewHolder(view);
+        View v = LayoutInflater.from(context).inflate(R.layout.item_doc, parent, false);
+        return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         DocEntry doc = docs.get(position);
 
-        holder.title.setText(doc.title);
-        holder.subtitle.setText(doc.subtitle);
-        holder.docIcon.setText(doc.iconLetter);
-        holder.docTag.setText(doc.tag);
+        h.title.setText(doc.title);
+        h.subtitle.setText(doc.subtitle);
+        h.docIcon.setText(doc.iconLetter);
+        h.docTag.setText(doc.tag.toUpperCase());
 
-        // Apply per-doc banner color
-        holder.cardBanner.setBackgroundColor(ContextCompat.getColor(context, doc.bannerColorRes));
+        int accent    = ContextCompat.getColor(context, doc.accentColorRes);
+        int accentDim = ContextCompat.getColor(context, doc.bannerColorRes);
+        int cardBg    = ContextCompat.getColor(context, R.color.surface_card);
 
-        // Apply accent to online button
-        holder.btnReadOnline.setBackgroundTintList(
-                android.content.res.ColorStateList.valueOf(
-                        ContextCompat.getColor(context, doc.accentColorRes)));
+        // Gradient banner
+        GradientDrawable grad = new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM, new int[]{ accentDim, cardBg });
+        h.bannerGradient.setBackground(grad);
+        h.accentLine.setBackgroundColor(accentDim);
 
-        // Offline status badge
-        boolean downloaded = OfflineStorage.isDownloaded(context, doc.title);
-        if (downloaded) {
-            holder.offlineStatusRow.setVisibility(View.VISIBLE);
-            holder.btnDownload.setText(context.getString(R.string.read_offline));
+        // Icon box
+        GradientDrawable iconBg = new GradientDrawable();
+        iconBg.setShape(GradientDrawable.RECTANGLE);
+        iconBg.setCornerRadius(dpToPx(10));
+        iconBg.setColor(Color.argb(200,
+                Color.red(accentDim), Color.green(accentDim), Color.blue(accentDim)));
+        h.iconCircle.setBackground(iconBg);
+        h.docIcon.setTextColor(accent);
+
+        // Online button accent
+        h.btnReadOnline.setBackgroundTintList(ColorStateList.valueOf(accent));
+        h.btnReadOnline.setIconTint(ColorStateList.valueOf(Color.WHITE));
+
+        // ── State logic ────────────────────────────────────────────────────
+        boolean downloading = DownloadState.isActive(doc.title);
+        boolean downloaded  = !downloading && OfflineStorage.isDownloaded(context, doc.title);
+        DownloadState.Progress prog = DownloadState.get(doc.title);
+
+        // Progress container
+        if (downloading && prog != null) {
+            h.progressContainer.setVisibility(View.VISIBLE);
+            h.offlineStatusRow.setVisibility(View.GONE);
+            h.progressPhase.setText(prog.phase);
+            if (prog.percent >= 0) {
+                h.progressBar.setIndeterminate(false);
+                h.progressBar.setProgress(prog.percent);
+                h.progressLabel.setText(prog.percent + "%  " + prog.bytesLabel());
+            } else {
+                h.progressBar.setIndeterminate(true);
+                h.progressLabel.setText(prog.bytesLabel());
+            }
         } else {
-            holder.offlineStatusRow.setVisibility(View.GONE);
-            holder.btnDownload.setText(context.getString(R.string.download_offline));
+            h.progressContainer.setVisibility(View.GONE);
         }
 
-        holder.btnReadOnline.setOnClickListener(v -> {
-            Intent intent = new Intent(context, DocBrowserActivity.class);
-            intent.putExtra(DocBrowserActivity.EXTRA_URL, doc.onlineUrl);
-            intent.putExtra(DocBrowserActivity.EXTRA_TITLE, doc.title);
-            intent.putExtra(DocBrowserActivity.EXTRA_OFFLINE, false);
-            context.startActivity(intent);
+        // Offline badge
+        if (downloaded) {
+            h.offlineStatusRow.setVisibility(View.VISIBLE);
+            String size = OfflineStorage.sizeMb(context, doc.title);
+            h.offlineSizeText.setText("Available offline" + (size.isEmpty() ? "" : " · " + size));
+        } else if (!downloading) {
+            h.offlineStatusRow.setVisibility(View.GONE);
+        }
+
+        // Download button label
+        if (downloading) {
+            h.btnDownload.setText("Downloading…");
+            h.btnDownload.setIcon(null);
+            h.btnDownload.setEnabled(false);
+        } else if (downloaded) {
+            h.btnDownload.setText(context.getString(R.string.read_offline));
+            h.btnDownload.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_offline_read));
+            h.btnDownload.setEnabled(true);
+        } else {
+            h.btnDownload.setText(context.getString(R.string.download_offline));
+            h.btnDownload.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_download));
+            h.btnDownload.setEnabled(true);
+        }
+        h.btnDownload.setIconTint(ColorStateList.valueOf(
+                ContextCompat.getColor(context, R.color.text_secondary)));
+        h.btnDownload.setTextColor(ContextCompat.getColor(context, R.color.text_primary));
+        h.btnDownload.setStrokeColor(ColorStateList.valueOf(
+                ContextCompat.getColor(context, R.color.divider)));
+
+        // ── Click handlers ─────────────────────────────────────────────────
+
+        h.btnReadOnline.setOnClickListener(v -> {
+            Intent i = new Intent(context, DocBrowserActivity.class);
+            i.putExtra(DocBrowserActivity.EXTRA_URL, doc.onlineUrl);
+            i.putExtra(DocBrowserActivity.EXTRA_TITLE, doc.title);
+            i.putExtra(DocBrowserActivity.EXTRA_OFFLINE, false);
+            context.startActivity(i);
         });
 
-        holder.btnDownload.setOnClickListener(v -> {
+        h.btnDownload.setOnClickListener(v -> {
             if (OfflineStorage.isDownloaded(context, doc.title)) {
-                File offlineDir = OfflineStorage.getDocDir(context, doc.title);
-                Intent intent = new Intent(context, DocBrowserActivity.class);
-                intent.putExtra(DocBrowserActivity.EXTRA_URL,
-                        "file://" + new File(offlineDir, doc.offlineIndex).getAbsolutePath());
-                intent.putExtra(DocBrowserActivity.EXTRA_TITLE, doc.title + " (Offline)");
-                intent.putExtra(DocBrowserActivity.EXTRA_OFFLINE, true);
-                context.startActivity(intent);
-            } else {
-                Toast.makeText(context, "Downloading " + doc.title + "…", Toast.LENGTH_SHORT).show();
-                Intent serviceIntent = new Intent(context, DownloadService.class);
-                serviceIntent.putExtra(DownloadService.EXTRA_DOC_TITLE, doc.title);
-                serviceIntent.putExtra(DownloadService.EXTRA_DOC_URL, doc.downloadUrl);
-                context.startService(serviceIntent);
+                // Open offline
+                File index = new File(OfflineStorage.getDocDir(context, doc.title), doc.offlineIndex);
+                String fileUri = Uri.fromFile(index).toString();
+                Intent i = new Intent(context, DocBrowserActivity.class);
+                i.putExtra(DocBrowserActivity.EXTRA_URL, fileUri);
+                i.putExtra(DocBrowserActivity.EXTRA_TITLE, doc.title + " (Offline)");
+                i.putExtra(DocBrowserActivity.EXTRA_OFFLINE, true);
+                context.startActivity(i);
+            } else if (!DownloadState.isActive(doc.title)) {
+                // Start download
+                Toast.makeText(context, "Downloading " + doc.title + "…",
+                        Toast.LENGTH_SHORT).show();
+                Intent svc = new Intent(context, DownloadService.class);
+                svc.putExtra(DownloadService.EXTRA_DOC_TITLE, doc.title);
+                svc.putExtra(DownloadService.EXTRA_DOC_URL, doc.downloadUrl);
+                context.startService(svc);
             }
         });
+
+        // Long-press to delete offline copy
+        h.itemView.setOnLongClickListener(v -> {
+            if (OfflineStorage.isDownloaded(context, doc.title)) {
+                String size = OfflineStorage.sizeMb(context, doc.title);
+                String msg  = "Delete the offline copy of "" + doc.title + ""?"
+                        + (size.isEmpty() ? "" : "\n\nThis will free " + size + ".");
+                new AlertDialog.Builder(context)
+                        .setTitle("Delete offline copy")
+                        .setMessage(msg)
+                        .setPositiveButton("Delete", (d, w) -> {
+                            OfflineStorage.deleteDoc(context, doc.title);
+                            int pos = h.getAdapterPosition();
+                            if (pos != RecyclerView.NO_ID) notifyItemChanged(pos);
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+                return true;
+            }
+            return false;
+        });
+    }
+
+    /** Called from MainActivity's progress broadcast receiver. */
+    public void onProgress(String docTitle) {
+        for (int i = 0; i < docs.size(); i++) {
+            if (docs.get(i).title.equals(docTitle)) {
+                notifyItemChanged(i);
+                return;
+            }
+        }
+    }
+
+    private int dpToPx(int dp) {
+        return Math.round(dp * context.getResources().getDisplayMetrics().density);
     }
 
     @Override
-    public int getItemCount() {
-        return docs.size();
-    }
+    public int getItemCount() { return docs.size(); }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        FrameLayout cardBanner;
-        TextView docIcon, docTag, title, subtitle;
+        FrameLayout iconCircle;
+        View bannerGradient, accentLine, offlineStatusRow, progressContainer;
+        TextView docIcon, docTag, title, subtitle, offlineSizeText;
+        TextView progressPhase, progressLabel;
+        ProgressBar progressBar;
         MaterialButton btnReadOnline, btnDownload;
-        View offlineStatusRow;
 
-        ViewHolder(View itemView) {
-            super(itemView);
-            cardBanner = itemView.findViewById(R.id.card_banner);
-            docIcon = itemView.findViewById(R.id.doc_icon);
-            docTag = itemView.findViewById(R.id.doc_tag);
-            title = itemView.findViewById(R.id.doc_title);
-            subtitle = itemView.findViewById(R.id.doc_subtitle);
-            btnReadOnline = itemView.findViewById(R.id.btn_read_online);
-            btnDownload = itemView.findViewById(R.id.btn_download);
-            offlineStatusRow = itemView.findViewById(R.id.offline_status_row);
+        ViewHolder(View v) {
+            super(v);
+            bannerGradient   = v.findViewById(R.id.banner_gradient);
+            accentLine       = v.findViewById(R.id.accent_line);
+            iconCircle       = v.findViewById(R.id.icon_circle);
+            docIcon          = v.findViewById(R.id.doc_icon);
+            docTag           = v.findViewById(R.id.doc_tag);
+            title            = v.findViewById(R.id.doc_title);
+            subtitle         = v.findViewById(R.id.doc_subtitle);
+            offlineStatusRow = v.findViewById(R.id.offline_status_row);
+            offlineSizeText  = v.findViewById(R.id.offline_size_text);
+            progressContainer = v.findViewById(R.id.progress_container);
+            progressPhase    = v.findViewById(R.id.progress_phase);
+            progressLabel    = v.findViewById(R.id.progress_label);
+            progressBar      = v.findViewById(R.id.progress_bar);
+            btnReadOnline    = v.findViewById(R.id.btn_read_online);
+            btnDownload      = v.findViewById(R.id.btn_download);
         }
     }
 }
