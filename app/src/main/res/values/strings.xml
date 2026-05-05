@@ -3,7 +3,7 @@
     <string name="app_name">NixDoc Browser</string>
     <string name="app_subtitle">NixOS · Nixpkgs · Guix · Guix Cookbook</string>
     <string name="read_online">Read Online</string>
-    <string name="download_offline">Download Offline</string>
+    <string name="download_offline">Download</string>
     <string name="read_offline">Read Offline</string>
     <string name="find_hint">Find in page…</string>
     <string name="find_prev">Previous</string>
@@ -13,4 +13,9 @@
     <string name="back">Back</string>
     <string name="forward">Forward</string>
     <string name="refresh">Refresh</string>
+    <string name="offline_badge">OFFLINE</string>
+    <string name="tag_manual">Manual</string>
+    <string name="tag_cookbook">Cookbook</string>
+    <string name="tag_packages">Packages</string>
+    <string name="tag_system">System</string>
 </resources>
