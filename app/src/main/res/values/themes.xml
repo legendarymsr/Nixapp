@@ -24,6 +24,13 @@
         <item name="subtitleTextColor">@color/text_secondary</item>
     </style>
 
+    <style name="Theme.NixDocBrowser.Splash" parent="Theme.NixDocBrowser">
+        <item name="android:windowBackground">#000000</item>
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <style name="NixCard" parent="Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@color/surface_card</item>
         <item name="cardCornerRadius">16dp</item>

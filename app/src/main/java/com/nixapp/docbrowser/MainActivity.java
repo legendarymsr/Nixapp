@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
-import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -97,6 +96,36 @@ public class MainActivity extends AppCompatActivity {
                 "https://guix.gnu.org/cookbook/en/html_node/",
                 "GC", "Cookbook",
                 R.color.cookbook_green_dim, R.color.cookbook_green
+        ));
+
+        list.add(new DocEntry(
+                "Gentoo Handbook",
+                "The official Gentoo Linux installation and configuration handbook.",
+                "https://wiki.gentoo.org/wiki/Handbook:AMD64",
+                "index.html",
+                "https://wiki.gentoo.org/wiki/Handbook:AMD64",
+                "Ge", "Handbook",
+                R.color.gentoo_purple_dim, R.color.gentoo_purple
+        ));
+
+        list.add(new DocEntry(
+                "Arch Linux Wiki",
+                "The comprehensive Arch Linux wiki — installation, configuration, and troubleshooting.",
+                "https://wiki.archlinux.org/",
+                "index.html",
+                "https://wiki.archlinux.org/",
+                "Ar", "Wiki",
+                R.color.arch_blue_dim, R.color.arch_blue
+        ));
+
+        list.add(new DocEntry(
+                "Linux From Scratch",
+                "Step-by-step instructions for building your own custom Linux system from source.",
+                "https://www.linuxfromscratch.org/lfs/view/stable/",
+                "index.html",
+                "https://www.linuxfromscratch.org/lfs/view/stable/",
+                "LFS", "Book",
+                R.color.lfs_red_dim, R.color.lfs_red
         ));
 
         return list;
