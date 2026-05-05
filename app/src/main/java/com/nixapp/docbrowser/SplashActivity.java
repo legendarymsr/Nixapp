@@ -2,10 +2,16 @@ package com.nixapp.docbrowser;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.app.ActivityManager;
 import android.content.Intent;
+import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.StatFs;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ScrollView;
@@ -15,11 +21,13 @@ import androidx.appcompat.app.AppCompatActivity;
 public class SplashActivity extends AppCompatActivity {
 
     private TextView bootText;
+    private TextView skipHint;
     private ScrollView scrollView;
-    private TextView cursor;
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private boolean skipped = false;
+
+    private boolean bootComplete = false;
     private int lineIndex = 0;
+    private long bootStartTime;
 
     private static final String[] BOOT_LINES = {
         "",
@@ -62,23 +70,16 @@ public class SplashActivity extends AppCompatActivity {
         "",
     };
 
-    // Delay between lines in ms — shorter for kernel lines, longer for key events
     private static final int[] LINE_DELAYS = new int[BOOT_LINES.length];
-
     static {
         for (int i = 0; i < BOOT_LINES.length; i++) {
-            String line = BOOT_LINES[i];
-            if (line.isEmpty()) {
-                LINE_DELAYS[i] = 60;
-            } else if (line.startsWith("[") && line.contains("module loaded")) {
-                LINE_DELAYS[i] = 120;
-            } else if (line.startsWith("[")) {
-                LINE_DELAYS[i] = 55;
-            } else if (line.startsWith("NixDoc UEFI") || line.startsWith("Welcome")) {
-                LINE_DELAYS[i] = 200;
-            } else {
-                LINE_DELAYS[i] = 80;
-            }
+            String l = BOOT_LINES[i];
+            if (l.isEmpty())                              LINE_DELAYS[i] = 55;
+            else if (l.contains("module loaded"))         LINE_DELAYS[i] = 115;
+            else if (l.startsWith("["))                   LINE_DELAYS[i] = 50;
+            else if (l.startsWith("NixDoc UEFI") ||
+                     l.startsWith("Welcome"))             LINE_DELAYS[i] = 190;
+            else                                          LINE_DELAYS[i] = 75;
         }
     }
 
@@ -86,9 +87,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Immersive full-screen black
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -96,29 +95,49 @@ public class SplashActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash);
 
-        bootText = findViewById(R.id.boot_text);
+        bootText  = findViewById(R.id.boot_text);
         scrollView = findViewById(R.id.scroll_view);
-        cursor = findViewById(R.id.cursor);
-        TextView skipHint = findViewById(R.id.skip_hint);
+        skipHint  = findViewById(R.id.skip_hint);
+        TextView cursor = findViewById(R.id.cursor);
 
-        // Blink the cursor
+        bootStartTime = System.currentTimeMillis();
+
+        // Blinking cursor
         ObjectAnimator blink = ObjectAnimator.ofFloat(cursor, "alpha", 1f, 0f);
         blink.setDuration(500);
         blink.setRepeatMode(ValueAnimator.REVERSE);
         blink.setRepeatCount(ValueAnimator.INFINITE);
         blink.start();
 
-        // Fade in skip hint after 500ms
+        // Fade in skip hint after 600ms
         handler.postDelayed(() ->
-                skipHint.animate().alpha(1f).setDuration(400).start(), 500);
+                skipHint.animate().alpha(1f).setDuration(400).start(), 600);
 
-        // Tap anywhere to skip
-        findViewById(R.id.scroll_view).setOnClickListener(v -> skip());
-        skipHint.setOnClickListener(v -> skip());
-        bootText.setOnClickListener(v -> skip());
-        findViewById(android.R.id.content).setOnClickListener(v -> skip());
+        // Single tap handler: skip boot OR continue after fastfetch
+        View.OnClickListener tapListener = v -> onTap();
+        scrollView.setOnClickListener(tapListener);
+        bootText.setOnClickListener(tapListener);
+        skipHint.setOnClickListener(tapListener);
+        findViewById(android.R.id.content).setOnClickListener(tapListener);
 
         scheduleNextLine(300);
+    }
+
+    private void onTap() {
+        if (bootComplete) {
+            launch();
+        } else {
+            // Skip animation: flush remaining lines instantly then show fastfetch
+            handler.removeCallbacksAndMessages(null);
+            StringBuilder sb = new StringBuilder();
+            while (lineIndex < BOOT_LINES.length) {
+                sb.append(BOOT_LINES[lineIndex]).append("\n");
+                lineIndex++;
+            }
+            bootText.append(sb.toString());
+            scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+            showFastfetch();
+        }
     }
 
     private void scheduleNextLine(long delay) {
@@ -126,48 +145,156 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void printNextLine() {
-        if (skipped || lineIndex >= BOOT_LINES.length) {
-            if (!skipped) launch();
+        if (lineIndex >= BOOT_LINES.length) {
+            showFastfetch();
             return;
         }
-
-        String line = BOOT_LINES[lineIndex];
-
-        // Colour certain lines differently
-        String colored = colorize(line);
-        bootText.append(colored.isEmpty() ? "\n" : colored + "\n");
-
-        // Auto-scroll to bottom
+        bootText.append(BOOT_LINES[lineIndex] + "\n");
         scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
-
         int delay = LINE_DELAYS[lineIndex];
         lineIndex++;
         scheduleNextLine(delay);
     }
 
-    private String colorize(String line) {
-        // Keep raw string — TextView doesn't handle ANSI; we use HTML via Spanned
-        return line;
+    // ── Fastfetch ──────────────────────────────────────────────────────────
+
+    private void showFastfetch() {
+        bootText.append("\n" + buildFastfetch());
+        scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+
+        bootComplete = true;
+        skipHint.setText("── tap anywhere to continue ──");
+        skipHint.setTextColor(0xFF44FF44);
+        skipHint.animate().alpha(1f).setDuration(300).start();
     }
 
-    private void skip() {
-        if (skipped) return;
-        skipped = true;
-        handler.removeCallbacksAndMessages(null);
-        launch();
+    @SuppressWarnings("deprecation")
+    private String buildFastfetch() {
+        // ── Real hardware info ────────────────────────────────────────────
+        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo mem = new ActivityManager.MemoryInfo();
+        am.getMemoryInfo(mem);
+        long totalMib = mem.totalMem / (1024 * 1024);
+        long usedMib  = (mem.totalMem - mem.availMem) / (1024 * 1024);
+
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        float density = dm.density;
+        String dpi = dm.densityDpi + " dpi";
+
+        StatFs sf = new StatFs(Environment.getDataDirectory().getPath());
+        long storTotal = sf.getTotalBytes() / (1024 * 1024 * 1024);
+        long storFree  = sf.getFreeBytes()  / (1024 * 1024 * 1024);
+
+        BatteryManager bm = (BatteryManager) getSystemService(BATTERY_SERVICE);
+        int battery = bm != null
+                ? bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) : -1;
+        String battStr = battery >= 0 ? battery + "%" : "unknown";
+        String battBar = batteryBar(battery);
+
+        int    cores     = Runtime.getRuntime().availableProcessors();
+        long   uptimeSec = (System.currentTimeMillis() - bootStartTime) / 1000;
+        String model     = Build.MANUFACTURER + " " + Build.MODEL;
+        String board     = Build.HARDWARE;
+        String abi       = Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "arm64";
+        String androidVer = "Android " + Build.VERSION.RELEASE
+                            + "  (API " + Build.VERSION.SDK_INT + ")";
+
+        // ── Fun computed fields ───────────────────────────────────────────
+        String nerdScore = nerdScore();
+        String upStr     = formatUptime(uptimeSec);
+
+        // ── ASCII logo (20 chars wide, 8 lines) ───────────────────────────
+        String[] logo = {
+            "       .  *  .  *   ",
+            "      * \\  |  / *   ",
+            "     *  --[Nd]--  * ",
+            "      * /  |  \\ *   ",
+            "       .  *  .  *   ",
+            "        NixDoc OS   ",
+            "                    ",
+            "                    ",
+        };
+
+        // ── Info rows ─────────────────────────────────────────────────────
+        String user = "user@nixdoc";
+        String sep  = repeat("─", 28);
+        String[] info = {
+            user,
+            sep,
+            "OS       NixDoc Browser 1.0",
+            "Kernel   1.0.0-stable-arm64",
+            "Host     " + model,
+            "Board    " + board + "  (" + abi + ")",
+            "Uptime   " + upStr,
+            "Android  " + androidVer,
+            "Shell    nixdoc-sh 1.0",
+            "DE       nixdoc-wm (dark terminal)",
+            "Font     Monospace (crisp)",
+            "Docs     7 loaded  (NixOS Nixpkgs Guix Arch Gentoo LFS)",
+            "Nerd Lvl " + nerdScore,
+            sep,
+            "Res      " + dm.widthPixels + "x" + dm.heightPixels + "  @" + dpi,
+            "CPU      " + cores + "-core ARM  (" + abi + ")",
+            "Memory   " + usedMib + " MiB / " + totalMib + " MiB",
+            "Storage  " + (storTotal - storFree) + " GiB / " + storTotal + " GiB",
+            "Battery  " + battStr + "  " + battBar,
+            sep,
+            "  █ █ █ █ █ █ █ █  (terminal colors)",
+        };
+
+        int lines = Math.max(logo.length, info.length);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < lines; i++) {
+            String l = i < logo.length ? logo[i] : "                    ";
+            String r = i < info.length ? info[i] : "";
+            sb.append(l).append("  ").append(r).append("\n");
+        }
+        sb.append("\n");
+        return sb.toString();
     }
+
+    private String batteryBar(int pct) {
+        if (pct < 0) return "[----------]";
+        int filled = pct / 10;
+        StringBuilder b = new StringBuilder("[");
+        for (int i = 0; i < 10; i++) b.append(i < filled ? "█" : "░");
+        b.append("]");
+        return b.toString();
+    }
+
+    private String formatUptime(long secs) {
+        if (secs < 60) return secs + "s";
+        long mins = secs / 60; long s = secs % 60;
+        if (mins < 60) return mins + "m " + s + "s";
+        return (mins / 60) + "h " + (mins % 60) + "m";
+    }
+
+    private String nerdScore() {
+        // Fun score: NixOS + Guix = functional purist, + Gentoo/Arch/LFS = absolute ricer
+        String[] badges = { "★★★★★  MAXIMUM RICE", "[ confirmed distro hopper ]",
+                            "rice lord  (seek help)", "kernel.org/superfan" };
+        int idx = (int)(System.currentTimeMillis() % badges.length);
+        return badges[idx];
+    }
+
+    private static String repeat(String s, int n) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) sb.append(s);
+        return sb.toString();
+    }
+
+    // ── Launch ─────────────────────────────────────────────────────────────
 
     private void launch() {
-        // Brief green flash then transition
-        bootText.append("\nLaunching NixDoc Browser...\n");
+        bootText.append("Launching NixDoc Browser...\n");
         scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
         handler.postDelayed(() -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(intent);
+            startActivity(new Intent(this, MainActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION));
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();
-        }, 350);
+        }, 300);
     }
 
     @Override
