@@ -128,6 +128,16 @@ public class MainActivity extends AppCompatActivity {
                 R.color.lfs_red_dim, R.color.lfs_red
         ));
 
+        list.add(new DocEntry(
+                "Beyond Linux From Scratch",
+                "Extends LFS with user-space software — networking, desktop environments, and more.",
+                "https://www.linuxfromscratch.org/blfs/view/stable/",
+                "index.html",
+                "https://www.linuxfromscratch.org/blfs/view/stable/",
+                "BLFS", "Book",
+                R.color.blfs_teal_dim, R.color.blfs_teal
+        ));
+
         return list;
     }
 }

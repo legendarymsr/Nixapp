@@ -13,3 +13,7 @@ local.properties
 
 # Keep releases folder tracked
 !releases/
+AccessChecker/local.properties
+AccessChecker/build/
+AccessChecker/app/build/
+AccessChecker/.gradle/

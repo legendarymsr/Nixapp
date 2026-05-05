@@ -123,7 +123,7 @@
                 android:textColor="@color/text_secondary"
                 android:lineSpacingExtra="3dp" />
 
-            <!-- Offline status -->
+            <!-- Offline status (shown when downloaded) -->
             <LinearLayout
                 android:id="@+id/offline_status_row"
                 android:layout_width="match_parent"
@@ -140,12 +140,60 @@
                     android:layout_marginEnd="7dp" />
 
                 <TextView
+                    android:id="@+id/offline_size_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Available offline"
                     android:textSize="11sp"
                     android:textColor="@color/cookbook_green"
                     android:fontFamily="sans-serif-medium" />
+            </LinearLayout>
+
+            <!-- Download progress (shown while downloading) -->
+            <LinearLayout
+                android:id="@+id/progress_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="12dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/progress_phase"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="11sp"
+                        android:textColor="@color/text_secondary"
+                        android:fontFamily="monospace"
+                        android:singleLine="true"
+                        android:text="Downloading…" />
+
+                    <TextView
+                        android:id="@+id/progress_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="11sp"
+                        android:textColor="@color/accent"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="0%" />
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:layout_marginTop="6dp"
+                    android:max="100"
+                    android:progressTint="@color/accent"
+                    android:progressBackgroundTint="@color/surface_variant" />
             </LinearLayout>
 
             <!-- Buttons -->

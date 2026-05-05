@@ -39,6 +39,9 @@
     <color name="lfs_red">#E06832</color>
     <color name="lfs_red_dim">#3A1A08</color>
 
+    <color name="blfs_teal">#3DA89E</color>
+    <color name="blfs_teal_dim">#0D2B28</color>
+
     <!-- Generic accent (browser toolbar) -->
     <color name="accent">#7CB3FF</color>
     <color name="accent_dark">#5A8FD6</color>
