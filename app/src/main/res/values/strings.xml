@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NixDoc Browser</string>
+    <string name="app_subtitle">NixOS · Nixpkgs · Guix · Guix Cookbook</string>
+    <string name="read_online">Read Online</string>
+    <string name="download_offline">Download Offline</string>
+    <string name="read_offline">Read Offline</string>
+    <string name="find_hint">Find in page…</string>
+    <string name="find_prev">Previous</string>
+    <string name="find_next">Next</string>
+    <string name="find_close">Close</string>
+    <string name="find_in_page">Find in Page</string>
+    <string name="back">Back</string>
+    <string name="forward">Forward</string>
+    <string name="refresh">Refresh</string>
+</resources>
