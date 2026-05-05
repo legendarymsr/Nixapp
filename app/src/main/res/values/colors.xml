@@ -1,17 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dark theme palette -->
-    <color name="bg_dark">#121212</color>
-    <color name="surface_dark">#1E1E1E</color>
-    <color name="surface_variant">#2A2A2A</color>
+    <!-- Base dark theme -->
+    <color name="bg_dark">#0D0D0D</color>
+    <color name="surface_dark">#161616</color>
+    <color name="surface_card">#1C1C1E</color>
+    <color name="surface_variant">#252528</color>
+    <color name="divider">#2A2A2E</color>
+
+    <!-- Text -->
+    <color name="text_primary">#F2F2F7</color>
+    <color name="text_secondary">#8E8E93</color>
+    <color name="text_tertiary">#48484A</color>
+    <color name="btn_text">#0D0D0D</color>
+
+    <!-- Per-doc accent colors -->
+    <color name="nixos_blue">#5277C3</color>
+    <color name="nixos_blue_dim">#1E2F52</color>
+    <color name="nixos_blue_glow">#264070</color>
+
+    <color name="nixpkgs_cyan">#7EBAE4</color>
+    <color name="nixpkgs_cyan_dim">#1A3245</color>
+    <color name="nixpkgs_cyan_glow">#1E3D55</color>
+
+    <color name="guix_orange">#E8844A</color>
+    <color name="guix_orange_dim">#3D2010</color>
+    <color name="guix_orange_glow">#4A2810</color>
+
+    <color name="cookbook_green">#4CAF82</color>
+    <color name="cookbook_green_dim">#0D2E1E</color>
+    <color name="cookbook_green_glow">#0F3522</color>
+
+    <!-- Generic accent (browser toolbar) -->
     <color name="accent">#7CB3FF</color>
     <color name="accent_dark">#5A8FD6</color>
-    <color name="text_primary">#E0E0E0</color>
-    <color name="text_secondary">#9E9E9E</color>
-    <color name="btn_text">#121212</color>
-    <color name="divider">#2D2D2D</color>
 
-    <!-- Required by Material theme -->
+    <!-- Material theme required -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>

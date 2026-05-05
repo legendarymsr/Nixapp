@@ -21,9 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private final BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (adapter != null) {
-                adapter.notifyDataSetChanged();
-            }
+            if (adapter != null) adapter.notifyDataSetChanged();
         }
     };
 
@@ -31,9 +29,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        TextView appTitle = findViewById(R.id.app_title);
-        appTitle.setText(R.string.app_name);
 
         docs = buildDocList();
         adapter = new DocAdapter(this, docs);
@@ -66,34 +61,42 @@ public class MainActivity extends AppCompatActivity {
 
         list.add(new DocEntry(
                 "NixOS Manual",
-                "The official NixOS operating system documentation",
+                "The official NixOS operating system documentation — configuration, installation, and modules.",
                 "https://nixos.org/manual/nixos/stable/",
                 "index.html",
-                "https://nixos.org/manual/nixos/stable/"
+                "https://nixos.org/manual/nixos/stable/",
+                "NX", "System",
+                R.color.nixos_blue_dim, R.color.nixos_blue
         ));
 
         list.add(new DocEntry(
                 "Nixpkgs Manual",
-                "The Nix packages collection reference manual",
+                "The Nix packages collection reference — functions, overlays, and packaging guidelines.",
                 "https://nixos.org/manual/nixpkgs/stable/",
                 "index.html",
-                "https://nixos.org/manual/nixpkgs/stable/"
+                "https://nixos.org/manual/nixpkgs/stable/",
+                "Np", "Packages",
+                R.color.nixpkgs_cyan_dim, R.color.nixpkgs_cyan
         ));
 
         list.add(new DocEntry(
                 "GNU Guix Manual",
-                "The official GNU Guix system documentation",
+                "The official GNU Guix system documentation — package management and system configuration.",
                 "https://guix.gnu.org/manual/en/html_node/",
                 "index.html",
-                "https://guix.gnu.org/manual/en/html_node/"
+                "https://guix.gnu.org/manual/en/html_node/",
+                "Gx", "System",
+                R.color.guix_orange_dim, R.color.guix_orange
         ));
 
         list.add(new DocEntry(
                 "Guix Cookbook",
-                "Tutorials and examples for GNU Guix",
+                "Tutorials, how-tos, and worked examples for GNU Guix users and contributors.",
                 "https://guix.gnu.org/cookbook/en/html_node/",
                 "index.html",
-                "https://guix.gnu.org/cookbook/en/html_node/"
+                "https://guix.gnu.org/cookbook/en/html_node/",
+                "GC", "Cookbook",
+                R.color.cookbook_green_dim, R.color.cookbook_green
         ));
 
         return list;

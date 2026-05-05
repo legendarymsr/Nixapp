@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.button.MaterialButton;
 import java.io.File;
 import java.util.List;
 
@@ -33,8 +35,29 @@ public class DocAdapter extends RecyclerView.Adapter<DocAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DocEntry doc = docs.get(position);
+
         holder.title.setText(doc.title);
         holder.subtitle.setText(doc.subtitle);
+        holder.docIcon.setText(doc.iconLetter);
+        holder.docTag.setText(doc.tag);
+
+        // Apply per-doc banner color
+        holder.cardBanner.setBackgroundColor(ContextCompat.getColor(context, doc.bannerColorRes));
+
+        // Apply accent to online button
+        holder.btnReadOnline.setBackgroundTintList(
+                android.content.res.ColorStateList.valueOf(
+                        ContextCompat.getColor(context, doc.accentColorRes)));
+
+        // Offline status badge
+        boolean downloaded = OfflineStorage.isDownloaded(context, doc.title);
+        if (downloaded) {
+            holder.offlineStatusRow.setVisibility(View.VISIBLE);
+            holder.btnDownload.setText(context.getString(R.string.read_offline));
+        } else {
+            holder.offlineStatusRow.setVisibility(View.GONE);
+            holder.btnDownload.setText(context.getString(R.string.download_offline));
+        }
 
         holder.btnReadOnline.setOnClickListener(v -> {
             Intent intent = new Intent(context, DocBrowserActivity.class);
@@ -45,8 +68,8 @@ public class DocAdapter extends RecyclerView.Adapter<DocAdapter.ViewHolder> {
         });
 
         holder.btnDownload.setOnClickListener(v -> {
-            File offlineDir = OfflineStorage.getDocDir(context, doc.title);
             if (OfflineStorage.isDownloaded(context, doc.title)) {
+                File offlineDir = OfflineStorage.getDocDir(context, doc.title);
                 Intent intent = new Intent(context, DocBrowserActivity.class);
                 intent.putExtra(DocBrowserActivity.EXTRA_URL,
                         "file://" + new File(offlineDir, doc.offlineIndex).getAbsolutePath());
@@ -54,23 +77,13 @@ public class DocAdapter extends RecyclerView.Adapter<DocAdapter.ViewHolder> {
                 intent.putExtra(DocBrowserActivity.EXTRA_OFFLINE, true);
                 context.startActivity(intent);
             } else {
-                Toast.makeText(context, "Downloading " + doc.title + "...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Downloading " + doc.title + "…", Toast.LENGTH_SHORT).show();
                 Intent serviceIntent = new Intent(context, DownloadService.class);
                 serviceIntent.putExtra(DownloadService.EXTRA_DOC_TITLE, doc.title);
                 serviceIntent.putExtra(DownloadService.EXTRA_DOC_URL, doc.downloadUrl);
                 context.startService(serviceIntent);
             }
         });
-
-        updateDownloadButton(holder.btnDownload, doc);
-    }
-
-    private void updateDownloadButton(Button btn, DocEntry doc) {
-        if (OfflineStorage.isDownloaded(context, doc.title)) {
-            btn.setText(context.getString(R.string.read_offline));
-        } else {
-            btn.setText(context.getString(R.string.download_offline));
-        }
     }
 
     @Override
@@ -79,15 +92,21 @@ public class DocAdapter extends RecyclerView.Adapter<DocAdapter.ViewHolder> {
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView title, subtitle;
-        Button btnReadOnline, btnDownload;
+        FrameLayout cardBanner;
+        TextView docIcon, docTag, title, subtitle;
+        MaterialButton btnReadOnline, btnDownload;
+        View offlineStatusRow;
 
         ViewHolder(View itemView) {
             super(itemView);
+            cardBanner = itemView.findViewById(R.id.card_banner);
+            docIcon = itemView.findViewById(R.id.doc_icon);
+            docTag = itemView.findViewById(R.id.doc_tag);
             title = itemView.findViewById(R.id.doc_title);
             subtitle = itemView.findViewById(R.id.doc_subtitle);
             btnReadOnline = itemView.findViewById(R.id.btn_read_online);
             btnDownload = itemView.findViewById(R.id.btn_download);
+            offlineStatusRow = itemView.findViewById(R.id.offline_status_row);
         }
     }
 }
