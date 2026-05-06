@@ -1,3 +1,0 @@
-/home/user/Nixapp/AccessChecker/app/.cxx/Debug/3b4m4212/x86_64/CMakeFiles/accesschecker_native.dir
-/home/user/Nixapp/AccessChecker/app/.cxx/Debug/3b4m4212/x86_64/CMakeFiles/edit_cache.dir
-/home/user/Nixapp/AccessChecker/app/.cxx/Debug/3b4m4212/x86_64/CMakeFiles/rebuild_cache.dir

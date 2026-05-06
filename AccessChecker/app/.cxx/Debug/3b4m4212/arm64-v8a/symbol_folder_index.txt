@@ -1,1 +1,0 @@
-/home/user/Nixapp/AccessChecker/app/build/intermediates/cxx/Debug/3b4m4212/obj/arm64-v8a

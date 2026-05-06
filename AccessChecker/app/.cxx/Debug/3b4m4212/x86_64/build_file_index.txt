@@ -1,1 +1,0 @@
-/home/user/Nixapp/AccessChecker/app/src/main/cpp/CMakeLists.txt
