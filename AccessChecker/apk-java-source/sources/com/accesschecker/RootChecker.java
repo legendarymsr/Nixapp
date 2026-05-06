@@ -91,9 +91,6 @@ public class RootChecker {
         }
         r.lines.add(fmt("root manager    ", r.rootManager == null) + (r.rootManager != null ? " (" + r.rootManager + " v" + r.rootManagerVersion + ")" : ""));
         r.magiskSocketFound = NativeChecker.safeMagiskSocket();
-        if (r.magiskSocketFound) {
-            r.status = Status.GRANTED;
-        }
         r.lines.add(fmt("magisk socket   ", !r.magiskSocketFound));
         r.kernelSuVfs = NativeChecker.safeKernelSU();
         if (r.kernelSuVfs) {
@@ -106,9 +103,6 @@ public class RootChecker {
         }
         r.lines.add(fmt("apatch vfs      ", !r.apatchVfs));
         r.suspiciousMounts = NativeChecker.safeMagiskMounts();
-        if (r.suspiciousMounts) {
-            r.status = Status.GRANTED;
-        }
         r.mountDetails = NativeChecker.safeSuspiciousMounts();
         r.lines.add(fmt("magisk mounts   ", !r.suspiciousMounts));
         r.fuseMounts = NativeChecker.safeFuse();
@@ -116,12 +110,18 @@ public class RootChecker {
         if (!NativeChecker.isAvailable()) {
             r.lines.add("NOTE: native library not loaded — socket/mount/maps checks skipped");
         }
+        boolean strongRoot = r.suPath != null || r.execTestPassed || r.nativeSuPassed || r.rootManager != null || r.kernelSuVfs || r.apatchVfs;
+        boolean weakRoot = r.magiskSocketFound || r.suspiciousMounts;
+        if (strongRoot) {
+            r.status = Status.GRANTED;
+        } else if (weakRoot) {
+            r.status = Status.UNKNOWN;
+        } else {
+            r.status = Status.DENIED;
+        }
         int conf = r.execTestPassed ? 0 + 30 : 0;
         if (r.nativeSuPassed) {
             conf += 25;
-        }
-        if (r.magiskSocketFound) {
-            conf += 20;
         }
         if (r.rootManager != null) {
             conf += 20;
@@ -135,13 +135,13 @@ public class RootChecker {
         if (r.apatchVfs) {
             conf += 15;
         }
+        if (r.magiskSocketFound) {
+            conf += 10;
+        }
         if (r.suspiciousMounts) {
             conf += 10;
         }
         r.confidence = Math.min(100, conf);
-        if (r.status == Status.UNKNOWN) {
-            r.status = Status.DENIED;
-        }
         return r;
     }
 

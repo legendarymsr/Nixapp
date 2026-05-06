@@ -94,18 +94,18 @@ Java_com_accesschecker_NativeChecker_hasMagiskSocket(JNIEnv *env, jclass cls) {
 /* --- Suspicious mounts (/proc/self/mounts + /proc/mounts) ----------------- */
 JNIEXPORT jboolean JNICALL
 Java_com_accesschecker_NativeChecker_hasMagiskMounts(JNIEnv *env, jclass cls) {
-    const char *pats[] = { "magisk", "mirror", "worker", "magisktmp", ".magisk" };
-    if (scan_file_for_patterns("/proc/self/mounts", pats, 5, NULL, 0)) return JNI_TRUE;
-    if (scan_file_for_patterns("/proc/mounts",      pats, 5, NULL, 0)) return JNI_TRUE;
+    const char *pats[] = { "magisk", "magisktmp", ".magisk" };
+    if (scan_file_for_patterns("/proc/self/mounts", pats, 3, NULL, 0)) return JNI_TRUE;
+    if (scan_file_for_patterns("/proc/mounts",      pats, 3, NULL, 0)) return JNI_TRUE;
     return JNI_FALSE;
 }
 
 JNIEXPORT jstring JNICALL
 Java_com_accesschecker_NativeChecker_getSuspiciousMounts(JNIEnv *env, jclass cls) {
-    const char *pats[] = { "magisk", "mirror", "worker", "magisktmp", ".magisk" };
+    const char *pats[] = { "magisk", "magisktmp", ".magisk" };
     char buf[4096] = {0};
-    scan_file_for_patterns("/proc/self/mounts", pats, 5, buf, sizeof(buf));
-    scan_file_for_patterns("/proc/mounts",      pats, 5, buf, sizeof(buf));
+    scan_file_for_patterns("/proc/self/mounts", pats, 3, buf, sizeof(buf));
+    scan_file_for_patterns("/proc/mounts",      pats, 3, buf, sizeof(buf));
     return (*env)->NewStringUTF(env, buf);
 }
 

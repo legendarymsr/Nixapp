@@ -91,10 +91,13 @@ public class BootloaderChecker {
         boolean rootManagerConfirmed = rootResult != null
                 && rootResult.execTestPassed && rootResult.rootManager != null;
         boolean rootManagerDetected  = rootResult != null && rootResult.rootManager != null;
-        // Native checks add even stronger evidence
+        // Native checks — only use signals that prove kernel-level root beyond doubt.
+        // magiskSocketFound is deliberately excluded: it's a weak signal with known
+        // false positives on non-rooted devices and must not cascade to unlock inference.
         boolean rootNativeConfirmed  = rootResult != null
-                && (rootResult.nativeSuPassed || rootResult.magiskSocketFound
-                    || rootResult.kernelSuVfs  || rootResult.apatchVfs);
+                && (rootResult.nativeSuPassed
+                    || rootResult.kernelSuVfs
+                    || rootResult.apatchVfs);
 
         if (rootManagerConfirmed || rootNativeConfirmed) {
             if (r.status == Status.LOCKED) r.propertiesMasked = true;

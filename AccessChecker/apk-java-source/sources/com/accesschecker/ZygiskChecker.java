@@ -34,66 +34,67 @@ public class ZygiskChecker {
     }
 
     public static Result check() {
-        Result r = new Result();
-        r.zygiskInMaps = NativeChecker.safeZygiskInMaps();
-        String mapsHits = NativeChecker.safeMapsMatches();
-        if (!mapsHits.isEmpty()) {
-            r.riruInMaps = mapsHits.contains("riru");
-            r.shamikoInMaps = mapsHits.contains("shamiko");
+        Result result = new Result();
+        result.zygiskInMaps = NativeChecker.safeZygiskInMaps();
+        String safeMapsMatches = NativeChecker.safeMapsMatches();
+        if (!safeMapsMatches.isEmpty()) {
+            result.riruInMaps = safeMapsMatches.contains("riru");
+            result.shamikoInMaps = safeMapsMatches.contains("shamiko");
         }
-        r.proc1Maps = NativeChecker.safeProc1Maps();
-        r.magiskSocket = NativeChecker.safeMagiskSocket();
-        r.magiskMounts = NativeChecker.safeMagiskMounts();
-        r.lsposedProcess = detectProcess("lspd", "lsposed");
-        r.tracerPid = NativeChecker.safeTracerPid();
-        r.tracingActive = r.tracerPid > 0;
-        r.suspiciousFd = checkSuspiciousFd();
-        int conf = r.zygiskInMaps ? 0 + 35 : 0;
-        if (r.magiskSocket) {
-            conf += 25;
+        result.proc1Maps = NativeChecker.safeProc1Maps();
+        result.magiskSocket = NativeChecker.safeMagiskSocket();
+        result.magiskMounts = NativeChecker.safeMagiskMounts();
+        result.lsposedProcess = detectProcess("lspd", "lsposed");
+        result.tracerPid = NativeChecker.safeTracerPid();
+        result.tracingActive = result.tracerPid > 0;
+        result.suspiciousFd = checkSuspiciousFd();
+        int i = result.zygiskInMaps ? 0 + 35 : 0;
+        if (result.magiskSocket) {
+            i += 25;
         }
-        if (r.magiskMounts) {
-            conf += 20;
+        if (result.magiskMounts) {
+            i += 20;
         }
-        if (r.lsposedProcess) {
-            conf += 20;
+        if (result.lsposedProcess) {
+            i += 20;
         }
-        if (r.riruInMaps) {
-            conf += 20;
+        if (result.riruInMaps) {
+            i += 20;
         }
-        if (r.proc1Maps) {
-            conf += 15;
+        if (result.proc1Maps) {
+            i += 15;
         }
-        if (r.shamikoInMaps) {
-            conf += 15;
+        if (result.shamikoInMaps) {
+            i += 15;
         }
-        if (r.suspiciousFd) {
-            conf += 10;
+        if (result.suspiciousFd) {
+            i += 10;
         }
-        if (r.tracingActive) {
-            conf += 10;
+        if (result.tracingActive) {
+            i += 10;
         }
-        r.confidence = Math.min(100, conf);
-        if (r.zygiskInMaps || r.lsposedProcess || r.riruInMaps) {
-            r.status = Status.DETECTED;
-        } else if (r.magiskSocket || r.magiskMounts || r.shamikoInMaps || r.proc1Maps || r.suspiciousFd) {
-            r.status = Status.SUSPECTED;
+        result.confidence = Math.min(100, i);
+        int i2 = (result.magiskSocket ? 1 : 0) + (result.magiskMounts ? 1 : 0) + (result.shamikoInMaps ? 1 : 0) + (result.proc1Maps ? 1 : 0) + (result.suspiciousFd ? 1 : 0);
+        if (result.zygiskInMaps || result.lsposedProcess || result.riruInMaps) {
+            result.status = Status.DETECTED;
+        } else if (i2 >= 2) {
+            result.status = Status.SUSPECTED;
         } else {
-            r.status = Status.CLEAN;
+            result.status = Status.CLEAN;
         }
-        r.lines.add(fmt("zygisk in maps   ", !r.zygiskInMaps));
-        r.lines.add(fmt("riru in maps     ", !r.riruInMaps));
-        r.lines.add(fmt("shamiko in maps  ", !r.shamikoInMaps));
-        r.lines.add(fmt("lspd process     ", !r.lsposedProcess));
-        r.lines.add(fmt("magisk socket    ", !r.magiskSocket));
-        r.lines.add(fmt("magisk mounts    ", !r.magiskMounts));
-        r.lines.add(fmt("proc/1 maps      ", !r.proc1Maps));
-        r.lines.add(fmt("suspicious fd    ", true ^ r.suspiciousFd));
-        r.lines.add("tracer pid       : " + (r.tracingActive ? "ACTIVE pid=" + r.tracerPid : "none"));
+        result.lines.add(fmt("zygisk in maps   ", !result.zygiskInMaps));
+        result.lines.add(fmt("riru in maps     ", !result.riruInMaps));
+        result.lines.add(fmt("shamiko in maps  ", !result.shamikoInMaps));
+        result.lines.add(fmt("lspd process     ", !result.lsposedProcess));
+        result.lines.add(fmt("magisk socket    ", !result.magiskSocket));
+        result.lines.add(fmt("magisk mounts    ", !result.magiskMounts));
+        result.lines.add(fmt("proc/1 maps      ", !result.proc1Maps));
+        result.lines.add(fmt("suspicious fd    ", true ^ result.suspiciousFd));
+        result.lines.add("tracer pid       : " + (result.tracingActive ? "ACTIVE pid=" + result.tracerPid : "none"));
         if (!NativeChecker.isAvailable()) {
-            r.lines.add("NOTE: native library unavailable — map/socket checks skipped");
+            result.lines.add("NOTE: native library unavailable — map/socket checks skipped");
         }
-        return r;
+        return result;
     }
 
     private static boolean detectProcess(String... keywords) {

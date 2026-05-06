@@ -141,7 +141,7 @@ public class BootloaderChecker {
         }
         boolean rootManagerConfirmed = (rootResult == null || !rootResult.execTestPassed || rootResult.rootManager == null) ? false : true;
         boolean rootManagerDetected = (rootResult == null || rootResult.rootManager == null) ? false : true;
-        boolean rootNativeConfirmed = rootResult != null && (rootResult.nativeSuPassed || rootResult.magiskSocketFound || rootResult.kernelSuVfs || rootResult.apatchVfs);
+        boolean rootNativeConfirmed = rootResult != null && (rootResult.nativeSuPassed || rootResult.kernelSuVfs || rootResult.apatchVfs);
         if (rootManagerConfirmed || rootNativeConfirmed) {
             if (r.status == Status.LOCKED) {
                 r.propertiesMasked = true;

@@ -70,10 +70,14 @@ public class ZygiskChecker {
         r.confidence = Math.min(100, conf);
 
         // ── Status ────────────────────────────────────────────────────────
+        // DETECTED requires a strong signal (library injected into maps or daemon running).
+        // SUSPECTED requires at least 2 weak signals to avoid single-source false positives.
+        int weakCount = (r.magiskSocket ? 1 : 0) + (r.magiskMounts ? 1 : 0)
+                + (r.shamikoInMaps ? 1 : 0) + (r.proc1Maps ? 1 : 0) + (r.suspiciousFd ? 1 : 0);
+
         if (r.zygiskInMaps || r.lsposedProcess || r.riruInMaps) {
             r.status = Status.DETECTED;
-        } else if (r.magiskSocket || r.magiskMounts || r.shamikoInMaps
-                || r.proc1Maps || r.suspiciousFd) {
+        } else if (weakCount >= 2) {
             r.status = Status.SUSPECTED;
         } else {
             r.status = Status.CLEAN;
