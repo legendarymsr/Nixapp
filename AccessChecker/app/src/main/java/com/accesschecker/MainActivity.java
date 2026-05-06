@@ -3,7 +3,6 @@ package com.accesschecker;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -19,14 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,48 +30,42 @@ public class MainActivity extends AppCompatActivity {
     private static final int SHIZUKU_REQUEST_CODE = 1001;
 
     // Root card
-    private View         rootPulse, rootDot;
-    private TextView     rootStatusTv, rootDetailsTv, rootExpandTv, rootConfidenceTv;
+    private View       rootPulse, rootDot;
+    private TextView   rootStatusTv, rootDetailsTv, rootExpandTv;
     private LinearLayout rootDetailsLayout;
 
     // Bootloader card
-    private View         bootPulse, bootDot;
-    private TextView     bootStatusTv, bootDetailsTv, bootExpandTv, bootConfidenceTv;
+    private View       bootPulse, bootDot;
+    private TextView   bootStatusTv, bootDetailsTv, bootExpandTv;
     private LinearLayout bootDetailsLayout;
 
-    // Zygisk card
-    private View         zygiskPulse, zygiskDot;
-    private TextView     zygiskStatusTv, zygiskDetailsTv, zygiskExpandTv, zygiskConfidenceTv;
-    private LinearLayout zygiskDetailsLayout;
-
     // Shizuku card
-    private View         shizukuPulse, shizukuDot;
-    private TextView     shizukuStatusTv, shizukuDetailsTv, shizukuExpandTv;
+    private View       shizukuPulse, shizukuDot;
+    private TextView   shizukuStatusTv, shizukuDetailsTv, shizukuExpandTv;
     private LinearLayout shizukuDetailsLayout;
 
     // Score
-    private TextView    scoreText;
+    private TextView   scoreText;
     private ProgressBar scoreBar;
 
     // Results (written on background thread, read on main)
-    private volatile RootChecker.Result       rootResult;
+    private volatile RootChecker.Result     rootResult;
     private volatile BootloaderChecker.Result bootResult;
-    private volatile ZygiskChecker.Result     zygiskResult;
-    private volatile ShizukuChecker.Result    shizukuResult;
+    private volatile ShizukuChecker.Result  shizukuResult;
 
     // Pulse animations
-    private AnimatorSet rootAnim, bootAnim, zygiskAnim, shizukuAnim;
+    private AnimatorSet rootAnim, bootAnim, shizukuAnim;
 
-    private final ExecutorService executor    = Executors.newSingleThreadExecutor();
-    private final Handler         mainHandler = new Handler(Looper.getMainLooper());
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     // ── Shizuku lifecycle listeners ───────────────────────────────────────
 
-    private final Shizuku.OnBinderReceivedListener onBinderReceived =
-            () -> mainHandler.post(() -> runShizukuCheck(true));
+    private final Shizuku.OnBinderReceivedListener onBinderReceived = () ->
+            mainHandler.post(() -> runShizukuCheck(true));
 
-    private final Shizuku.OnBinderDeadListener onBinderDead =
-            () -> mainHandler.post(() -> runShizukuCheck(true));
+    private final Shizuku.OnBinderDeadListener onBinderDead = () ->
+            mainHandler.post(() -> runShizukuCheck(true));
 
     private final Shizuku.OnRequestPermissionResultListener onPermResult =
             (code, result) -> {
@@ -103,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (Throwable ignored) {}
 
         shizukuDot.setOnClickListener(v -> requestShizukuPermission());
+
         findViewById(R.id.btn_recheck).setOnClickListener(v -> recheckAll());
-        findViewById(R.id.btn_export).setOnClickListener(v -> exportJson());
 
         recheckAll();
     }
@@ -120,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
         executor.shutdown();
         cancelAnim(rootAnim);
         cancelAnim(bootAnim);
-        cancelAnim(zygiskAnim);
         cancelAnim(shizukuAnim);
     }
 
@@ -129,36 +115,40 @@ public class MainActivity extends AppCompatActivity {
     private void recheckAll() {
         rootResult    = null;
         bootResult    = null;
-        zygiskResult  = null;
         shizukuResult = null;
 
-        setLoading(rootPulse,    rootDot,    rootStatusTv,    1);
-        setLoading(bootPulse,    bootDot,    bootStatusTv,    2);
-        setLoading(zygiskPulse,  zygiskDot,  zygiskStatusTv,  3);
-        setLoading(shizukuPulse, shizukuDot, shizukuStatusTv, 4);
+        setLoading(rootPulse, rootDot, rootStatusTv);
+        setLoading(bootPulse, bootDot, bootStatusTv);
+        setLoading(shizukuPulse, shizukuDot, shizukuStatusTv);
         scoreText.setText("--/100");
         scoreText.setTextColor(getColor(R.color.green_dim));
         scoreBar.setProgress(0);
-        rootConfidenceTv.setText("");
-        bootConfidenceTv.setText("");
-        zygiskConfidenceTv.setText("");
 
         executor.execute(() -> {
             RootChecker.Result root = RootChecker.check(this);
-            mainHandler.post(() -> { applyRootResult(root); maybeUpdateScore(); });
+            mainHandler.post(() -> {
+                applyRootResult(root);
+                maybeUpdateScore();
+            });
 
-            BootloaderChecker.Result boot = BootloaderChecker.check(root);
-            mainHandler.post(() -> { applyBootResult(boot); maybeUpdateScore(); });
-
-            ZygiskChecker.Result zy = ZygiskChecker.check();
-            mainHandler.post(() -> { applyZygiskResult(zy); maybeUpdateScore(); });
+            BootloaderChecker.Result boot = BootloaderChecker.check();
+            mainHandler.post(() -> {
+                applyBootResult(boot);
+                maybeUpdateScore();
+            });
         });
 
+        // Shizuku API must be called on main thread
         runShizukuCheck(false);
     }
 
     private void runShizukuCheck(boolean updateScore) {
         ShizukuChecker.Result result = ShizukuChecker.check(this);
+        // Cross-reference run mode with root result
+        if (result.running) {
+            result.runMode = (rootResult != null
+                    && rootResult.status == RootChecker.Status.GRANTED) ? "root" : "adb";
+        }
         applyShizukuResult(result);
         if (updateScore) maybeUpdateScore();
     }
@@ -167,99 +157,124 @@ public class MainActivity extends AppCompatActivity {
 
     private void applyRootResult(RootChecker.Result r) {
         rootResult = r;
-        int color;  String label;
+        int color;
+        String label;
         switch (r.status) {
-            case GRANTED: color = Color.parseColor("#FF3B3B"); label = "ROOTED";     break;
-            case DENIED:  color = Color.parseColor("#00E676"); label = "NOT ROOTED"; break;
-            default:      color = Color.parseColor("#FFD600"); label = "UNKNOWN";    break;
+            case GRANTED:
+                color = Color.parseColor("#FF3B3B");
+                label = "ROOTED";
+                break;
+            case DENIED:
+                color = Color.parseColor("#00E676");
+                label = "NOT ROOTED";
+                break;
+            default:
+                color = Color.parseColor("#FFD600");
+                label = "UNKNOWN";
+                break;
         }
         applyDotColor(rootPulse, rootDot, color);
         rootStatusTv.setText(label);
         rootStatusTv.setTextColor(color);
         startSonarPulse(rootPulse, color, 1);
-        rootConfidenceTv.setText("confidence: " + r.confidence + "%");
-        rootDetailsTv.setText(buildLines(r.lines));
+
+        StringBuilder sb = new StringBuilder();
+        for (String line : r.lines) sb.append("  ").append(line).append("\n");
+        rootDetailsTv.setText(sb.toString().trim());
     }
 
     private void applyBootResult(BootloaderChecker.Result r) {
         bootResult = r;
-        int color;  String label;
+        int color;
+        String label;
         switch (r.status) {
-            case LOCKED:   color = Color.parseColor("#00E676"); label = "LOCKED";   break;
-            case UNLOCKED: color = Color.parseColor("#FF3B3B"); label = "UNLOCKED"; break;
-            default:       color = Color.parseColor("#FFD600"); label = "UNKNOWN";  break;
+            case LOCKED:
+                color = Color.parseColor("#00E676");
+                label = "LOCKED";
+                break;
+            case UNLOCKED:
+                color = Color.parseColor("#FF3B3B");
+                label = "UNLOCKED";
+                break;
+            default:
+                color = Color.parseColor("#FFD600");
+                label = "UNKNOWN";
+                break;
         }
+        // If boot state is unknown but verified boot tells us something, use it
         if (r.status == BootloaderChecker.Status.UNKNOWN) {
             if (r.verifiedBoot == BootloaderChecker.VerifiedBootState.GREEN) {
-                color = Color.parseColor("#00E676"); label = "LIKELY LOCKED";
+                color = Color.parseColor("#00E676");
+                label = "LIKELY LOCKED";
             } else if (r.verifiedBoot == BootloaderChecker.VerifiedBootState.ORANGE) {
-                color = Color.parseColor("#FF3B3B"); label = "LIKELY UNLOCKED";
+                color = Color.parseColor("#FF3B3B");
+                label = "LIKELY UNLOCKED";
             }
         }
         applyDotColor(bootPulse, bootDot, color);
         bootStatusTv.setText(label);
         bootStatusTv.setTextColor(color);
         startSonarPulse(bootPulse, color, 2);
-        bootConfidenceTv.setText("hw-attest: " + r.hwAttestation
-                + "  vb: " + r.verifiedBoot.name().toLowerCase());
-        bootDetailsTv.setText(buildLines(r.lines));
-    }
 
-    private void applyZygiskResult(ZygiskChecker.Result r) {
-        zygiskResult = r;
-        int color;  String label;
-        switch (r.status) {
-            case DETECTED:  color = Color.parseColor("#FF3B3B"); label = "HOOKING DETECTED";  break;
-            case SUSPECTED: color = Color.parseColor("#FFD600"); label = "SUSPECTED HOOKING"; break;
-            case CLEAN:     color = Color.parseColor("#00E676"); label = "CLEAN";             break;
-            default:        color = Color.parseColor("#FFD600"); label = "UNKNOWN";           break;
-        }
-        applyDotColor(zygiskPulse, zygiskDot, color);
-        zygiskStatusTv.setText(label);
-        zygiskStatusTv.setTextColor(color);
-        startSonarPulse(zygiskPulse, color, 3);
-        zygiskConfidenceTv.setText("confidence: " + r.confidence + "%");
-        zygiskDetailsTv.setText(buildLines(r.lines));
+        StringBuilder sb = new StringBuilder();
+        for (String line : r.lines) sb.append("  ").append(line).append("\n");
+        bootDetailsTv.setText(sb.toString().trim());
     }
 
     private void applyShizukuResult(ShizukuChecker.Result r) {
         shizukuResult = r;
-        int color;  String label;
+        int color;
+        String label;
         switch (r.status) {
-            case AVAILABLE_PERMITTED: color = Color.parseColor("#FF3B3B"); label = "RUNNING / PERMITTED";  break;
-            case AVAILABLE_DENIED:    color = Color.parseColor("#FFD600"); label = "RUNNING / NO PERM";    break;
-            case INSTALLED_STOPPED:   color = Color.parseColor("#FFD600"); label = "INSTALLED / STOPPED";  break;
-            case NOT_INSTALLED:       color = Color.parseColor("#00E676"); label = "NOT INSTALLED";        break;
-            default:                  color = Color.parseColor("#FFD600"); label = "UNKNOWN";              break;
+            case AVAILABLE_PERMITTED:
+                color = Color.parseColor("#FF3B3B");
+                label = "RUNNING / PERMITTED";
+                break;
+            case AVAILABLE_DENIED:
+                color = Color.parseColor("#FFD600");
+                label = "RUNNING / NO PERM";
+                break;
+            case INSTALLED_STOPPED:
+                color = Color.parseColor("#FFD600");
+                label = "INSTALLED / STOPPED";
+                break;
+            case NOT_INSTALLED:
+                color = Color.parseColor("#00E676");
+                label = "NOT INSTALLED";
+                break;
+            default:
+                color = Color.parseColor("#FFD600");
+                label = "UNKNOWN";
+                break;
         }
         applyDotColor(shizukuPulse, shizukuDot, color);
         shizukuStatusTv.setText(label);
         shizukuStatusTv.setTextColor(color);
-        startSonarPulse(shizukuPulse, color, 4);
+        startSonarPulse(shizukuPulse, color, 3);
 
         StringBuilder sb = new StringBuilder();
         for (String line : r.lines) sb.append("  ").append(line).append("\n");
-        if (r.runMode != null) sb.append("  run mode  : ").append(r.runMode).append("\n");
+        if (r.runMode != null)
+            sb.append("  run mode  : ").append(r.runMode).append("\n");
         if (r.status == ShizukuChecker.Status.AVAILABLE_DENIED)
             sb.append("\n  [ TAP STATUS DOT TO REQUEST PERMISSION ]");
         shizukuDetailsTv.setText(sb.toString().trim());
     }
 
     private void maybeUpdateScore() {
-        if (rootResult == null || bootResult == null
-                || zygiskResult == null || shizukuResult == null) return;
+        if (rootResult == null || bootResult == null || shizukuResult == null) return;
 
         int score = 100;
 
-        // Root (max −30)
-        if (rootResult.status == RootChecker.Status.GRANTED)       score -= 30;
-        else if (rootResult.status == RootChecker.Status.UNKNOWN)  score -= 5;
+        // Root
+        if (rootResult.status == RootChecker.Status.GRANTED)  score -= 30;
+        else if (rootResult.status == RootChecker.Status.UNKNOWN) score -= 5;
 
-        // Bootloader (max −30)
-        if (bootResult.status == BootloaderChecker.Status.UNLOCKED)       score -= 30;
-        else if (bootResult.status == BootloaderChecker.Status.UNKNOWN)   score -= 5;
+        // Bootloader
+        if (bootResult.status == BootloaderChecker.Status.UNLOCKED) score -= 35;
+        else if (bootResult.status == BootloaderChecker.Status.UNKNOWN) score -= 5;
 
-        // Verified boot (max −15)
+        // Verified boot
         switch (bootResult.verifiedBoot) {
             case YELLOW:  score -=  5; break;
             case ORANGE:  score -= 10; break;
@@ -268,24 +283,18 @@ public class MainActivity extends AppCompatActivity {
             default: break;
         }
 
-        // dm-verity (max −5)
+        // dm-verity
         if (!bootResult.dmVerityEnabled) score -= 5;
 
-        // Zygisk / hooking (max −10)
-        if      (zygiskResult.status == ZygiskChecker.Status.DETECTED)  score -= 10;
-        else if (zygiskResult.status == ZygiskChecker.Status.SUSPECTED) score -= 5;
-
-        // Suspicious mounts (max −5)
-        if (rootResult.suspiciousMounts) score -= 5;
-
-        // Shizuku (max −5)
-        if (shizukuResult.status == ShizukuChecker.Status.AVAILABLE_PERMITTED) score -= 5;
+        // Shizuku
+        if (shizukuResult.status == ShizukuChecker.Status.AVAILABLE_PERMITTED) score -= 10;
 
         score = Math.max(0, score);
 
         int scoreColor = score >= 80 ? Color.parseColor("#00E676")
                        : score >= 50 ? Color.parseColor("#FFD600")
                        :               Color.parseColor("#FF3B3B");
+
         scoreText.setText(score + "/100");
         scoreText.setTextColor(scoreColor);
 
@@ -293,97 +302,16 @@ public class MainActivity extends AppCompatActivity {
                 scoreBar.getProgress(), score);
         barAnim.setDuration(900);
         barAnim.start();
+
         scoreBar.setProgressTintList(
                 android.content.res.ColorStateList.valueOf(scoreColor));
-    }
-
-    // ── JSON export ───────────────────────────────────────────────────────
-
-    private void exportJson() {
-        if (rootResult == null || bootResult == null
-                || zygiskResult == null || shizukuResult == null) {
-            Toast.makeText(this, "Run a scan first", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        try {
-            JSONObject report = new JSONObject();
-            report.put("generated",   new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",
-                    Locale.US).format(new Date()));
-            report.put("app_version", "1.5");
-
-            JSONObject root = new JSONObject();
-            root.put("status",            rootResult.status.name());
-            root.put("confidence_pct",    rootResult.confidence);
-            root.put("su_path",           rootResult.suPath != null ? rootResult.suPath : "");
-            root.put("root_manager",      rootResult.rootManager != null ? rootResult.rootManager : "");
-            root.put("exec_java",         rootResult.execTestPassed);
-            root.put("exec_native",       rootResult.nativeSuPassed);
-            root.put("magisk_socket",     rootResult.magiskSocketFound);
-            root.put("kernelsu_vfs",      rootResult.kernelSuVfs);
-            root.put("apatch_vfs",        rootResult.apatchVfs);
-            root.put("suspicious_mounts", rootResult.suspiciousMounts);
-            root.put("fuse_fs",           rootResult.fuseMounts);
-            report.put("root", root);
-
-            JSONObject boot = new JSONObject();
-            boot.put("status",            bootResult.status.name());
-            boot.put("confidence_pct",    bootResult.confidence);
-            boot.put("verified_boot",     bootResult.verifiedBoot.name());
-            boot.put("dm_verity",         bootResult.dmVerityEnabled);
-            boot.put("encryption",        bootResult.encryptionState);
-            boot.put("debuggable",        bootResult.debuggable);
-            boot.put("test_keys",         bootResult.testKeys);
-            boot.put("hw_attestation",    bootResult.hwAttestation);
-            boot.put("props_masked",      bootResult.propertiesMasked);
-            report.put("bootloader", boot);
-
-            JSONObject zy = new JSONObject();
-            zy.put("status",             zygiskResult.status.name());
-            zy.put("confidence_pct",     zygiskResult.confidence);
-            zy.put("zygisk_in_maps",     zygiskResult.zygiskInMaps);
-            zy.put("riru_in_maps",       zygiskResult.riruInMaps);
-            zy.put("shamiko_in_maps",    zygiskResult.shamikoInMaps);
-            zy.put("lsposed_process",    zygiskResult.lsposedProcess);
-            zy.put("magisk_socket",      zygiskResult.magiskSocket);
-            zy.put("magisk_mounts",      zygiskResult.magiskMounts);
-            zy.put("proc1_maps",         zygiskResult.proc1Maps);
-            zy.put("suspicious_fd",      zygiskResult.suspiciousFd);
-            zy.put("tracing_active",     zygiskResult.tracingActive);
-            zy.put("tracer_pid",         zygiskResult.tracerPid);
-            report.put("zygisk_hooking", zy);
-
-            JSONObject sh = new JSONObject();
-            sh.put("status",    shizukuResult.status.name());
-            sh.put("installed", shizukuResult.installed);
-            sh.put("running",   shizukuResult.running);
-            sh.put("permitted", shizukuResult.hasPermission);
-            sh.put("version",   shizukuResult.version);
-            sh.put("run_mode",  shizukuResult.runMode != null ? shizukuResult.runMode : "");
-            report.put("shizuku", sh);
-
-            JSONArray rawChecks = new JSONArray();
-            for (String l : rootResult.lines)    rawChecks.put("root: "    + l);
-            for (String l : bootResult.lines)    rawChecks.put("boot: "    + l);
-            for (String l : zygiskResult.lines)  rawChecks.put("zygisk: "  + l);
-            for (String l : shizukuResult.lines) rawChecks.put("shizuku: " + l);
-            report.put("raw_checks", rawChecks);
-
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_SUBJECT, "AccessChecker Report");
-            intent.putExtra(Intent.EXTRA_TEXT, report.toString(2));
-            startActivity(Intent.createChooser(intent, "Share Report"));
-
-        } catch (JSONException e) {
-            Toast.makeText(this, "Export failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
     }
 
     // ── Animation ─────────────────────────────────────────────────────────
 
     private void applyDotColor(View pulse, View dot, int color) {
-        int alpha = Color.argb(70, Color.red(color), Color.green(color), Color.blue(color));
-        setCircleColor(pulse, alpha);
+        int pulseAlpha = Color.argb(70, Color.red(color), Color.green(color), Color.blue(color));
+        setCircleColor(pulse, pulseAlpha);
         setCircleColor(dot, color);
     }
 
@@ -394,50 +322,51 @@ public class MainActivity extends AppCompatActivity {
         v.setBackground(d);
     }
 
-    private void setLoading(View pulse, View dot, TextView statusTv, int slot) {
+    private void setLoading(View pulse, View dot, TextView statusTv) {
         int gray = Color.parseColor("#444444");
         applyDotColor(pulse, dot, gray);
         statusTv.setText("CHECKING...");
         statusTv.setTextColor(Color.parseColor("#888888"));
-        cancelAnim(animForSlot(slot));
-        startSonarPulse(pulse, gray, slot);
+        cancelAnim(currentAnim(pulse));
+        startSonarPulse(pulse, gray, 0);
     }
 
-    private AnimatorSet animForSlot(int slot) {
-        switch (slot) {
-            case 1: return rootAnim;
-            case 2: return bootAnim;
-            case 3: return zygiskAnim;
-            default: return shizukuAnim;
-        }
+    private AnimatorSet currentAnim(View pulse) {
+        if (pulse == rootPulse) return rootAnim;
+        if (pulse == bootPulse) return bootAnim;
+        return shizukuAnim;
     }
 
     private void startSonarPulse(View pulse, int color, int slot) {
-        cancelAnim(animForSlot(slot));
+        AnimatorSet old = slot == 1 ? rootAnim : slot == 2 ? bootAnim : shizukuAnim;
+        cancelAnim(old);
+
         pulse.setScaleX(1f);
         pulse.setScaleY(1f);
         pulse.setAlpha(0.75f);
-        setCircleColor(pulse, Color.argb(70, Color.red(color), Color.green(color), Color.blue(color)));
 
-        ObjectAnimator sx = ObjectAnimator.ofFloat(pulse, "scaleX", 1f, 3f);
-        ObjectAnimator sy = ObjectAnimator.ofFloat(pulse, "scaleY", 1f, 3f);
-        ObjectAnimator al = ObjectAnimator.ofFloat(pulse, "alpha",  0.75f, 0f);
-        for (ObjectAnimator a : new ObjectAnimator[]{ sx, sy, al }) {
+        // Pulse color update
+        int pulseAlpha = Color.argb(70, Color.red(color), Color.green(color), Color.blue(color));
+        setCircleColor(pulse, pulseAlpha);
+
+        ObjectAnimator sx    = ObjectAnimator.ofFloat(pulse, "scaleX", 1f, 3f);
+        ObjectAnimator sy    = ObjectAnimator.ofFloat(pulse, "scaleY", 1f, 3f);
+        ObjectAnimator alpha = ObjectAnimator.ofFloat(pulse, "alpha",  0.75f, 0f);
+
+        for (ObjectAnimator a : new ObjectAnimator[]{ sx, sy, alpha }) {
             a.setRepeatCount(ValueAnimator.INFINITE);
             a.setRepeatMode(ValueAnimator.RESTART);
             a.setDuration(2200);
         }
+
         AnimatorSet set = new AnimatorSet();
-        set.playTogether(sx, sy, al);
+        set.playTogether(sx, sy, alpha);
         set.setInterpolator(new DecelerateInterpolator(1.5f));
         set.start();
 
-        switch (slot) {
-            case 1: rootAnim    = set; break;
-            case 2: bootAnim    = set; break;
-            case 3: zygiskAnim  = set; break;
-            default: shizukuAnim = set; break;
-        }
+        if (slot == 1) rootAnim    = set;
+        else if (slot == 2) bootAnim = set;
+        else shizukuAnim = set;
     }
 
     private static void cancelAnim(AnimatorSet a) {
@@ -453,7 +382,6 @@ public class MainActivity extends AppCompatActivity {
         rootDetailsTv      = findViewById(R.id.root_details_text);
         rootExpandTv       = findViewById(R.id.root_expand);
         rootDetailsLayout  = findViewById(R.id.root_details);
-        rootConfidenceTv   = findViewById(R.id.root_confidence);
 
         bootPulse          = findViewById(R.id.boot_pulse);
         bootDot            = findViewById(R.id.boot_dot);
@@ -461,21 +389,12 @@ public class MainActivity extends AppCompatActivity {
         bootDetailsTv      = findViewById(R.id.boot_details_text);
         bootExpandTv       = findViewById(R.id.boot_expand);
         bootDetailsLayout  = findViewById(R.id.boot_details);
-        bootConfidenceTv   = findViewById(R.id.boot_confidence);
 
-        zygiskPulse         = findViewById(R.id.zygisk_pulse);
-        zygiskDot           = findViewById(R.id.zygisk_dot);
-        zygiskStatusTv      = findViewById(R.id.zygisk_status);
-        zygiskDetailsTv     = findViewById(R.id.zygisk_details_text);
-        zygiskExpandTv      = findViewById(R.id.zygisk_expand);
-        zygiskDetailsLayout = findViewById(R.id.zygisk_details);
-        zygiskConfidenceTv  = findViewById(R.id.zygisk_confidence);
-
-        shizukuPulse        = findViewById(R.id.shizuku_pulse);
-        shizukuDot          = findViewById(R.id.shizuku_dot);
-        shizukuStatusTv     = findViewById(R.id.shizuku_status);
-        shizukuDetailsTv    = findViewById(R.id.shizuku_details_text);
-        shizukuExpandTv     = findViewById(R.id.shizuku_expand);
+        shizukuPulse       = findViewById(R.id.shizuku_pulse);
+        shizukuDot         = findViewById(R.id.shizuku_dot);
+        shizukuStatusTv    = findViewById(R.id.shizuku_status);
+        shizukuDetailsTv   = findViewById(R.id.shizuku_details_text);
+        shizukuExpandTv    = findViewById(R.id.shizuku_expand);
         shizukuDetailsLayout = findViewById(R.id.shizuku_details);
 
         scoreText = findViewById(R.id.score_text);
@@ -485,7 +404,6 @@ public class MainActivity extends AppCompatActivity {
     private void setupCardClicks() {
         wireExpand(R.id.root_header,    rootDetailsLayout,    rootExpandTv);
         wireExpand(R.id.boot_header,    bootDetailsLayout,    bootExpandTv);
-        wireExpand(R.id.zygisk_header,  zygiskDetailsLayout,  zygiskExpandTv);
         wireExpand(R.id.shizuku_header, shizukuDetailsLayout, shizukuExpandTv);
     }
 
@@ -515,11 +433,5 @@ public class MainActivity extends AppCompatActivity {
         } catch (Throwable t) {
             Toast.makeText(this, "Shizuku error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private static String buildLines(java.util.List<String> lines) {
-        StringBuilder sb = new StringBuilder();
-        for (String l : lines) sb.append(l).append("\n");
-        return sb.toString().trim();
     }
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#080C08</color>
+    <color name="surface_card">#0F160F</color>
+    <color name="surface_variant">#1A221A</color>
+
+    <color name="green_bright">#00FF41</color>
+    <color name="green_mid">#39A852</color>
+    <color name="green_dim">#3D6B3D</color>
+    <color name="green_line">#1A2E1A</color>
+
+    <color name="text_bright">#C8FFC8</color>
+    <color name="text_dim">#6B9B6B</color>
+
+    <color name="status_ok">#00E676</color>
+    <color name="status_warn">#FFD600</color>
+    <color name="status_bad">#FF3B3B</color>
+
+    <color name="colorPrimary">#00FF41</color>
+    <color name="colorPrimaryVariant">#39A852</color>
+    <color name="colorOnPrimary">#080C08</color>
+    <color name="colorSecondary">#00E676</color>
+    <color name="colorOnSecondary">#080C08</color>
+    <color name="colorError">#FF3B3B</color>
+    <color name="colorOnError">#FFFFFF</color>
+    <color name="colorBackground">#080C08</color>
+    <color name="colorOnBackground">#C8FFC8</color>
+    <color name="colorSurface">#0F160F</color>
+    <color name="colorOnSurface">#C8FFC8</color>
+</resources>

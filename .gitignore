@@ -16,4 +16,5 @@ local.properties
 AccessChecker/local.properties
 AccessChecker/build/
 AccessChecker/app/build/
+AccessChecker/app/.cxx/
 AccessChecker/.gradle/
