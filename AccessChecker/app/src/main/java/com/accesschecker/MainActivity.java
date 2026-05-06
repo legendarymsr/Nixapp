@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
         int score = 100;
 
         // Root
-        if (rootResult.status == RootChecker.Status.GRANTED)  score -= 30;
+        if (rootResult.status == RootChecker.Status.GRANTED)  score -= 35;
         else if (rootResult.status == RootChecker.Status.UNKNOWN) score -= 5;
 
         // Bootloader

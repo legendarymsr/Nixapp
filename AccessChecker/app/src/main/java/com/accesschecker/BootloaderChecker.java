@@ -100,11 +100,20 @@ public class BootloaderChecker {
         if (rootManagerConfirmed) {
             if (r.status == Status.LOCKED) r.propertiesMasked = true;
             r.status = Status.UNLOCKED;
+            // Green verified boot means Google's signing keys — impossible on an unlocked BL.
+            // Magisk masked the property; correct it to orange (user-signed / custom).
+            if (r.verifiedBoot == VerifiedBootState.GREEN) {
+                r.verifiedBoot = VerifiedBootState.ORANGE;
+                r.propertiesMasked = true;
+            }
         } else if (rootManagerDetected && r.status == Status.LOCKED) {
             // Package present but exec test failed (Magisk Denylist hiding su from us).
             // Still treat as unlocked — the package can't install without it.
             r.propertiesMasked = true;
             r.status = Status.UNLOCKED;
+            if (r.verifiedBoot == VerifiedBootState.GREEN) {
+                r.verifiedBoot = VerifiedBootState.ORANGE;
+            }
         }
 
         // ── 4. Remaining fields ───────────────────────────────────────────
@@ -137,7 +146,7 @@ public class BootloaderChecker {
                        ? " v" + rootResult.rootManagerVersion : "")
                     + " (requires unlocked BL)");
         if (r.propertiesMasked)
-            r.lines.add("NOTE: props masked by Magisk — BL inferred from root manager");
+            r.lines.add("NOTE: props masked by Magisk — BL + verified boot corrected");
 
         return r;
     }
