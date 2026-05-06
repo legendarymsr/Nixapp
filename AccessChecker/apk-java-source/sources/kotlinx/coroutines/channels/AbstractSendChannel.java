@@ -205,17 +205,17 @@ public abstract class AbstractSendChannel<E> implements SendChannel<E> {
 
     @Override // kotlinx.coroutines.channels.SendChannel
     /* renamed from: trySend-JP2dKIU, reason: not valid java name */
-    public final Object mo1662trySendJP2dKIU(E element) {
+    public final Object mo1664trySendJP2dKIU(E element) {
         Object result = offerInternal(element);
         if (result == AbstractChannelKt.OFFER_SUCCESS) {
-            return ChannelResult.INSTANCE.m1682successJP2dKIU(Unit.INSTANCE);
+            return ChannelResult.INSTANCE.m1684successJP2dKIU(Unit.INSTANCE);
         }
         if (result == AbstractChannelKt.OFFER_FAILED) {
             Closed closedForSend = getClosedForSend();
-            return closedForSend == null ? ChannelResult.INSTANCE.m1681failurePtdJZtk() : ChannelResult.INSTANCE.m1680closedJP2dKIU(helpCloseAndGetSendException(closedForSend));
+            return closedForSend == null ? ChannelResult.INSTANCE.m1683failurePtdJZtk() : ChannelResult.INSTANCE.m1682closedJP2dKIU(helpCloseAndGetSendException(closedForSend));
         }
         if (result instanceof Closed) {
-            return ChannelResult.INSTANCE.m1680closedJP2dKIU(helpCloseAndGetSendException((Closed) result));
+            return ChannelResult.INSTANCE.m1682closedJP2dKIU(helpCloseAndGetSendException((Closed) result));
         }
         throw new IllegalStateException(("trySend returned " + result).toString());
     }
@@ -264,7 +264,7 @@ public abstract class AbstractSendChannel<E> implements SendChannel<E> {
             Object offerResult = offerInternal(e);
             if (offerResult == AbstractChannelKt.OFFER_SUCCESS) {
                 Result.Companion companion = Result.INSTANCE;
-                cont.resumeWith(Result.m155constructorimpl(Unit.INSTANCE));
+                cont.resumeWith(Result.m157constructorimpl(Unit.INSTANCE));
                 break;
             }
             if (offerResult != AbstractChannelKt.OFFER_FAILED) {
@@ -291,10 +291,10 @@ public abstract class AbstractSendChannel<E> implements SendChannel<E> {
         if (function1 != null && (it = OnUndeliveredElementKt.callUndeliveredElementCatchingException$default(function1, e, null, 2, null)) != null) {
             ExceptionsKt.addSuppressed(it, sendException);
             Result.Companion companion = Result.INSTANCE;
-            continuation.resumeWith(Result.m155constructorimpl(ResultKt.createFailure(it)));
+            continuation.resumeWith(Result.m157constructorimpl(ResultKt.createFailure(it)));
         } else {
             Result.Companion companion2 = Result.INSTANCE;
-            continuation.resumeWith(Result.m155constructorimpl(ResultKt.createFailure(sendException)));
+            continuation.resumeWith(Result.m157constructorimpl(ResultKt.createFailure(sendException)));
         }
     }
 
@@ -430,16 +430,16 @@ public abstract class AbstractSendChannel<E> implements SendChannel<E> {
     }
 
     private final void helpClose(Closed<?> closed) {
-        Object closedList = InlineList.m1698constructorimpl$default(null, 1, null);
+        Object closedList = InlineList.m1700constructorimpl$default(null, 1, null);
         while (true) {
             LockFreeLinkedListNode prevNode = closed.getPrevNode();
             Receive previous = prevNode instanceof Receive ? (Receive) prevNode : null;
             if (previous == null) {
                 break;
-            } else if (!previous.mo1706remove()) {
+            } else if (!previous.mo1708remove()) {
                 previous.helpRemove();
             } else {
-                closedList = InlineList.m1703plusFjFbRPM(closedList, previous);
+                closedList = InlineList.m1705plusFjFbRPM(closedList, previous);
             }
         }
         if (closedList != null) {
@@ -662,7 +662,7 @@ public abstract class AbstractSendChannel<E> implements SendChannel<E> {
 
         @Override // kotlinx.coroutines.DisposableHandle
         public void dispose() {
-            if (mo1706remove()) {
+            if (mo1708remove()) {
                 undeliveredElement();
             }
         }

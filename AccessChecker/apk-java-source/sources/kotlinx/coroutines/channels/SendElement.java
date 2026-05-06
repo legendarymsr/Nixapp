@@ -56,7 +56,7 @@ public class SendElement<E> extends Send {
     public void resumeSendClosed(Closed<?> closed) {
         CancellableContinuation<Unit> cancellableContinuation = this.cont;
         Result.Companion companion = Result.INSTANCE;
-        cancellableContinuation.resumeWith(Result.m155constructorimpl(ResultKt.createFailure(closed.getSendException())));
+        cancellableContinuation.resumeWith(Result.m157constructorimpl(ResultKt.createFailure(closed.getSendException())));
     }
 
     @Override // kotlinx.coroutines.internal.LockFreeLinkedListNode

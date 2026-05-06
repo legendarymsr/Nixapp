@@ -30,16 +30,16 @@ public final /* synthetic */ class JobKt__JobKt {
 
     @Deprecated(level = DeprecationLevel.HIDDEN, message = "Since 1.2.0, binary compatibility with versions <= 1.1.x")
     /* renamed from: Job, reason: collision with other method in class */
-    public static final /* synthetic */ Job m1648Job(Job parent) {
+    public static final /* synthetic */ Job m1650Job(Job parent) {
         return JobKt.Job(parent);
     }
 
     /* renamed from: Job$default, reason: collision with other method in class */
-    public static /* synthetic */ Job m1649Job$default(Job job, int i, Object obj) {
+    public static /* synthetic */ Job m1651Job$default(Job job, int i, Object obj) {
         if ((i & 1) != 0) {
             job = null;
         }
-        return m1648Job(job);
+        return m1650Job(job);
     }
 
     public static final DisposableHandle disposeOnCompletion(Job $this$disposeOnCompletion, DisposableHandle handle) {

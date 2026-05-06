@@ -172,7 +172,7 @@ public class SharedFlowImpl<T> extends AbstractSharedFlow<SharedFlowSlot> implem
         for (Continuation cont : continuationArr) {
             if (cont != null) {
                 Result.Companion companion = Result.INSTANCE;
-                cont.resumeWith(Result.m155constructorimpl(Unit.INSTANCE));
+                cont.resumeWith(Result.m157constructorimpl(Unit.INSTANCE));
             }
         }
         return emitted;
@@ -301,7 +301,7 @@ public class SharedFlowImpl<T> extends AbstractSharedFlow<SharedFlowSlot> implem
         synchronized (this) {
             if (tryEmitLocked(t)) {
                 Result.Companion companion = Result.INSTANCE;
-                cont.resumeWith(Result.m155constructorimpl(Unit.INSTANCE));
+                cont.resumeWith(Result.m157constructorimpl(Unit.INSTANCE));
                 continuationArr = findSlotsToResumeLocked(continuationArr2);
                 emitter = null;
             } else {
@@ -322,7 +322,7 @@ public class SharedFlowImpl<T> extends AbstractSharedFlow<SharedFlowSlot> implem
         for (Continuation r : continuationArr) {
             if (r != null) {
                 Result.Companion companion2 = Result.INSTANCE;
-                r.resumeWith(Result.m155constructorimpl(Unit.INSTANCE));
+                r.resumeWith(Result.m157constructorimpl(Unit.INSTANCE));
             }
         }
         Object result = cancellable$iv.getResult();
@@ -444,7 +444,7 @@ public class SharedFlowImpl<T> extends AbstractSharedFlow<SharedFlowSlot> implem
         for (Continuation resume : continuationArr) {
             if (resume != null) {
                 Result.Companion companion = Result.INSTANCE;
-                resume.resumeWith(Result.m155constructorimpl(Unit.INSTANCE));
+                resume.resumeWith(Result.m157constructorimpl(Unit.INSTANCE));
             }
         }
         return value;
@@ -482,7 +482,7 @@ public class SharedFlowImpl<T> extends AbstractSharedFlow<SharedFlowSlot> implem
                 slot.cont = cont;
             } else {
                 Result.Companion companion = Result.INSTANCE;
-                cont.resumeWith(Result.m155constructorimpl(Unit.INSTANCE));
+                cont.resumeWith(Result.m157constructorimpl(Unit.INSTANCE));
             }
             Unit unit = Unit.INSTANCE;
         }

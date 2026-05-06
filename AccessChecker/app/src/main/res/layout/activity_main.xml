@@ -41,7 +41,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="[ DEVICE SECURITY AUDIT TOOL v1.0 ]"
+                    android:text="[ DEVICE SECURITY AUDIT TOOL v1.5 ]"
                     android:textColor="@color/green_dim"
                     android:textSize="10sp"
                     android:fontFamily="monospace"
@@ -61,14 +61,29 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="SECURITY SCORE"
-                        android:textColor="@color/green_dim"
-                        android:textSize="11sp"
-                        android:fontFamily="monospace"/>
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="SECURITY SCORE"
+                            android:textColor="@color/green_dim"
+                            android:textSize="11sp"
+                            android:fontFamily="monospace"/>
+
+                        <TextView
+                            android:id="@+id/scan_mode_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="standard scan"
+                            android:textColor="@color/green_dim"
+                            android:textSize="9sp"
+                            android:fontFamily="monospace"/>
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/score_text"
@@ -103,7 +118,6 @@
                 android:layout_marginBottom="12dp"
                 android:clipChildren="false">
 
-                <!-- Header row (clickable = expand/collapse) -->
                 <LinearLayout
                     android:id="@+id/root_header"
                     android:layout_width="match_parent"
@@ -116,23 +130,16 @@
                     android:background="?attr/selectableItemBackground"
                     android:clipChildren="false">
 
-                    <!-- Pulse ring + solid dot -->
                     <FrameLayout
                         android:layout_width="44dp"
                         android:layout_height="44dp"
                         android:layout_marginEnd="14dp"
                         android:clipChildren="false">
-
-                        <View
-                            android:id="@+id/root_pulse"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                        <View android:id="@+id/root_pulse"
+                            android:layout_width="28dp" android:layout_height="28dp"
                             android:layout_gravity="center"/>
-
-                        <View
-                            android:id="@+id/root_dot"
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
+                        <View android:id="@+id/root_dot"
+                            android:layout_width="16dp" android:layout_height="16dp"
                             android:layout_gravity="center"/>
                     </FrameLayout>
 
@@ -141,7 +148,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
-
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -151,7 +157,6 @@
                             android:fontFamily="monospace"
                             android:textStyle="bold"
                             android:letterSpacing="0.1"/>
-
                         <TextView
                             android:id="@+id/root_status"
                             android:layout_width="match_parent"
@@ -161,6 +166,14 @@
                             android:textSize="11sp"
                             android:fontFamily="monospace"
                             android:layout_marginTop="2dp"/>
+                        <TextView
+                            android:id="@+id/root_confidence"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/green_dim"
+                            android:textSize="9sp"
+                            android:fontFamily="monospace"/>
                     </LinearLayout>
 
                     <TextView
@@ -173,21 +186,15 @@
                         android:paddingStart="8dp"/>
                 </LinearLayout>
 
-                <!-- Collapsible details -->
                 <LinearLayout
                     android:id="@+id/root_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:visibility="gone">
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
                         android:background="@color/green_line"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"/>
-
+                        android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
                     <TextView
                         android:id="@+id/root_details_text"
                         android:layout_width="match_parent"
@@ -227,17 +234,11 @@
                         android:layout_height="44dp"
                         android:layout_marginEnd="14dp"
                         android:clipChildren="false">
-
-                        <View
-                            android:id="@+id/boot_pulse"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                        <View android:id="@+id/boot_pulse"
+                            android:layout_width="28dp" android:layout_height="28dp"
                             android:layout_gravity="center"/>
-
-                        <View
-                            android:id="@+id/boot_dot"
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
+                        <View android:id="@+id/boot_dot"
+                            android:layout_width="16dp" android:layout_height="16dp"
                             android:layout_gravity="center"/>
                     </FrameLayout>
 
@@ -246,17 +247,15 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
-
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="BOOTLOADER STATUS"
+                            android:text="BOOTLOADER + ATTESTATION"
                             android:textColor="@color/text_bright"
                             android:textSize="13sp"
                             android:fontFamily="monospace"
                             android:textStyle="bold"
                             android:letterSpacing="0.1"/>
-
                         <TextView
                             android:id="@+id/boot_status"
                             android:layout_width="match_parent"
@@ -266,6 +265,14 @@
                             android:textSize="11sp"
                             android:fontFamily="monospace"
                             android:layout_marginTop="2dp"/>
+                        <TextView
+                            android:id="@+id/boot_confidence"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/green_dim"
+                            android:textSize="9sp"
+                            android:fontFamily="monospace"/>
                     </LinearLayout>
 
                     <TextView
@@ -284,16 +291,110 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:visibility="gone">
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
                         android:background="@color/green_line"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"/>
-
+                        android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
                     <TextView
                         android:id="@+id/boot_details_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="..."
+                        android:textColor="@color/text_dim"
+                        android:textSize="11sp"
+                        android:fontFamily="monospace"
+                        android:lineSpacingExtra="5dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ══════════════════════ ZYGISK / HOOKING CARD ════════════ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:layout_marginBottom="12dp"
+                android:clipChildren="false">
+
+                <LinearLayout
+                    android:id="@+id/zygisk_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:clipChildren="false">
+
+                    <FrameLayout
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_marginEnd="14dp"
+                        android:clipChildren="false">
+                        <View android:id="@+id/zygisk_pulse"
+                            android:layout_width="28dp" android:layout_height="28dp"
+                            android:layout_gravity="center"/>
+                        <View android:id="@+id/zygisk_dot"
+                            android:layout_width="16dp" android:layout_height="16dp"
+                            android:layout_gravity="center"/>
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="ZYGISK / HOOKING"
+                            android:textColor="@color/text_bright"
+                            android:textSize="13sp"
+                            android:fontFamily="monospace"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.1"/>
+                        <TextView
+                            android:id="@+id/zygisk_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="CHECKING..."
+                            android:textColor="@color/green_dim"
+                            android:textSize="11sp"
+                            android:fontFamily="monospace"
+                            android:layout_marginTop="2dp"/>
+                        <TextView
+                            android:id="@+id/zygisk_confidence"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/green_dim"
+                            android:textSize="9sp"
+                            android:fontFamily="monospace"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/zygisk_expand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="▼"
+                        android:textColor="@color/green_dim"
+                        android:textSize="13sp"
+                        android:paddingStart="8dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/zygisk_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="@color/green_line"
+                        android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+                    <TextView
+                        android:id="@+id/zygisk_details_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
@@ -331,18 +432,12 @@
                         android:layout_height="44dp"
                         android:layout_marginEnd="14dp"
                         android:clipChildren="false">
-
-                        <View
-                            android:id="@+id/shizuku_pulse"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
+                        <View android:id="@+id/shizuku_pulse"
+                            android:layout_width="28dp" android:layout_height="28dp"
                             android:layout_gravity="center"
                             android:clickable="false"/>
-
-                        <View
-                            android:id="@+id/shizuku_dot"
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
+                        <View android:id="@+id/shizuku_dot"
+                            android:layout_width="16dp" android:layout_height="16dp"
                             android:layout_gravity="center"
                             android:clickable="true"
                             android:focusable="true"/>
@@ -353,7 +448,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
-
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -363,7 +457,6 @@
                             android:fontFamily="monospace"
                             android:textStyle="bold"
                             android:letterSpacing="0.1"/>
-
                         <TextView
                             android:id="@+id/shizuku_status"
                             android:layout_width="match_parent"
@@ -391,14 +484,9 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:visibility="gone">
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
                         android:background="@color/green_line"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"/>
-
+                        android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
                     <TextView
                         android:id="@+id/shizuku_details_text"
                         android:layout_width="match_parent"
@@ -412,7 +500,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- ══════════════════════ RECHECK BUTTON ═══════════════════ -->
+            <!-- ══════════════════════ BUTTONS ═══════════════════════════ -->
             <Button
                 android:id="@+id/btn_recheck"
                 android:layout_width="match_parent"
@@ -424,6 +512,20 @@
                 android:textColor="@color/bg"
                 android:letterSpacing="0.1"
                 android:background="@drawable/btn_recheck"
+                android:textAllCaps="false"
+                android:layout_marginBottom="8dp"/>
+
+            <Button
+                android:id="@+id/btn_export"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="[ EXPORT JSON REPORT ]"
+                android:fontFamily="monospace"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:textColor="@color/green_bright"
+                android:letterSpacing="0.1"
+                android:background="@drawable/bg_card"
                 android:textAllCaps="false"
                 android:layout_marginBottom="8dp"/>
 

@@ -138,7 +138,7 @@ class TimePickerTextInputPresenter implements TimePickerView.OnSelectionChange, 
         this.toggle.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() { // from class: com.google.android.material.timepicker.TimePickerTextInputPresenter$$ExternalSyntheticLambda0
             @Override // com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener
             public final void onButtonChecked(MaterialButtonToggleGroup materialButtonToggleGroup, int i, boolean z) {
-                TimePickerTextInputPresenter.this.m149xf2085e95(materialButtonToggleGroup, i, z);
+                TimePickerTextInputPresenter.this.m151xf2085e95(materialButtonToggleGroup, i, z);
             }
         });
         this.toggle.setVisibility(0);
@@ -146,7 +146,7 @@ class TimePickerTextInputPresenter implements TimePickerView.OnSelectionChange, 
     }
 
     /* renamed from: lambda$setupPeriodToggle$0$com-google-android-material-timepicker-TimePickerTextInputPresenter, reason: not valid java name */
-    /* synthetic */ void m149xf2085e95(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+    /* synthetic */ void m151xf2085e95(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
         if (!isChecked) {
             return;
         }

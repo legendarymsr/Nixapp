@@ -42,13 +42,13 @@ public interface ReceiveChannel<E> {
     Object receive(Continuation<? super E> continuation);
 
     /* renamed from: receiveCatching-JP2dKIU */
-    Object mo1660receiveCatchingJP2dKIU(Continuation<? super ChannelResult<? extends E>> continuation);
+    Object mo1662receiveCatchingJP2dKIU(Continuation<? super ChannelResult<? extends E>> continuation);
 
     @Deprecated(level = DeprecationLevel.ERROR, message = "Deprecated in favor of 'receiveCatching'. Please note that the provided replacement does not rethrow channel's close cause as 'receiveOrNull' did, for the detailed replacement please refer to the 'receiveOrNull' documentation", replaceWith = @ReplaceWith(expression = "receiveCatching().getOrNull()", imports = {}))
     Object receiveOrNull(Continuation<? super E> continuation);
 
     /* renamed from: tryReceive-PtdJZtk */
-    Object mo1661tryReceivePtdJZtk();
+    Object mo1663tryReceivePtdJZtk();
 
     /* compiled from: Channel.kt */
     @Metadata(k = 3, mv = {1, 6, 0}, xi = ConstraintLayout.LayoutParams.Table.LAYOUT_CONSTRAINT_VERTICAL_CHAINSTYLE)
@@ -85,15 +85,15 @@ public interface ReceiveChannel<E> {
 
         @Deprecated(level = DeprecationLevel.ERROR, message = "Deprecated in the favour of 'tryReceive'. Please note that the provided replacement does not rethrow channel's close cause as 'poll' did, for the precise replacement please refer to the 'poll' documentation", replaceWith = @ReplaceWith(expression = "tryReceive().getOrNull()", imports = {}))
         public static <E> E poll(ReceiveChannel<? extends E> receiveChannel) {
-            Object mo1661tryReceivePtdJZtk = receiveChannel.mo1661tryReceivePtdJZtk();
-            if (ChannelResult.m1677isSuccessimpl(mo1661tryReceivePtdJZtk)) {
-                return (E) ChannelResult.m1673getOrThrowimpl(mo1661tryReceivePtdJZtk);
+            Object mo1663tryReceivePtdJZtk = receiveChannel.mo1663tryReceivePtdJZtk();
+            if (ChannelResult.m1679isSuccessimpl(mo1663tryReceivePtdJZtk)) {
+                return (E) ChannelResult.m1675getOrThrowimpl(mo1663tryReceivePtdJZtk);
             }
-            Throwable m1671exceptionOrNullimpl = ChannelResult.m1671exceptionOrNullimpl(mo1661tryReceivePtdJZtk);
-            if (m1671exceptionOrNullimpl == null) {
+            Throwable m1673exceptionOrNullimpl = ChannelResult.m1673exceptionOrNullimpl(mo1663tryReceivePtdJZtk);
+            if (m1673exceptionOrNullimpl == null) {
                 return null;
             }
-            throw StackTraceRecoveryKt.recoverStackTrace(m1671exceptionOrNullimpl);
+            throw StackTraceRecoveryKt.recoverStackTrace(m1673exceptionOrNullimpl);
         }
 
         /* JADX WARN: Removed duplicated region for block: B:11:0x002d  */
@@ -146,11 +146,11 @@ public interface ReceiveChannel<E> {
                 kotlin.ResultKt.throwOnFailure(r0)
                 r2 = 1
                 r4.label = r2
-                java.lang.Object r3 = r3.mo1660receiveCatchingJP2dKIU(r4)
+                java.lang.Object r3 = r3.mo1662receiveCatchingJP2dKIU(r4)
                 if (r3 != r1) goto L45
                 return r1
             L45:
-                java.lang.Object r3 = kotlinx.coroutines.channels.ChannelResult.m1672getOrNullimpl(r3)
+                java.lang.Object r3 = kotlinx.coroutines.channels.ChannelResult.m1674getOrNullimpl(r3)
                 return r3
             */
             throw new UnsupportedOperationException("Method not decompiled: kotlinx.coroutines.channels.ReceiveChannel.DefaultImpls.receiveOrNull(kotlinx.coroutines.channels.ReceiveChannel, kotlin.coroutines.Continuation):java.lang.Object");

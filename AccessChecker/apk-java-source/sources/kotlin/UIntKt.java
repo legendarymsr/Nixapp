@@ -7,19 +7,19 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 /* loaded from: classes.dex */
 public final class UIntKt {
     private static final int toUInt(byte $this$toUInt) {
-        return UInt.m250constructorimpl($this$toUInt);
+        return UInt.m252constructorimpl($this$toUInt);
     }
 
     private static final int toUInt(short $this$toUInt) {
-        return UInt.m250constructorimpl($this$toUInt);
+        return UInt.m252constructorimpl($this$toUInt);
     }
 
     private static final int toUInt(int $this$toUInt) {
-        return UInt.m250constructorimpl($this$toUInt);
+        return UInt.m252constructorimpl($this$toUInt);
     }
 
     private static final int toUInt(long $this$toUInt) {
-        return UInt.m250constructorimpl((int) $this$toUInt);
+        return UInt.m252constructorimpl((int) $this$toUInt);
     }
 
     private static final int toUInt(float $this$toUInt) {

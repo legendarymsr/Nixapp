@@ -48,7 +48,7 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
     int scrollOffset;
 
     /* renamed from: lambda$new$0$com-google-android-material-carousel-CarouselLayoutManager, reason: not valid java name */
-    /* synthetic */ void m62x2ff337cb(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+    /* synthetic */ void m64x2ff337cb(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
             v.post(new Runnable() { // from class: com.google.android.material.carousel.CarouselLayoutManager$$ExternalSyntheticLambda0
                 @Override // java.lang.Runnable
@@ -88,7 +88,7 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
         this.recyclerViewSizeChangeListener = new View.OnLayoutChangeListener() { // from class: com.google.android.material.carousel.CarouselLayoutManager$$ExternalSyntheticLambda1
             @Override // android.view.View.OnLayoutChangeListener
             public final void onLayoutChange(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
-                CarouselLayoutManager.this.m62x2ff337cb(view, i, i2, i3, i4, i5, i6, i7, i8);
+                CarouselLayoutManager.this.m64x2ff337cb(view, i, i2, i3, i4, i5, i6, i7, i8);
             }
         };
         this.currentEstimatedPosition = -1;
@@ -104,7 +104,7 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
         this.recyclerViewSizeChangeListener = new View.OnLayoutChangeListener() { // from class: com.google.android.material.carousel.CarouselLayoutManager$$ExternalSyntheticLambda1
             @Override // android.view.View.OnLayoutChangeListener
             public final void onLayoutChange(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
-                CarouselLayoutManager.this.m62x2ff337cb(view, i, i2, i3, i4, i5, i6, i7, i8);
+                CarouselLayoutManager.this.m64x2ff337cb(view, i, i2, i3, i4, i5, i6, i7, i8);
             }
         };
         this.currentEstimatedPosition = -1;

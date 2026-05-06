@@ -538,14 +538,14 @@ public class SideSheetBehavior<V extends View> extends CoordinatorLayout.Behavio
             runAfterLayout(this.viewRef.get(), new Runnable() { // from class: com.google.android.material.sidesheet.SideSheetBehavior$$ExternalSyntheticLambda1
                 @Override // java.lang.Runnable
                 public final void run() {
-                    SideSheetBehavior.this.m130xc0f1d0a9(state);
+                    SideSheetBehavior.this.m132xc0f1d0a9(state);
                 }
             });
         }
     }
 
     /* renamed from: lambda$setState$0$com-google-android-material-sidesheet-SideSheetBehavior, reason: not valid java name */
-    /* synthetic */ void m130xc0f1d0a9(int finalState) {
+    /* synthetic */ void m132xc0f1d0a9(int finalState) {
         V child = this.viewRef.get();
         if (child != null) {
             startSettling(child, finalState, false);
@@ -806,13 +806,13 @@ public class SideSheetBehavior<V extends View> extends CoordinatorLayout.Behavio
         return new ValueAnimator.AnimatorUpdateListener() { // from class: com.google.android.material.sidesheet.SideSheetBehavior$$ExternalSyntheticLambda0
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                SideSheetBehavior.this.m129xc3af8fb4(coplanarSiblingLayoutParams, coplanarSiblingAdjacentMargin, coplanarSiblingView, valueAnimator);
+                SideSheetBehavior.this.m131xc3af8fb4(coplanarSiblingLayoutParams, coplanarSiblingAdjacentMargin, coplanarSiblingView, valueAnimator);
             }
         };
     }
 
     /* renamed from: lambda$getCoplanarFinishAnimatorUpdateListener$1$com-google-android-material-sidesheet-SideSheetBehavior, reason: not valid java name */
-    /* synthetic */ void m129xc3af8fb4(ViewGroup.MarginLayoutParams coplanarSiblingLayoutParams, int coplanarSiblingAdjacentMargin, View coplanarSiblingView, ValueAnimator animation) {
+    /* synthetic */ void m131xc3af8fb4(ViewGroup.MarginLayoutParams coplanarSiblingLayoutParams, int coplanarSiblingAdjacentMargin, View coplanarSiblingView, ValueAnimator animation) {
         this.sheetDelegate.updateCoplanarSiblingAdjacentMargin(coplanarSiblingLayoutParams, AnimationUtils.lerp(coplanarSiblingAdjacentMargin, 0, animation.getAnimatedFraction()));
         coplanarSiblingView.requestLayout();
     }
@@ -833,7 +833,7 @@ public class SideSheetBehavior<V extends View> extends CoordinatorLayout.Behavio
         private final Runnable continueSettlingRunnable = new Runnable() { // from class: com.google.android.material.sidesheet.SideSheetBehavior$StateSettlingTracker$$ExternalSyntheticLambda0
             @Override // java.lang.Runnable
             public final void run() {
-                SideSheetBehavior.StateSettlingTracker.this.m131xe5f914a3();
+                SideSheetBehavior.StateSettlingTracker.this.m133xe5f914a3();
             }
         };
         private boolean isContinueSettlingRunnablePosted;
@@ -843,7 +843,7 @@ public class SideSheetBehavior<V extends View> extends CoordinatorLayout.Behavio
         }
 
         /* renamed from: lambda$new$0$com-google-android-material-sidesheet-SideSheetBehavior$StateSettlingTracker, reason: not valid java name */
-        /* synthetic */ void m131xe5f914a3() {
+        /* synthetic */ void m133xe5f914a3() {
             this.isContinueSettlingRunnablePosted = false;
             if (SideSheetBehavior.this.viewDragHelper == null || !SideSheetBehavior.this.viewDragHelper.continueSettling(true)) {
                 if (SideSheetBehavior.this.state == 2) {
@@ -943,13 +943,13 @@ public class SideSheetBehavior<V extends View> extends CoordinatorLayout.Behavio
         return new AccessibilityViewCommand() { // from class: com.google.android.material.sidesheet.SideSheetBehavior$$ExternalSyntheticLambda2
             @Override // androidx.core.view.accessibility.AccessibilityViewCommand
             public final boolean perform(View view, AccessibilityViewCommand.CommandArguments commandArguments) {
-                return SideSheetBehavior.this.m128x564aa398(state, view, commandArguments);
+                return SideSheetBehavior.this.m130x564aa398(state, view, commandArguments);
             }
         };
     }
 
     /* renamed from: lambda$createAccessibilityViewCommandForState$2$com-google-android-material-sidesheet-SideSheetBehavior, reason: not valid java name */
-    /* synthetic */ boolean m128x564aa398(int state, View view, AccessibilityViewCommand.CommandArguments arguments) {
+    /* synthetic */ boolean m130x564aa398(int state, View view, AccessibilityViewCommand.CommandArguments arguments) {
         setState(state);
         return true;
     }

@@ -24,7 +24,7 @@ public abstract class CoroutineDispatcher extends AbstractCoroutineContextElemen
     public static final Companion INSTANCE = new Companion(null);
 
     /* renamed from: dispatch */
-    public abstract void mo1707dispatch(CoroutineContext context, Runnable block);
+    public abstract void mo1709dispatch(CoroutineContext context, Runnable block);
 
     @Override // kotlin.coroutines.AbstractCoroutineContextElement, kotlin.coroutines.CoroutineContext.Element, kotlin.coroutines.CoroutineContext
     public <E extends CoroutineContext.Element> E get(CoroutineContext.Key<E> key) {
@@ -71,7 +71,7 @@ public abstract class CoroutineDispatcher extends AbstractCoroutineContextElemen
     }
 
     public void dispatchYield(CoroutineContext context, Runnable block) {
-        mo1707dispatch(context, block);
+        mo1709dispatch(context, block);
     }
 
     @Override // kotlin.coroutines.ContinuationInterceptor

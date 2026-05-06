@@ -33,11 +33,11 @@ final class ResumeAwaitOnCompletion<T> extends JobNode {
         if (state instanceof CompletedExceptionally) {
             CancellableContinuationImpl<T> cancellableContinuationImpl = this.continuation;
             Result.Companion companion = Result.INSTANCE;
-            cancellableContinuationImpl.resumeWith(Result.m155constructorimpl(ResultKt.createFailure(((CompletedExceptionally) state).cause)));
+            cancellableContinuationImpl.resumeWith(Result.m157constructorimpl(ResultKt.createFailure(((CompletedExceptionally) state).cause)));
         } else {
             CancellableContinuationImpl<T> cancellableContinuationImpl2 = this.continuation;
             Result.Companion companion2 = Result.INSTANCE;
-            cancellableContinuationImpl2.resumeWith(Result.m155constructorimpl(JobSupportKt.unboxState(state)));
+            cancellableContinuationImpl2.resumeWith(Result.m157constructorimpl(JobSupportKt.unboxState(state)));
         }
     }
 }

@@ -44,7 +44,7 @@ class ShizukuServiceConnection extends IShizukuServiceConnection.Stub {
         MAIN_HANDLER.post(new Runnable() { // from class: rikka.shizuku.ShizukuServiceConnection$$ExternalSyntheticLambda1
             @Override // java.lang.Runnable
             public final void run() {
-                ShizukuServiceConnection.this.m1721lambda$connected$0$rikkashizukuShizukuServiceConnection(binder);
+                ShizukuServiceConnection.this.m1723lambda$connected$0$rikkashizukuShizukuServiceConnection(binder);
             }
         });
         this.binder = binder;
@@ -60,7 +60,7 @@ class ShizukuServiceConnection extends IShizukuServiceConnection.Stub {
     }
 
     /* renamed from: lambda$connected$0$rikka-shizuku-ShizukuServiceConnection, reason: not valid java name */
-    /* synthetic */ void m1721lambda$connected$0$rikkashizukuShizukuServiceConnection(IBinder binder) {
+    /* synthetic */ void m1723lambda$connected$0$rikkashizukuShizukuServiceConnection(IBinder binder) {
         for (ServiceConnection conn : this.connections) {
             conn.onServiceConnected(this.componentName, binder);
         }
@@ -76,13 +76,13 @@ class ShizukuServiceConnection extends IShizukuServiceConnection.Stub {
         MAIN_HANDLER.post(new Runnable() { // from class: rikka.shizuku.ShizukuServiceConnection$$ExternalSyntheticLambda0
             @Override // java.lang.Runnable
             public final void run() {
-                ShizukuServiceConnection.this.m1722lambda$died$1$rikkashizukuShizukuServiceConnection();
+                ShizukuServiceConnection.this.m1724lambda$died$1$rikkashizukuShizukuServiceConnection();
             }
         });
     }
 
     /* renamed from: lambda$died$1$rikka-shizuku-ShizukuServiceConnection, reason: not valid java name */
-    /* synthetic */ void m1722lambda$died$1$rikkashizukuShizukuServiceConnection() {
+    /* synthetic */ void m1724lambda$died$1$rikkashizukuShizukuServiceConnection() {
         for (ServiceConnection conn : this.connections) {
             conn.onServiceDisconnected(this.componentName);
         }

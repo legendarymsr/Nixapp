@@ -38,23 +38,23 @@ public final class StackTraceRecoveryKt {
         Object obj4 = baseContinuationImplClass;
         try {
             Result.Companion companion = Result.INSTANCE;
-            obj = Result.m155constructorimpl(Class.forName(baseContinuationImplClass).getCanonicalName());
+            obj = Result.m157constructorimpl(Class.forName(baseContinuationImplClass).getCanonicalName());
         } catch (Throwable th) {
             Result.Companion companion2 = Result.INSTANCE;
-            obj = Result.m155constructorimpl(ResultKt.createFailure(th));
+            obj = Result.m157constructorimpl(ResultKt.createFailure(th));
         }
-        if (Result.m158exceptionOrNullimpl(obj) == null) {
+        if (Result.m160exceptionOrNullimpl(obj) == null) {
             obj4 = obj;
         }
         baseContinuationImplClassName = (String) obj4;
         try {
             Result.Companion companion3 = Result.INSTANCE;
-            obj2 = Result.m155constructorimpl(Class.forName(stackTraceRecoveryClass).getCanonicalName());
+            obj2 = Result.m157constructorimpl(Class.forName(stackTraceRecoveryClass).getCanonicalName());
         } catch (Throwable th2) {
             Result.Companion companion4 = Result.INSTANCE;
-            obj2 = Result.m155constructorimpl(ResultKt.createFailure(th2));
+            obj2 = Result.m157constructorimpl(ResultKt.createFailure(th2));
         }
-        if (Result.m158exceptionOrNullimpl(obj2) == null) {
+        if (Result.m160exceptionOrNullimpl(obj2) == null) {
             obj3 = obj2;
         }
         stackTraceRecoveryClassName = (String) obj3;

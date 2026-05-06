@@ -9,13 +9,13 @@ import kotlin.time.Duration;
 /* loaded from: classes.dex */
 public final class LongSaturatedMathKt {
     /* renamed from: saturatingAdd-pTJri5U, reason: not valid java name */
-    public static final long m1609saturatingAddpTJri5U(long longNs, long duration) {
-        long durationNs = Duration.m1501getInWholeNanosecondsimpl(duration);
+    public static final long m1611saturatingAddpTJri5U(long longNs, long duration) {
+        long durationNs = Duration.m1503getInWholeNanosecondsimpl(duration);
         if (((longNs - 1) | 1) == Long.MAX_VALUE) {
-            return m1608checkInfiniteSumDefinedPjuGub4(longNs, duration, durationNs);
+            return m1610checkInfiniteSumDefinedPjuGub4(longNs, duration, durationNs);
         }
         if ((1 | (durationNs - 1)) == Long.MAX_VALUE) {
-            return m1610saturatingAddInHalvespTJri5U(longNs, duration);
+            return m1612saturatingAddInHalvespTJri5U(longNs, duration);
         }
         long result = longNs + durationNs;
         if (((longNs ^ result) & (durationNs ^ result)) < 0) {
@@ -25,33 +25,33 @@ public final class LongSaturatedMathKt {
     }
 
     /* renamed from: checkInfiniteSumDefined-PjuGub4, reason: not valid java name */
-    private static final long m1608checkInfiniteSumDefinedPjuGub4(long longNs, long duration, long durationNs) {
-        if (!Duration.m1513isInfiniteimpl(duration) || (longNs ^ durationNs) >= 0) {
+    private static final long m1610checkInfiniteSumDefinedPjuGub4(long longNs, long duration, long durationNs) {
+        if (!Duration.m1515isInfiniteimpl(duration) || (longNs ^ durationNs) >= 0) {
             return longNs;
         }
         throw new IllegalArgumentException("Summing infinities of different signs");
     }
 
     /* renamed from: saturatingAddInHalves-pTJri5U, reason: not valid java name */
-    private static final long m1610saturatingAddInHalvespTJri5U(long longNs, long duration) {
-        long half = Duration.m1484divUwyO8pc(duration, 2);
-        long $this$isSaturated$iv = Duration.m1501getInWholeNanosecondsimpl(half);
+    private static final long m1612saturatingAddInHalvespTJri5U(long longNs, long duration) {
+        long half = Duration.m1486divUwyO8pc(duration, 2);
+        long $this$isSaturated$iv = Duration.m1503getInWholeNanosecondsimpl(half);
         if ((1 | ($this$isSaturated$iv - 1)) == Long.MAX_VALUE) {
-            return (long) (longNs + Duration.m1524toDoubleimpl(duration, DurationUnit.NANOSECONDS));
+            return (long) (longNs + Duration.m1526toDoubleimpl(duration, DurationUnit.NANOSECONDS));
         }
-        return m1609saturatingAddpTJri5U(m1609saturatingAddpTJri5U(longNs, half), Duration.m1516minusLRDsOJo(duration, half));
+        return m1611saturatingAddpTJri5U(m1611saturatingAddpTJri5U(longNs, half), Duration.m1518minusLRDsOJo(duration, half));
     }
 
     public static final long saturatingDiff(long valueNs, long originNs) {
         if ((1 | (originNs - 1)) == Long.MAX_VALUE) {
-            return Duration.m1533unaryMinusUwyO8pc(DurationKt.toDuration(originNs, DurationUnit.DAYS));
+            return Duration.m1535unaryMinusUwyO8pc(DurationKt.toDuration(originNs, DurationUnit.DAYS));
         }
         return saturatingFiniteDiff(valueNs, originNs);
     }
 
     public static final long saturatingOriginsDiff(long origin1Ns, long origin2Ns) {
         if (((origin2Ns - 1) | 1) == Long.MAX_VALUE) {
-            return origin1Ns == origin2Ns ? Duration.INSTANCE.m1583getZEROUwyO8pc() : Duration.m1533unaryMinusUwyO8pc(DurationKt.toDuration(origin2Ns, DurationUnit.DAYS));
+            return origin1Ns == origin2Ns ? Duration.INSTANCE.m1585getZEROUwyO8pc() : Duration.m1535unaryMinusUwyO8pc(DurationKt.toDuration(origin2Ns, DurationUnit.DAYS));
         }
         if ((1 | (origin1Ns - 1)) == Long.MAX_VALUE) {
             return DurationKt.toDuration(origin1Ns, DurationUnit.DAYS);
@@ -68,7 +68,7 @@ public final class LongSaturatedMathKt {
             Duration.Companion companion = Duration.INSTANCE;
             long duration = DurationKt.toDuration(resultMs, DurationUnit.MILLISECONDS);
             Duration.Companion companion2 = Duration.INSTANCE;
-            return Duration.m1517plusLRDsOJo(duration, DurationKt.toDuration(resultNs, DurationUnit.NANOSECONDS));
+            return Duration.m1519plusLRDsOJo(duration, DurationKt.toDuration(resultNs, DurationUnit.NANOSECONDS));
         }
         Duration.Companion companion3 = Duration.INSTANCE;
         return DurationKt.toDuration(result, DurationUnit.NANOSECONDS);

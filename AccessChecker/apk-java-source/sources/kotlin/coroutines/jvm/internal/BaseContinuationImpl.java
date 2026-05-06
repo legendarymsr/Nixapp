@@ -28,7 +28,7 @@ public abstract class BaseContinuationImpl implements Continuation<Object>, Coro
 
     @Override // kotlin.coroutines.Continuation
     public final void resumeWith(Object result) {
-        Object m155constructorimpl;
+        Object m157constructorimpl;
         Object outcome;
         Object current = this;
         Object param = result;
@@ -41,14 +41,14 @@ public abstract class BaseContinuationImpl implements Continuation<Object>, Coro
                 outcome = $this$resumeWith_u24lambda_u240.invokeSuspend(param);
             } catch (Throwable exception) {
                 Result.Companion companion = Result.INSTANCE;
-                m155constructorimpl = Result.m155constructorimpl(ResultKt.createFailure(exception));
+                m157constructorimpl = Result.m157constructorimpl(ResultKt.createFailure(exception));
             }
             if (outcome == IntrinsicsKt.getCOROUTINE_SUSPENDED()) {
                 return;
             }
             Result.Companion companion2 = Result.INSTANCE;
-            m155constructorimpl = Result.m155constructorimpl(outcome);
-            Object outcome2 = m155constructorimpl;
+            m157constructorimpl = Result.m157constructorimpl(outcome);
+            Object outcome2 = m157constructorimpl;
             $this$resumeWith_u24lambda_u240.releaseIntercepted();
             if (completion instanceof BaseContinuationImpl) {
                 current = completion;

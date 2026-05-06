@@ -39,7 +39,7 @@ public class ShizukuRemoteProcess extends Process implements Parcelable {
             this.remote.asBinder().linkToDeath(new IBinder.DeathRecipient() { // from class: rikka.shizuku.ShizukuRemoteProcess$$ExternalSyntheticLambda0
                 @Override // android.os.IBinder.DeathRecipient
                 public final void binderDied() {
-                    ShizukuRemoteProcess.this.m1720lambda$new$0$rikkashizukuShizukuRemoteProcess();
+                    ShizukuRemoteProcess.this.m1722lambda$new$0$rikkashizukuShizukuRemoteProcess();
                 }
             }, 0);
         } catch (RemoteException e) {
@@ -49,7 +49,7 @@ public class ShizukuRemoteProcess extends Process implements Parcelable {
     }
 
     /* renamed from: lambda$new$0$rikka-shizuku-ShizukuRemoteProcess, reason: not valid java name */
-    /* synthetic */ void m1720lambda$new$0$rikkashizukuShizukuRemoteProcess() {
+    /* synthetic */ void m1722lambda$new$0$rikkashizukuShizukuRemoteProcess() {
         this.remote = null;
         Log.v(TAG, "remote process is dead");
         CACHE.remove(this);

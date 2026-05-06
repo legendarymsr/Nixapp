@@ -42,12 +42,12 @@ final class FlowKt__DelayKt$sample$2$1$1 extends SuspendLambda implements Functi
 
     @Override // kotlin.jvm.functions.Function2
     public /* bridge */ /* synthetic */ Object invoke(ChannelResult<? extends Object> channelResult, Continuation<? super Unit> continuation) {
-        return m1691invokeWpGqRn0(channelResult.getHolder(), continuation);
+        return m1693invokeWpGqRn0(channelResult.getHolder(), continuation);
     }
 
     /* renamed from: invoke-WpGqRn0, reason: not valid java name */
-    public final Object m1691invokeWpGqRn0(Object obj, Continuation<? super Unit> continuation) {
-        return ((FlowKt__DelayKt$sample$2$1$1) create(ChannelResult.m1667boximpl(obj), continuation)).invokeSuspend(Unit.INSTANCE);
+    public final Object m1693invokeWpGqRn0(Object obj, Continuation<? super Unit> continuation) {
+        return ((FlowKt__DelayKt$sample$2$1$1) create(ChannelResult.m1669boximpl(obj), continuation)).invokeSuspend(Unit.INSTANCE);
     }
 
     /* JADX WARN: Type inference failed for: r1v2, types: [T, java.lang.Object] */
@@ -66,7 +66,7 @@ final class FlowKt__DelayKt$sample$2$1$1 extends SuspendLambda implements Functi
                 ReceiveChannel<Unit> receiveChannel = this.$ticker;
                 Ref.ObjectRef<Object> objectRef2 = this.$lastValue;
                 if (holder instanceof ChannelResult.Failed) {
-                    Throwable it = ChannelResult.m1671exceptionOrNullimpl(holder);
+                    Throwable it = ChannelResult.m1673exceptionOrNullimpl(holder);
                     if (it != null) {
                         throw it;
                     }

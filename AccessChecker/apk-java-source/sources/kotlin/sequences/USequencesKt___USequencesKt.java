@@ -19,7 +19,7 @@ class USequencesKt___USequencesKt {
         Iterator<UInt> it = sequence.iterator();
         while (it.hasNext()) {
             int element = it.next().getData();
-            sum = UInt.m250constructorimpl(sum + element);
+            sum = UInt.m252constructorimpl(sum + element);
         }
         return sum;
     }
@@ -30,7 +30,7 @@ class USequencesKt___USequencesKt {
         Iterator<ULong> it = sequence.iterator();
         while (it.hasNext()) {
             long element = it.next().getData();
-            sum = ULong.m329constructorimpl(sum + element);
+            sum = ULong.m331constructorimpl(sum + element);
         }
         return sum;
     }
@@ -41,7 +41,7 @@ class USequencesKt___USequencesKt {
         Iterator<UByte> it = sequence.iterator();
         while (it.hasNext()) {
             byte element = it.next().getData();
-            sum = UInt.m250constructorimpl(UInt.m250constructorimpl(element & UByte.MAX_VALUE) + sum);
+            sum = UInt.m252constructorimpl(UInt.m252constructorimpl(element & UByte.MAX_VALUE) + sum);
         }
         return sum;
     }
@@ -52,7 +52,7 @@ class USequencesKt___USequencesKt {
         Iterator<UShort> it = sequence.iterator();
         while (it.hasNext()) {
             short element = it.next().getData();
-            sum = UInt.m250constructorimpl(UInt.m250constructorimpl(65535 & element) + sum);
+            sum = UInt.m252constructorimpl(UInt.m252constructorimpl(65535 & element) + sum);
         }
         return sum;
     }

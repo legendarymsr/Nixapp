@@ -22,7 +22,7 @@ final class RunSuspend implements Continuation<Unit> {
     }
 
     /* renamed from: getResult-xLWZpok, reason: not valid java name */
-    public final Result<Unit> m1372getResultxLWZpok() {
+    public final Result<Unit> m1374getResultxLWZpok() {
         return this.result;
     }
 
@@ -33,7 +33,7 @@ final class RunSuspend implements Continuation<Unit> {
     @Override // kotlin.coroutines.Continuation
     public void resumeWith(Object result) {
         synchronized (this) {
-            this.result = Result.m154boximpl(result);
+            this.result = Result.m156boximpl(result);
             Intrinsics.checkNotNull(this, "null cannot be cast to non-null type java.lang.Object");
             notifyAll();
             Unit unit = Unit.INSTANCE;

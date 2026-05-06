@@ -163,7 +163,7 @@ public class Snackbar extends BaseTransientBottomBar<Snackbar> {
             tv.setOnClickListener(new View.OnClickListener() { // from class: com.google.android.material.snackbar.Snackbar$$ExternalSyntheticLambda0
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    Snackbar.this.m132lambda$setAction$0$comgoogleandroidmaterialsnackbarSnackbar(listener, view);
+                    Snackbar.this.m134lambda$setAction$0$comgoogleandroidmaterialsnackbarSnackbar(listener, view);
                 }
             });
         }
@@ -171,7 +171,7 @@ public class Snackbar extends BaseTransientBottomBar<Snackbar> {
     }
 
     /* renamed from: lambda$setAction$0$com-google-android-material-snackbar-Snackbar, reason: not valid java name */
-    /* synthetic */ void m132lambda$setAction$0$comgoogleandroidmaterialsnackbarSnackbar(View.OnClickListener listener, View view) {
+    /* synthetic */ void m134lambda$setAction$0$comgoogleandroidmaterialsnackbarSnackbar(View.OnClickListener listener, View view) {
         listener.onClick(view);
         dispatchDismiss(1);
     }

@@ -154,7 +154,7 @@ final class AwaitAll<T> {
                     destination$iv$iv.add(deferred.getCompleted());
                 }
                 Result.Companion companion = Result.INSTANCE;
-                cancellableContinuation.resumeWith(Result.m155constructorimpl((List) destination$iv$iv));
+                cancellableContinuation.resumeWith(Result.m157constructorimpl((List) destination$iv$iv));
             }
         }
     }

@@ -36,12 +36,12 @@ final class ReceiveChannel$onReceiveOrNull$1$registerSelectClause1$1<E, R> exten
 
     @Override // kotlin.jvm.functions.Function2
     public /* bridge */ /* synthetic */ Object invoke(Object obj, Object obj2) {
-        return m1683invokeWpGqRn0(((ChannelResult) obj).getHolder(), (Continuation) obj2);
+        return m1685invokeWpGqRn0(((ChannelResult) obj).getHolder(), (Continuation) obj2);
     }
 
     /* renamed from: invoke-WpGqRn0, reason: not valid java name */
-    public final Object m1683invokeWpGqRn0(Object obj, Continuation<? super R> continuation) {
-        return ((ReceiveChannel$onReceiveOrNull$1$registerSelectClause1$1) create(ChannelResult.m1667boximpl(obj), continuation)).invokeSuspend(Unit.INSTANCE);
+    public final Object m1685invokeWpGqRn0(Object obj, Continuation<? super R> continuation) {
+        return ((ReceiveChannel$onReceiveOrNull$1$registerSelectClause1$1) create(ChannelResult.m1669boximpl(obj), continuation)).invokeSuspend(Unit.INSTANCE);
     }
 
     @Override // kotlin.coroutines.jvm.internal.BaseContinuationImpl
@@ -51,14 +51,14 @@ final class ReceiveChannel$onReceiveOrNull$1$registerSelectClause1$1<E, R> exten
             case 0:
                 ResultKt.throwOnFailure(obj);
                 Object holder = ((ChannelResult) this.L$0).getHolder();
-                Throwable m1671exceptionOrNullimpl = ChannelResult.m1671exceptionOrNullimpl(holder);
-                if (m1671exceptionOrNullimpl != null) {
-                    throw m1671exceptionOrNullimpl;
+                Throwable m1673exceptionOrNullimpl = ChannelResult.m1673exceptionOrNullimpl(holder);
+                if (m1673exceptionOrNullimpl != null) {
+                    throw m1673exceptionOrNullimpl;
                 }
                 Function2<E, Continuation<? super R>, Object> function2 = this.$block;
-                Object m1672getOrNullimpl = ChannelResult.m1672getOrNullimpl(holder);
+                Object m1674getOrNullimpl = ChannelResult.m1674getOrNullimpl(holder);
                 this.label = 1;
-                Object invoke = function2.invoke(m1672getOrNullimpl, this);
+                Object invoke = function2.invoke(m1674getOrNullimpl, this);
                 return invoke == coroutine_suspended ? coroutine_suspended : invoke;
             case 1:
                 ResultKt.throwOnFailure(obj);

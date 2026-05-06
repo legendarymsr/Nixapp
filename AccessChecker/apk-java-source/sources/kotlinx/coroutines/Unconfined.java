@@ -25,7 +25,7 @@ public final class Unconfined extends CoroutineDispatcher {
 
     @Override // kotlinx.coroutines.CoroutineDispatcher
     /* renamed from: dispatch */
-    public void mo1707dispatch(CoroutineContext context, Runnable block) {
+    public void mo1709dispatch(CoroutineContext context, Runnable block) {
         YieldContext yieldContext = (YieldContext) context.get(YieldContext.INSTANCE);
         if (yieldContext != null) {
             yieldContext.dispatcherWasUnconfined = true;

@@ -18,28 +18,28 @@ import kotlin.jvm.internal.Intrinsics;
 /* loaded from: classes.dex */
 public final class UStringsKt {
     /* renamed from: toString-LxnNnR4, reason: not valid java name */
-    public static final String m1467toStringLxnNnR4(byte $this$toString_u2dLxnNnR4, int radix) {
+    public static final String m1469toStringLxnNnR4(byte $this$toString_u2dLxnNnR4, int radix) {
         String num = Integer.toString($this$toString_u2dLxnNnR4 & UByte.MAX_VALUE, CharsKt.checkRadix(radix));
         Intrinsics.checkNotNullExpressionValue(num, "toString(this, checkRadix(radix))");
         return num;
     }
 
     /* renamed from: toString-olVBNx4, reason: not valid java name */
-    public static final String m1469toStringolVBNx4(short $this$toString_u2dolVBNx4, int radix) {
+    public static final String m1471toStringolVBNx4(short $this$toString_u2dolVBNx4, int radix) {
         String num = Integer.toString(65535 & $this$toString_u2dolVBNx4, CharsKt.checkRadix(radix));
         Intrinsics.checkNotNullExpressionValue(num, "toString(this, checkRadix(radix))");
         return num;
     }
 
     /* renamed from: toString-V7xB4Y4, reason: not valid java name */
-    public static final String m1468toStringV7xB4Y4(int $this$toString_u2dV7xB4Y4, int radix) {
+    public static final String m1470toStringV7xB4Y4(int $this$toString_u2dV7xB4Y4, int radix) {
         String l = Long.toString($this$toString_u2dV7xB4Y4 & 4294967295L, CharsKt.checkRadix(radix));
         Intrinsics.checkNotNullExpressionValue(l, "toString(this, checkRadix(radix))");
         return l;
     }
 
     /* renamed from: toString-JSWoG40, reason: not valid java name */
-    public static final String m1466toStringJSWoG40(long $this$toString_u2dJSWoG40, int radix) {
+    public static final String m1468toStringJSWoG40(long $this$toString_u2dJSWoG40, int radix) {
         return UnsignedKt.ulongToString($this$toString_u2dJSWoG40, CharsKt.checkRadix(radix));
     }
 
@@ -136,11 +136,11 @@ public final class UStringsKt {
             return null;
         }
         int data = uIntOrNull.getData();
-        compare = Integer.compare(data ^ Integer.MIN_VALUE, UInt.m250constructorimpl(255) ^ Integer.MIN_VALUE);
+        compare = Integer.compare(data ^ Integer.MIN_VALUE, UInt.m252constructorimpl(255) ^ Integer.MIN_VALUE);
         if (compare > 0) {
             return null;
         }
-        return UByte.m167boximpl(UByte.m173constructorimpl((byte) data));
+        return UByte.m169boximpl(UByte.m175constructorimpl((byte) data));
     }
 
     public static final UShort toUShortOrNull(String $this$toUShortOrNull) {
@@ -156,11 +156,11 @@ public final class UStringsKt {
             return null;
         }
         int data = uIntOrNull.getData();
-        compare = Integer.compare(data ^ Integer.MIN_VALUE, UInt.m250constructorimpl(SupportMenu.USER_MASK) ^ Integer.MIN_VALUE);
+        compare = Integer.compare(data ^ Integer.MIN_VALUE, UInt.m252constructorimpl(SupportMenu.USER_MASK) ^ Integer.MIN_VALUE);
         if (compare > 0) {
             return null;
         }
-        return UShort.m430boximpl(UShort.m436constructorimpl((short) data));
+        return UShort.m432boximpl(UShort.m438constructorimpl((short) data));
     }
 
     public static final UInt toUIntOrNull(String $this$toUIntOrNull) {
@@ -189,7 +189,7 @@ public final class UStringsKt {
             start = 0;
         }
         int limitBeforeMul = 119304647;
-        int uradix = UInt.m250constructorimpl(radix);
+        int uradix = UInt.m252constructorimpl(radix);
         int result = 0;
         for (int i = start; i < length; i++) {
             int digit = CharsKt.digitOf($this$toUIntOrNull.charAt(i), radix);
@@ -207,14 +207,14 @@ public final class UStringsKt {
                     return null;
                 }
             }
-            int result2 = UInt.m250constructorimpl(result * uradix);
-            result = UInt.m250constructorimpl(UInt.m250constructorimpl(digit) + result2);
+            int result2 = UInt.m252constructorimpl(result * uradix);
+            result = UInt.m252constructorimpl(UInt.m252constructorimpl(digit) + result2);
             compare2 = Integer.compare(result ^ Integer.MIN_VALUE, result2 ^ Integer.MIN_VALUE);
             if (compare2 < 0) {
                 return null;
             }
         }
-        return UInt.m244boximpl(result);
+        return UInt.m246boximpl(result);
     }
 
     public static final ULong toULongOrNull(String $this$toULongOrNull) {
@@ -245,7 +245,7 @@ public final class UStringsKt {
             start = 0;
         }
         long limitBeforeMul = 512409557603043100L;
-        long uradix = ULong.m329constructorimpl(i);
+        long uradix = ULong.m331constructorimpl(i);
         long result = 0;
         int i2 = start;
         while (i2 < length) {
@@ -266,8 +266,8 @@ public final class UStringsKt {
                     return null;
                 }
             }
-            long result2 = ULong.m329constructorimpl(result * uradix);
-            result = ULong.m329constructorimpl(ULong.m329constructorimpl(UInt.m250constructorimpl(digit) & 4294967295L) + result2);
+            long result2 = ULong.m331constructorimpl(result * uradix);
+            result = ULong.m331constructorimpl(ULong.m331constructorimpl(UInt.m252constructorimpl(digit) & 4294967295L) + result2);
             compare2 = Long.compare(result ^ Long.MIN_VALUE, result2 ^ Long.MIN_VALUE);
             if (compare2 < 0) {
                 return null;
@@ -277,6 +277,6 @@ public final class UStringsKt {
             i = radix;
             length = length2;
         }
-        return ULong.m323boximpl(result);
+        return ULong.m325boximpl(result);
     }
 }

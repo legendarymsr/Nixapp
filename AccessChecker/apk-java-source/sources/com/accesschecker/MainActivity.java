@@ -2,6 +2,7 @@ package com.accesschecker;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -19,14 +20,23 @@ import androidx.core.app.NotificationCompat;
 import com.accesschecker.BootloaderChecker;
 import com.accesschecker.RootChecker;
 import com.accesschecker.ShizukuChecker;
+import com.accesschecker.ZygiskChecker;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import rikka.shizuku.Shizuku;
 
 /* loaded from: classes3.dex */
 public class MainActivity extends AppCompatActivity {
     private static final int SHIZUKU_REQUEST_CODE = 1001;
     private AnimatorSet bootAnim;
+    private TextView bootConfidenceTv;
     private LinearLayout bootDetailsLayout;
     private TextView bootDetailsTv;
     private View bootDot;
@@ -35,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private volatile BootloaderChecker.Result bootResult;
     private TextView bootStatusTv;
     private AnimatorSet rootAnim;
+    private TextView rootConfidenceTv;
     private LinearLayout rootDetailsLayout;
     private TextView rootDetailsTv;
     private View rootDot;
@@ -52,21 +63,30 @@ public class MainActivity extends AppCompatActivity {
     private View shizukuPulse;
     private volatile ShizukuChecker.Result shizukuResult;
     private TextView shizukuStatusTv;
+    private AnimatorSet zygiskAnim;
+    private TextView zygiskConfidenceTv;
+    private LinearLayout zygiskDetailsLayout;
+    private TextView zygiskDetailsTv;
+    private View zygiskDot;
+    private TextView zygiskExpandTv;
+    private View zygiskPulse;
+    private volatile ZygiskChecker.Result zygiskResult;
+    private TextView zygiskStatusTv;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private final Shizuku.OnBinderReceivedListener onBinderReceived = new Shizuku.OnBinderReceivedListener() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda9
+    private final Shizuku.OnBinderReceivedListener onBinderReceived = new Shizuku.OnBinderReceivedListener() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda10
         @Override // rikka.shizuku.Shizuku.OnBinderReceivedListener
         public final void onBinderReceived() {
             MainActivity.this.m47lambda$new$1$comaccesscheckerMainActivity();
         }
     };
-    private final Shizuku.OnBinderDeadListener onBinderDead = new Shizuku.OnBinderDeadListener() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda10
+    private final Shizuku.OnBinderDeadListener onBinderDead = new Shizuku.OnBinderDeadListener() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda11
         @Override // rikka.shizuku.Shizuku.OnBinderDeadListener
         public final void onBinderDead() {
             MainActivity.this.m49lambda$new$3$comaccesscheckerMainActivity();
         }
     };
-    private final Shizuku.OnRequestPermissionResultListener onPermResult = new Shizuku.OnRequestPermissionResultListener() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda11
+    private final Shizuku.OnRequestPermissionResultListener onPermResult = new Shizuku.OnRequestPermissionResultListener() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda12
         @Override // rikka.shizuku.Shizuku.OnRequestPermissionResultListener
         public final void onRequestPermissionResult(int i, int i2) {
             MainActivity.this.m51lambda$new$5$comaccesscheckerMainActivity(i, i2);
@@ -80,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
     /* renamed from: lambda$new$1$com-accesschecker-MainActivity, reason: not valid java name */
     /* synthetic */ void m47lambda$new$1$comaccesscheckerMainActivity() {
-        this.mainHandler.post(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda8
+        this.mainHandler.post(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda9
             @Override // java.lang.Runnable
             public final void run() {
                 MainActivity.this.m46lambda$new$0$comaccesscheckerMainActivity();
@@ -95,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
     /* renamed from: lambda$new$3$com-accesschecker-MainActivity, reason: not valid java name */
     /* synthetic */ void m49lambda$new$3$comaccesscheckerMainActivity() {
-        this.mainHandler.post(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda2
+        this.mainHandler.post(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda4
             @Override // java.lang.Runnable
             public final void run() {
                 MainActivity.this.m48lambda$new$2$comaccesscheckerMainActivity();
@@ -106,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
     /* renamed from: lambda$new$5$com-accesschecker-MainActivity, reason: not valid java name */
     /* synthetic */ void m51lambda$new$5$comaccesscheckerMainActivity(int code, int result) {
         if (code == 1001) {
-            this.mainHandler.post(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda4
+            this.mainHandler.post(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda7
                 @Override // java.lang.Runnable
                 public final void run() {
                     MainActivity.this.m50lambda$new$4$comaccesscheckerMainActivity();
@@ -138,10 +158,16 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.m52lambda$onCreate$6$comaccesscheckerMainActivity(view);
             }
         });
-        findViewById(R.id.btn_recheck).setOnClickListener(new View.OnClickListener() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda3
+        findViewById(R.id.btn_recheck).setOnClickListener(new View.OnClickListener() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda5
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
                 MainActivity.this.m53lambda$onCreate$7$comaccesscheckerMainActivity(view);
+            }
+        });
+        findViewById(R.id.btn_export).setOnClickListener(new View.OnClickListener() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda6
+            @Override // android.view.View.OnClickListener
+            public final void onClick(View view) {
+                MainActivity.this.m54lambda$onCreate$8$comaccesscheckerMainActivity(view);
             }
         });
         recheckAll();
@@ -157,6 +183,11 @@ public class MainActivity extends AppCompatActivity {
         recheckAll();
     }
 
+    /* renamed from: lambda$onCreate$8$com-accesschecker-MainActivity, reason: not valid java name */
+    /* synthetic */ void m54lambda$onCreate$8$comaccesscheckerMainActivity(View v) {
+        exportJson();
+    }
+
     @Override // androidx.appcompat.app.AppCompatActivity, androidx.fragment.app.FragmentActivity, android.app.Activity
     protected void onDestroy() {
         super.onDestroy();
@@ -169,55 +200,74 @@ public class MainActivity extends AppCompatActivity {
         this.executor.shutdown();
         cancelAnim(this.rootAnim);
         cancelAnim(this.bootAnim);
+        cancelAnim(this.zygiskAnim);
         cancelAnim(this.shizukuAnim);
     }
 
     private void recheckAll() {
         this.rootResult = null;
         this.bootResult = null;
+        this.zygiskResult = null;
         this.shizukuResult = null;
-        setLoading(this.rootPulse, this.rootDot, this.rootStatusTv);
-        setLoading(this.bootPulse, this.bootDot, this.bootStatusTv);
-        setLoading(this.shizukuPulse, this.shizukuDot, this.shizukuStatusTv);
+        setLoading(this.rootPulse, this.rootDot, this.rootStatusTv, 1);
+        setLoading(this.bootPulse, this.bootDot, this.bootStatusTv, 2);
+        setLoading(this.zygiskPulse, this.zygiskDot, this.zygiskStatusTv, 3);
+        setLoading(this.shizukuPulse, this.shizukuDot, this.shizukuStatusTv, 4);
         this.scoreText.setText("--/100");
         this.scoreText.setTextColor(getColor(R.color.green_dim));
         this.scoreBar.setProgress(0);
-        this.executor.execute(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda1
+        this.rootConfidenceTv.setText("");
+        this.bootConfidenceTv.setText("");
+        this.zygiskConfidenceTv.setText("");
+        this.executor.execute(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda13
             @Override // java.lang.Runnable
             public final void run() {
-                MainActivity.this.m54lambda$recheckAll$10$comaccesscheckerMainActivity();
+                MainActivity.this.m57lambda$recheckAll$12$comaccesscheckerMainActivity();
             }
         });
         runShizukuCheck(false);
     }
 
-    /* renamed from: lambda$recheckAll$10$com-accesschecker-MainActivity, reason: not valid java name */
-    /* synthetic */ void m54lambda$recheckAll$10$comaccesscheckerMainActivity() {
+    /* renamed from: lambda$recheckAll$12$com-accesschecker-MainActivity, reason: not valid java name */
+    /* synthetic */ void m57lambda$recheckAll$12$comaccesscheckerMainActivity() {
         final RootChecker.Result root = RootChecker.check(this);
-        this.mainHandler.post(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda5
+        this.mainHandler.post(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda1
             @Override // java.lang.Runnable
             public final void run() {
-                MainActivity.this.m55lambda$recheckAll$8$comaccesscheckerMainActivity(root);
+                MainActivity.this.m58lambda$recheckAll$9$comaccesscheckerMainActivity(root);
             }
         });
         final BootloaderChecker.Result boot = BootloaderChecker.check(root);
-        this.mainHandler.post(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda6
+        this.mainHandler.post(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda2
             @Override // java.lang.Runnable
             public final void run() {
-                MainActivity.this.m56lambda$recheckAll$9$comaccesscheckerMainActivity(boot);
+                MainActivity.this.m55lambda$recheckAll$10$comaccesscheckerMainActivity(boot);
+            }
+        });
+        final ZygiskChecker.Result zy = ZygiskChecker.check();
+        this.mainHandler.post(new Runnable() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda3
+            @Override // java.lang.Runnable
+            public final void run() {
+                MainActivity.this.m56lambda$recheckAll$11$comaccesscheckerMainActivity(zy);
             }
         });
     }
 
-    /* renamed from: lambda$recheckAll$8$com-accesschecker-MainActivity, reason: not valid java name */
-    /* synthetic */ void m55lambda$recheckAll$8$comaccesscheckerMainActivity(RootChecker.Result root) {
+    /* renamed from: lambda$recheckAll$9$com-accesschecker-MainActivity, reason: not valid java name */
+    /* synthetic */ void m58lambda$recheckAll$9$comaccesscheckerMainActivity(RootChecker.Result root) {
         applyRootResult(root);
         maybeUpdateScore();
     }
 
-    /* renamed from: lambda$recheckAll$9$com-accesschecker-MainActivity, reason: not valid java name */
-    /* synthetic */ void m56lambda$recheckAll$9$comaccesscheckerMainActivity(BootloaderChecker.Result boot) {
+    /* renamed from: lambda$recheckAll$10$com-accesschecker-MainActivity, reason: not valid java name */
+    /* synthetic */ void m55lambda$recheckAll$10$comaccesscheckerMainActivity(BootloaderChecker.Result boot) {
         applyBootResult(boot);
+        maybeUpdateScore();
+    }
+
+    /* renamed from: lambda$recheckAll$11$com-accesschecker-MainActivity, reason: not valid java name */
+    /* synthetic */ void m56lambda$recheckAll$11$comaccesscheckerMainActivity(ZygiskChecker.Result zy) {
+        applyZygiskResult(zy);
         maybeUpdateScore();
     }
 
@@ -251,11 +301,8 @@ public class MainActivity extends AppCompatActivity {
         this.rootStatusTv.setText(label);
         this.rootStatusTv.setTextColor(color);
         startSonarPulse(this.rootPulse, color, 1);
-        StringBuilder sb = new StringBuilder();
-        for (String line : r.lines) {
-            sb.append("  ").append(line).append("\n");
-        }
-        this.rootDetailsTv.setText(sb.toString().trim());
+        this.rootConfidenceTv.setText("confidence: " + r.confidence + "%");
+        this.rootDetailsTv.setText(buildLines(r.lines));
     }
 
     private void applyBootResult(BootloaderChecker.Result r) {
@@ -289,11 +336,38 @@ public class MainActivity extends AppCompatActivity {
         this.bootStatusTv.setText(label);
         this.bootStatusTv.setTextColor(color);
         startSonarPulse(this.bootPulse, color, 2);
-        StringBuilder sb = new StringBuilder();
-        for (String line : r.lines) {
-            sb.append("  ").append(line).append("\n");
+        this.bootConfidenceTv.setText("hw-attest: " + r.hwAttestation + "  vb: " + r.verifiedBoot.name().toLowerCase());
+        this.bootDetailsTv.setText(buildLines(r.lines));
+    }
+
+    private void applyZygiskResult(ZygiskChecker.Result r) {
+        int color;
+        String label;
+        this.zygiskResult = r;
+        switch (r.status) {
+            case DETECTED:
+                color = Color.parseColor("#FF3B3B");
+                label = "HOOKING DETECTED";
+                break;
+            case SUSPECTED:
+                color = Color.parseColor("#FFD600");
+                label = "SUSPECTED HOOKING";
+                break;
+            case CLEAN:
+                color = Color.parseColor("#00E676");
+                label = "CLEAN";
+                break;
+            default:
+                color = Color.parseColor("#FFD600");
+                label = "UNKNOWN";
+                break;
         }
-        this.bootDetailsTv.setText(sb.toString().trim());
+        applyDotColor(this.zygiskPulse, this.zygiskDot, color);
+        this.zygiskStatusTv.setText(label);
+        this.zygiskStatusTv.setTextColor(color);
+        startSonarPulse(this.zygiskPulse, color, 3);
+        this.zygiskConfidenceTv.setText("confidence: " + r.confidence + "%");
+        this.zygiskDetailsTv.setText(buildLines(r.lines));
     }
 
     private void applyShizukuResult(ShizukuChecker.Result r) {
@@ -325,7 +399,7 @@ public class MainActivity extends AppCompatActivity {
         applyDotColor(this.shizukuPulse, this.shizukuDot, color);
         this.shizukuStatusTv.setText(label);
         this.shizukuStatusTv.setTextColor(color);
-        startSonarPulse(this.shizukuPulse, color, 3);
+        startSonarPulse(this.shizukuPulse, color, 4);
         StringBuilder sb = new StringBuilder();
         for (String line : r.lines) {
             sb.append("  ").append(line).append("\n");
@@ -341,17 +415,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void maybeUpdateScore() {
         int scoreColor;
-        if (this.rootResult == null || this.bootResult == null || this.shizukuResult == null) {
+        if (this.rootResult == null || this.bootResult == null || this.zygiskResult == null || this.shizukuResult == null) {
             return;
         }
         int score = 100;
         if (this.rootResult.status == RootChecker.Status.GRANTED) {
-            score = 100 - 35;
+            score = 100 - 30;
         } else if (this.rootResult.status == RootChecker.Status.UNKNOWN) {
             score = 100 - 5;
         }
         if (this.bootResult.status == BootloaderChecker.Status.UNLOCKED) {
-            score -= 35;
+            score -= 30;
         } else if (this.bootResult.status == BootloaderChecker.Status.UNKNOWN) {
             score -= 5;
         }
@@ -372,8 +446,16 @@ public class MainActivity extends AppCompatActivity {
         if (!this.bootResult.dmVerityEnabled) {
             score -= 5;
         }
-        if (this.shizukuResult.status == ShizukuChecker.Status.AVAILABLE_PERMITTED) {
+        if (this.zygiskResult.status == ZygiskChecker.Status.DETECTED) {
             score -= 10;
+        } else if (this.zygiskResult.status == ZygiskChecker.Status.SUSPECTED) {
+            score -= 5;
+        }
+        if (this.rootResult.suspiciousMounts) {
+            score -= 5;
+        }
+        if (this.shizukuResult.status == ShizukuChecker.Status.AVAILABLE_PERMITTED) {
+            score -= 5;
         }
         int score2 = Math.max(0, score);
         if (score2 >= 80) {
@@ -389,9 +471,88 @@ public class MainActivity extends AppCompatActivity {
         this.scoreBar.setProgressTintList(ColorStateList.valueOf(scoreColor));
     }
 
+    private void exportJson() {
+        if (this.rootResult == null || this.bootResult == null || this.zygiskResult == null || this.shizukuResult == null) {
+            Toast.makeText(this, "Run a scan first", 0).show();
+            return;
+        }
+        try {
+            JSONObject report = new JSONObject();
+            report.put("generated", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).format(new Date()));
+            report.put("app_version", "1.5");
+            JSONObject root = new JSONObject();
+            root.put(NotificationCompat.CATEGORY_STATUS, this.rootResult.status.name());
+            root.put("confidence_pct", this.rootResult.confidence);
+            root.put("su_path", this.rootResult.suPath != null ? this.rootResult.suPath : "");
+            root.put("root_manager", this.rootResult.rootManager != null ? this.rootResult.rootManager : "");
+            root.put("exec_java", this.rootResult.execTestPassed);
+            root.put("exec_native", this.rootResult.nativeSuPassed);
+            root.put("magisk_socket", this.rootResult.magiskSocketFound);
+            root.put("kernelsu_vfs", this.rootResult.kernelSuVfs);
+            root.put("apatch_vfs", this.rootResult.apatchVfs);
+            root.put("suspicious_mounts", this.rootResult.suspiciousMounts);
+            root.put("fuse_fs", this.rootResult.fuseMounts);
+            report.put("root", root);
+            JSONObject boot = new JSONObject();
+            boot.put(NotificationCompat.CATEGORY_STATUS, this.bootResult.status.name());
+            boot.put("confidence_pct", this.bootResult.confidence);
+            boot.put("verified_boot", this.bootResult.verifiedBoot.name());
+            boot.put("dm_verity", this.bootResult.dmVerityEnabled);
+            boot.put("encryption", this.bootResult.encryptionState);
+            boot.put("debuggable", this.bootResult.debuggable);
+            boot.put("test_keys", this.bootResult.testKeys);
+            boot.put("hw_attestation", this.bootResult.hwAttestation);
+            boot.put("props_masked", this.bootResult.propertiesMasked);
+            report.put("bootloader", boot);
+            JSONObject zy = new JSONObject();
+            zy.put(NotificationCompat.CATEGORY_STATUS, this.zygiskResult.status.name());
+            zy.put("confidence_pct", this.zygiskResult.confidence);
+            zy.put("zygisk_in_maps", this.zygiskResult.zygiskInMaps);
+            zy.put("riru_in_maps", this.zygiskResult.riruInMaps);
+            zy.put("shamiko_in_maps", this.zygiskResult.shamikoInMaps);
+            zy.put("lsposed_process", this.zygiskResult.lsposedProcess);
+            zy.put("magisk_socket", this.zygiskResult.magiskSocket);
+            zy.put("magisk_mounts", this.zygiskResult.magiskMounts);
+            zy.put("proc1_maps", this.zygiskResult.proc1Maps);
+            zy.put("suspicious_fd", this.zygiskResult.suspiciousFd);
+            zy.put("tracing_active", this.zygiskResult.tracingActive);
+            zy.put("tracer_pid", this.zygiskResult.tracerPid);
+            report.put("zygisk_hooking", zy);
+            JSONObject sh = new JSONObject();
+            sh.put(NotificationCompat.CATEGORY_STATUS, this.shizukuResult.status.name());
+            sh.put("installed", this.shizukuResult.installed);
+            sh.put("running", this.shizukuResult.running);
+            sh.put("permitted", this.shizukuResult.hasPermission);
+            sh.put("version", this.shizukuResult.version);
+            sh.put("run_mode", this.shizukuResult.runMode != null ? this.shizukuResult.runMode : "");
+            report.put("shizuku", sh);
+            JSONArray rawChecks = new JSONArray();
+            for (String l : this.rootResult.lines) {
+                rawChecks.put("root: " + l);
+            }
+            for (String l2 : this.bootResult.lines) {
+                rawChecks.put("boot: " + l2);
+            }
+            for (String l3 : this.zygiskResult.lines) {
+                rawChecks.put("zygisk: " + l3);
+            }
+            for (String l4 : this.shizukuResult.lines) {
+                rawChecks.put("shizuku: " + l4);
+            }
+            report.put("raw_checks", rawChecks);
+            Intent intent = new Intent("android.intent.action.SEND");
+            intent.setType("text/plain");
+            intent.putExtra("android.intent.extra.SUBJECT", "AccessChecker Report");
+            intent.putExtra("android.intent.extra.TEXT", report.toString(2));
+            startActivity(Intent.createChooser(intent, "Share Report"));
+        } catch (JSONException e) {
+            Toast.makeText(this, "Export failed: " + e.getMessage(), 1).show();
+        }
+    }
+
     private void applyDotColor(View pulse, View dot, int color) {
-        int pulseAlpha = Color.argb(70, Color.red(color), Color.green(color), Color.blue(color));
-        setCircleColor(pulse, pulseAlpha);
+        int alpha = Color.argb(70, Color.red(color), Color.green(color), Color.blue(color));
+        setCircleColor(pulse, alpha);
         setCircleColor(dot, color);
     }
 
@@ -402,51 +563,61 @@ public class MainActivity extends AppCompatActivity {
         v.setBackground(d);
     }
 
-    private void setLoading(View pulse, View dot, TextView statusTv) {
+    private void setLoading(View pulse, View dot, TextView statusTv, int slot) {
         int gray = Color.parseColor("#444444");
         applyDotColor(pulse, dot, gray);
         statusTv.setText("CHECKING...");
         statusTv.setTextColor(Color.parseColor("#888888"));
-        cancelAnim(currentAnim(pulse));
-        startSonarPulse(pulse, gray, 0);
+        cancelAnim(animForSlot(slot));
+        startSonarPulse(pulse, gray, slot);
     }
 
-    private AnimatorSet currentAnim(View pulse) {
-        return pulse == this.rootPulse ? this.rootAnim : pulse == this.bootPulse ? this.bootAnim : this.shizukuAnim;
+    private AnimatorSet animForSlot(int slot) {
+        switch (slot) {
+            case 1:
+                return this.rootAnim;
+            case 2:
+                return this.bootAnim;
+            case 3:
+                return this.zygiskAnim;
+            default:
+                return this.shizukuAnim;
+        }
     }
 
     private void startSonarPulse(View pulse, int color, int slot) {
-        int i = 1;
-        AnimatorSet old = slot == 1 ? this.rootAnim : slot == 2 ? this.bootAnim : this.shizukuAnim;
-        cancelAnim(old);
+        cancelAnim(animForSlot(slot));
         pulse.setScaleX(1.0f);
         pulse.setScaleY(1.0f);
         pulse.setAlpha(0.75f);
-        int pulseAlpha = Color.argb(70, Color.red(color), Color.green(color), Color.blue(color));
-        setCircleColor(pulse, pulseAlpha);
+        setCircleColor(pulse, Color.argb(70, Color.red(color), Color.green(color), Color.blue(color)));
         ObjectAnimator sx = ObjectAnimator.ofFloat(pulse, "scaleX", 1.0f, 3.0f);
         ObjectAnimator sy = ObjectAnimator.ofFloat(pulse, "scaleY", 1.0f, 3.0f);
-        ObjectAnimator alpha = ObjectAnimator.ofFloat(pulse, "alpha", 0.75f, 0.0f);
-        ObjectAnimator[] objectAnimatorArr = {sx, sy, alpha};
-        int i2 = 0;
-        while (i2 < 3) {
-            ObjectAnimator a = objectAnimatorArr[i2];
+        ObjectAnimator al = ObjectAnimator.ofFloat(pulse, "alpha", 0.75f, 0.0f);
+        ObjectAnimator[] objectAnimatorArr = {sx, sy, al};
+        for (int i = 0; i < 3; i++) {
+            ObjectAnimator a = objectAnimatorArr[i];
             a.setRepeatCount(-1);
-            a.setRepeatMode(i);
+            a.setRepeatMode(1);
             a.setDuration(2200L);
-            i2++;
-            i = 1;
         }
         AnimatorSet set = new AnimatorSet();
-        set.playTogether(sx, sy, alpha);
+        set.playTogether(sx, sy, al);
         set.setInterpolator(new DecelerateInterpolator(1.5f));
         set.start();
-        if (slot == 1) {
-            this.rootAnim = set;
-        } else if (slot == 2) {
-            this.bootAnim = set;
-        } else {
-            this.shizukuAnim = set;
+        switch (slot) {
+            case 1:
+                this.rootAnim = set;
+                break;
+            case 2:
+                this.bootAnim = set;
+                break;
+            case 3:
+                this.zygiskAnim = set;
+                break;
+            default:
+                this.shizukuAnim = set;
+                break;
         }
     }
 
@@ -464,12 +635,21 @@ public class MainActivity extends AppCompatActivity {
         this.rootDetailsTv = (TextView) findViewById(R.id.root_details_text);
         this.rootExpandTv = (TextView) findViewById(R.id.root_expand);
         this.rootDetailsLayout = (LinearLayout) findViewById(R.id.root_details);
+        this.rootConfidenceTv = (TextView) findViewById(R.id.root_confidence);
         this.bootPulse = findViewById(R.id.boot_pulse);
         this.bootDot = findViewById(R.id.boot_dot);
         this.bootStatusTv = (TextView) findViewById(R.id.boot_status);
         this.bootDetailsTv = (TextView) findViewById(R.id.boot_details_text);
         this.bootExpandTv = (TextView) findViewById(R.id.boot_expand);
         this.bootDetailsLayout = (LinearLayout) findViewById(R.id.boot_details);
+        this.bootConfidenceTv = (TextView) findViewById(R.id.boot_confidence);
+        this.zygiskPulse = findViewById(R.id.zygisk_pulse);
+        this.zygiskDot = findViewById(R.id.zygisk_dot);
+        this.zygiskStatusTv = (TextView) findViewById(R.id.zygisk_status);
+        this.zygiskDetailsTv = (TextView) findViewById(R.id.zygisk_details_text);
+        this.zygiskExpandTv = (TextView) findViewById(R.id.zygisk_expand);
+        this.zygiskDetailsLayout = (LinearLayout) findViewById(R.id.zygisk_details);
+        this.zygiskConfidenceTv = (TextView) findViewById(R.id.zygisk_confidence);
         this.shizukuPulse = findViewById(R.id.shizuku_pulse);
         this.shizukuDot = findViewById(R.id.shizuku_dot);
         this.shizukuStatusTv = (TextView) findViewById(R.id.shizuku_status);
@@ -483,19 +663,20 @@ public class MainActivity extends AppCompatActivity {
     private void setupCardClicks() {
         wireExpand(R.id.root_header, this.rootDetailsLayout, this.rootExpandTv);
         wireExpand(R.id.boot_header, this.bootDetailsLayout, this.bootExpandTv);
+        wireExpand(R.id.zygisk_header, this.zygiskDetailsLayout, this.zygiskExpandTv);
         wireExpand(R.id.shizuku_header, this.shizukuDetailsLayout, this.shizukuExpandTv);
     }
 
     private void wireExpand(int headerId, final LinearLayout details, final TextView arrow) {
-        findViewById(headerId).setOnClickListener(new View.OnClickListener() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda7
+        findViewById(headerId).setOnClickListener(new View.OnClickListener() { // from class: com.accesschecker.MainActivity$$ExternalSyntheticLambda8
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                MainActivity.lambda$wireExpand$11(details, arrow, view);
+                MainActivity.lambda$wireExpand$13(details, arrow, view);
             }
         });
     }
 
-    static /* synthetic */ void lambda$wireExpand$11(LinearLayout details, TextView arrow, View v) {
+    static /* synthetic */ void lambda$wireExpand$13(LinearLayout details, TextView arrow, View v) {
         boolean visible = details.getVisibility() == 0;
         details.setVisibility(visible ? 8 : 0);
         arrow.setText(visible ? "▼" : "▲");
@@ -517,5 +698,13 @@ public class MainActivity extends AppCompatActivity {
         } catch (Throwable t) {
             Toast.makeText(this, "Shizuku error: " + t.getMessage(), 0).show();
         }
+    }
+
+    private static String buildLines(List<String> lines) {
+        StringBuilder sb = new StringBuilder();
+        for (String l : lines) {
+            sb.append(l).append("\n");
+        }
+        return sb.toString().trim();
     }
 }

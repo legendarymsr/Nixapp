@@ -249,13 +249,13 @@ public final class DurationKt {
     }
 
     /* renamed from: times-mvk6XK0, reason: not valid java name */
-    private static final long m1607timesmvk6XK0(int $this$times_u2dmvk6XK0, long duration) {
-        return Duration.m1519timesUwyO8pc(duration, $this$times_u2dmvk6XK0);
+    private static final long m1609timesmvk6XK0(int $this$times_u2dmvk6XK0, long duration) {
+        return Duration.m1521timesUwyO8pc(duration, $this$times_u2dmvk6XK0);
     }
 
     /* renamed from: times-kIfJnKk, reason: not valid java name */
-    private static final long m1606timeskIfJnKk(double $this$times_u2dkIfJnKk, long duration) {
-        return Duration.m1518timesUwyO8pc(duration, $this$times_u2dkIfJnKk);
+    private static final long m1608timeskIfJnKk(double $this$times_u2dkIfJnKk, long duration) {
+        return Duration.m1520timesUwyO8pc(duration, $this$times_u2dkIfJnKk);
     }
 
     /* JADX INFO: Access modifiers changed from: private */
@@ -337,17 +337,17 @@ public final class DurationKt {
 
     /* JADX INFO: Access modifiers changed from: private */
     public static final long durationOfNanos(long normalNanos) {
-        return Duration.m1481constructorimpl(normalNanos << 1);
+        return Duration.m1483constructorimpl(normalNanos << 1);
     }
 
     /* JADX INFO: Access modifiers changed from: private */
     public static final long durationOfMillis(long normalMillis) {
-        return Duration.m1481constructorimpl((normalMillis << 1) + 1);
+        return Duration.m1483constructorimpl((normalMillis << 1) + 1);
     }
 
     /* JADX INFO: Access modifiers changed from: private */
     public static final long durationOf(long normalValue, int unitDiscriminator) {
-        return Duration.m1481constructorimpl((normalValue << 1) + unitDiscriminator);
+        return Duration.m1483constructorimpl((normalValue << 1) + unitDiscriminator);
     }
 
     /* JADX INFO: Access modifiers changed from: private */

@@ -69,15 +69,15 @@ public final class HandlerDispatcherKt {
     }
 
     static {
-        Object m155constructorimpl;
+        Object m157constructorimpl;
         try {
             Result.Companion companion = Result.INSTANCE;
-            m155constructorimpl = Result.m155constructorimpl(new HandlerContext(asHandler(Looper.getMainLooper(), true), null, 2, null));
+            m157constructorimpl = Result.m157constructorimpl(new HandlerContext(asHandler(Looper.getMainLooper(), true), null, 2, null));
         } catch (Throwable th) {
             Result.Companion companion2 = Result.INSTANCE;
-            m155constructorimpl = Result.m155constructorimpl(ResultKt.createFailure(th));
+            m157constructorimpl = Result.m157constructorimpl(ResultKt.createFailure(th));
         }
-        Main = (HandlerDispatcher) (Result.m161isFailureimpl(m155constructorimpl) ? null : m155constructorimpl);
+        Main = (HandlerDispatcher) (Result.m163isFailureimpl(m157constructorimpl) ? null : m157constructorimpl);
     }
 
     public static final Object awaitFrame(Continuation<? super Long> continuation) {
@@ -96,7 +96,7 @@ public final class HandlerDispatcherKt {
         CancellableContinuationImpl cancellable$iv2 = new CancellableContinuationImpl(IntrinsicsKt.intercepted(continuation), 1);
         cancellable$iv2.initCancellability();
         final CancellableContinuationImpl cont2 = cancellable$iv2;
-        Dispatchers.getMain().mo1707dispatch(EmptyCoroutineContext.INSTANCE, new Runnable() { // from class: kotlinx.coroutines.android.HandlerDispatcherKt$awaitFrame$lambda-3$$inlined$Runnable$1
+        Dispatchers.getMain().mo1709dispatch(EmptyCoroutineContext.INSTANCE, new Runnable() { // from class: kotlinx.coroutines.android.HandlerDispatcherKt$awaitFrame$lambda-3$$inlined$Runnable$1
             @Override // java.lang.Runnable
             public final void run() {
                 HandlerDispatcherKt.updateChoreographerAndPostFrameCallback(CancellableContinuation.this);
@@ -125,14 +125,14 @@ public final class HandlerDispatcherKt {
         choreographer2.postFrameCallback(new Choreographer.FrameCallback() { // from class: kotlinx.coroutines.android.HandlerDispatcherKt$$ExternalSyntheticLambda0
             @Override // android.view.Choreographer.FrameCallback
             public final void doFrame(long j) {
-                HandlerDispatcherKt.m1658postFrameCallback$lambda6(CancellableContinuation.this, j);
+                HandlerDispatcherKt.m1660postFrameCallback$lambda6(CancellableContinuation.this, j);
             }
         });
     }
 
     /* JADX INFO: Access modifiers changed from: private */
     /* renamed from: postFrameCallback$lambda-6, reason: not valid java name */
-    public static final void m1658postFrameCallback$lambda6(CancellableContinuation $cont, long nanos) {
+    public static final void m1660postFrameCallback$lambda6(CancellableContinuation $cont, long nanos) {
         $cont.resumeUndispatched(Dispatchers.getMain(), Long.valueOf(nanos));
     }
 }

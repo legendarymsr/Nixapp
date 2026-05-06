@@ -62,7 +62,7 @@ final class UIntProgressionIterator implements Iterator<UInt>, KMappedMarker {
             r0 = r1
         L18:
             r3.hasNext = r0
-            int r0 = kotlin.UInt.m250constructorimpl(r6)
+            int r0 = kotlin.UInt.m252constructorimpl(r6)
             r3.step = r0
             boolean r0 = r3.hasNext
             if (r0 == 0) goto L26
@@ -79,7 +79,7 @@ final class UIntProgressionIterator implements Iterator<UInt>, KMappedMarker {
 
     @Override // java.util.Iterator
     public /* bridge */ /* synthetic */ UInt next() {
-        return UInt.m244boximpl(m1393nextpVg5ArA());
+        return UInt.m246boximpl(m1395nextpVg5ArA());
     }
 
     @Override // java.util.Iterator
@@ -88,7 +88,7 @@ final class UIntProgressionIterator implements Iterator<UInt>, KMappedMarker {
     }
 
     /* renamed from: next-pVg5ArA, reason: not valid java name */
-    public int m1393nextpVg5ArA() {
+    public int m1395nextpVg5ArA() {
         int value = this.next;
         if (value == this.finalElement) {
             if (!this.hasNext) {
@@ -96,7 +96,7 @@ final class UIntProgressionIterator implements Iterator<UInt>, KMappedMarker {
             }
             this.hasNext = false;
         } else {
-            this.next = UInt.m250constructorimpl(this.next + this.step);
+            this.next = UInt.m252constructorimpl(this.next + this.step);
         }
         return value;
     }

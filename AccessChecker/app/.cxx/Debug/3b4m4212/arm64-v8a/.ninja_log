@@ -1,0 +1,3 @@
+# ninja log v5
+0	99	1778096697949333880	CMakeFiles/accesschecker_native.dir/native_checks.c.o	3abb3a47347e55f7
+100	120	1778096697973568870	/home/user/Nixapp/AccessChecker/app/build/intermediates/cxx/Debug/3b4m4212/obj/arm64-v8a/libaccesschecker_native.so	b8f8a63337563a3c

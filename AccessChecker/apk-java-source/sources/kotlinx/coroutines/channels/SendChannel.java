@@ -29,7 +29,7 @@ public interface SendChannel<E> {
     Object send(E e, Continuation<? super Unit> continuation);
 
     /* renamed from: trySend-JP2dKIU */
-    Object mo1662trySendJP2dKIU(E element);
+    Object mo1664trySendJP2dKIU(E element);
 
     /* compiled from: Channel.kt */
     @Metadata(k = 3, mv = {1, 6, 0}, xi = ConstraintLayout.LayoutParams.Table.LAYOUT_CONSTRAINT_VERTICAL_CHAINSTYLE)
@@ -50,15 +50,15 @@ public interface SendChannel<E> {
         /* JADX WARN: Multi-variable type inference failed */
         @Deprecated(level = DeprecationLevel.ERROR, message = "Deprecated in the favour of 'trySend' method", replaceWith = @ReplaceWith(expression = "trySend(element).isSuccess", imports = {}))
         public static <E> boolean offer(SendChannel<? super E> sendChannel, E e) {
-            Object result = sendChannel.mo1662trySendJP2dKIU(e);
-            if (ChannelResult.m1677isSuccessimpl(result)) {
+            Object result = sendChannel.mo1664trySendJP2dKIU(e);
+            if (ChannelResult.m1679isSuccessimpl(result)) {
                 return true;
             }
-            Throwable m1671exceptionOrNullimpl = ChannelResult.m1671exceptionOrNullimpl(result);
-            if (m1671exceptionOrNullimpl == null) {
+            Throwable m1673exceptionOrNullimpl = ChannelResult.m1673exceptionOrNullimpl(result);
+            if (m1673exceptionOrNullimpl == null) {
                 return false;
             }
-            throw StackTraceRecoveryKt.recoverStackTrace(m1671exceptionOrNullimpl);
+            throw StackTraceRecoveryKt.recoverStackTrace(m1673exceptionOrNullimpl);
         }
     }
 }

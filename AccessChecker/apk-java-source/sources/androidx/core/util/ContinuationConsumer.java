@@ -24,7 +24,7 @@ final class ContinuationConsumer<T> extends AtomicBoolean implements Consumer<T>
         if (compareAndSet(false, true)) {
             Continuation<T> continuation = this.continuation;
             Result.Companion companion = Result.INSTANCE;
-            continuation.resumeWith(Result.m155constructorimpl(value));
+            continuation.resumeWith(Result.m157constructorimpl(value));
         }
     }
 

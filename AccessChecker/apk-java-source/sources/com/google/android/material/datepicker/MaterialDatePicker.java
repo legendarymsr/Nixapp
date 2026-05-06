@@ -405,13 +405,13 @@ public final class MaterialDatePicker<S> extends DialogFragment {
         this.headerToggleButton.setOnClickListener(new View.OnClickListener() { // from class: com.google.android.material.datepicker.MaterialDatePicker$$ExternalSyntheticLambda0
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                MaterialDatePicker.this.m109x8a93f18a(view);
+                MaterialDatePicker.this.m111x8a93f18a(view);
             }
         });
     }
 
     /* renamed from: lambda$initHeaderToggle$0$com-google-android-material-datepicker-MaterialDatePicker, reason: not valid java name */
-    /* synthetic */ void m109x8a93f18a(View v) {
+    /* synthetic */ void m111x8a93f18a(View v) {
         this.confirmButton.setEnabled(getDateSelector().isSelectionComplete());
         this.headerToggleButton.toggle();
         this.inputMode = this.inputMode == 1 ? 0 : 1;

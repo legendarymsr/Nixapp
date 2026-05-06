@@ -97,7 +97,7 @@ public abstract class DispatchedTask<T> extends Task {
                             try {
                                 if (continuation instanceof CoroutineStackFrame) {
                                     cancellationException = StackTraceRecoveryKt.recoverFromStackFrame(cause, (CoroutineStackFrame) continuation);
-                                    continuation.resumeWith(Result.m155constructorimpl(ResultKt.createFailure(cancellationException)));
+                                    continuation.resumeWith(Result.m157constructorimpl(ResultKt.createFailure(cancellationException)));
                                 }
                             } catch (Throwable th2) {
                                 th = th2;
@@ -108,13 +108,13 @@ public abstract class DispatchedTask<T> extends Task {
                             }
                         }
                         cancellationException = cause;
-                        continuation.resumeWith(Result.m155constructorimpl(ResultKt.createFailure(cancellationException)));
+                        continuation.resumeWith(Result.m157constructorimpl(ResultKt.createFailure(cancellationException)));
                     } else if (exception != null) {
                         Result.Companion companion2 = Result.INSTANCE;
-                        continuation.resumeWith(Result.m155constructorimpl(ResultKt.createFailure(exception)));
+                        continuation.resumeWith(Result.m157constructorimpl(ResultKt.createFailure(exception)));
                     } else {
                         Result.Companion companion3 = Result.INSTANCE;
-                        continuation.resumeWith(Result.m155constructorimpl(getSuccessfulResult$kotlinx_coroutines_core(state)));
+                        continuation.resumeWith(Result.m157constructorimpl(getSuccessfulResult$kotlinx_coroutines_core(state)));
                     }
                     Unit unit = Unit.INSTANCE;
                     if (undispatchedCompletion$iv == null || undispatchedCompletion$iv.clearThreadContext()) {
@@ -124,12 +124,12 @@ public abstract class DispatchedTask<T> extends Task {
                         Result.Companion companion4 = Result.INSTANCE;
                         DispatchedTask<T> dispatchedTask = this;
                         taskContext.afterTask();
-                        result = Result.m155constructorimpl(Unit.INSTANCE);
+                        result = Result.m157constructorimpl(Unit.INSTANCE);
                     } catch (Throwable th3) {
                         th = th3;
                         Result.Companion companion5 = Result.INSTANCE;
-                        result = Result.m155constructorimpl(ResultKt.createFailure(th));
-                        handleFatalException(fatalException, Result.m158exceptionOrNullimpl(result));
+                        result = Result.m157constructorimpl(ResultKt.createFailure(th));
+                        handleFatalException(fatalException, Result.m160exceptionOrNullimpl(result));
                     }
                 } catch (Throwable th4) {
                     th = th4;
@@ -142,15 +142,15 @@ public abstract class DispatchedTask<T> extends Task {
             try {
                 Result.Companion companion6 = Result.INSTANCE;
                 taskContext.afterTask();
-                result = Result.m155constructorimpl(Unit.INSTANCE);
+                result = Result.m157constructorimpl(Unit.INSTANCE);
             } catch (Throwable th6) {
                 th = th6;
                 Result.Companion companion52 = Result.INSTANCE;
-                result = Result.m155constructorimpl(ResultKt.createFailure(th));
-                handleFatalException(fatalException, Result.m158exceptionOrNullimpl(result));
+                result = Result.m157constructorimpl(ResultKt.createFailure(th));
+                handleFatalException(fatalException, Result.m160exceptionOrNullimpl(result));
             }
         }
-        handleFatalException(fatalException, Result.m158exceptionOrNullimpl(result));
+        handleFatalException(fatalException, Result.m160exceptionOrNullimpl(result));
     }
 
     public final void handleFatalException(Throwable exception, Throwable finallyException) {

@@ -41,12 +41,12 @@ class DropdownMenuEndIconDelegate extends EndIconDelegate {
     private final AccessibilityManagerCompat.TouchExplorationStateChangeListener touchExplorationStateChangeListener;
 
     /* renamed from: lambda$new$0$com-google-android-material-textfield-DropdownMenuEndIconDelegate, reason: not valid java name */
-    /* synthetic */ void m140xd03fedd4(View view) {
+    /* synthetic */ void m142xd03fedd4(View view) {
         showHideDropdown();
     }
 
     /* renamed from: lambda$new$1$com-google-android-material-textfield-DropdownMenuEndIconDelegate, reason: not valid java name */
-    /* synthetic */ void m141xac016995(View view, boolean hasFocus) {
+    /* synthetic */ void m143xac016995(View view, boolean hasFocus) {
         this.editTextHasFocus = hasFocus;
         refreshIconState();
         if (!hasFocus) {
@@ -56,7 +56,7 @@ class DropdownMenuEndIconDelegate extends EndIconDelegate {
     }
 
     /* renamed from: lambda$new$2$com-google-android-material-textfield-DropdownMenuEndIconDelegate, reason: not valid java name */
-    /* synthetic */ void m142x87c2e556(boolean enabled) {
+    /* synthetic */ void m144x87c2e556(boolean enabled) {
         if (this.autoCompleteTextView != null && !EditTextUtils.isEditable(this.autoCompleteTextView)) {
             ViewCompat.setImportantForAccessibility(this.endIconView, enabled ? 2 : 1);
         }
@@ -67,19 +67,19 @@ class DropdownMenuEndIconDelegate extends EndIconDelegate {
         this.onIconClickListener = new View.OnClickListener() { // from class: com.google.android.material.textfield.DropdownMenuEndIconDelegate$$ExternalSyntheticLambda0
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                DropdownMenuEndIconDelegate.this.m140xd03fedd4(view);
+                DropdownMenuEndIconDelegate.this.m142xd03fedd4(view);
             }
         };
         this.onEditTextFocusChangeListener = new View.OnFocusChangeListener() { // from class: com.google.android.material.textfield.DropdownMenuEndIconDelegate$$ExternalSyntheticLambda1
             @Override // android.view.View.OnFocusChangeListener
             public final void onFocusChange(View view, boolean z) {
-                DropdownMenuEndIconDelegate.this.m141xac016995(view, z);
+                DropdownMenuEndIconDelegate.this.m143xac016995(view, z);
             }
         };
         this.touchExplorationStateChangeListener = new AccessibilityManagerCompat.TouchExplorationStateChangeListener() { // from class: com.google.android.material.textfield.DropdownMenuEndIconDelegate$$ExternalSyntheticLambda2
             @Override // androidx.core.view.accessibility.AccessibilityManagerCompat.TouchExplorationStateChangeListener
             public final void onTouchExplorationStateChanged(boolean z) {
-                DropdownMenuEndIconDelegate.this.m142x87c2e556(z);
+                DropdownMenuEndIconDelegate.this.m144x87c2e556(z);
             }
         };
         this.dropdownPopupActivatedAt = Long.MAX_VALUE;
@@ -173,13 +173,13 @@ class DropdownMenuEndIconDelegate extends EndIconDelegate {
         this.autoCompleteTextView.post(new Runnable() { // from class: com.google.android.material.textfield.DropdownMenuEndIconDelegate$$ExternalSyntheticLambda4
             @Override // java.lang.Runnable
             public final void run() {
-                DropdownMenuEndIconDelegate.this.m138xae660ff2();
+                DropdownMenuEndIconDelegate.this.m140xae660ff2();
             }
         });
     }
 
     /* renamed from: lambda$afterEditTextChanged$3$com-google-android-material-textfield-DropdownMenuEndIconDelegate, reason: not valid java name */
-    /* synthetic */ void m138xae660ff2() {
+    /* synthetic */ void m140xae660ff2() {
         boolean isPopupShowing = this.autoCompleteTextView.isPopupShowing();
         setEndIconChecked(isPopupShowing);
         this.dropdownPopupDirty = isPopupShowing;
@@ -242,14 +242,14 @@ class DropdownMenuEndIconDelegate extends EndIconDelegate {
         this.autoCompleteTextView.setOnTouchListener(new View.OnTouchListener() { // from class: com.google.android.material.textfield.DropdownMenuEndIconDelegate$$ExternalSyntheticLambda5
             @Override // android.view.View.OnTouchListener
             public final boolean onTouch(View view, MotionEvent motionEvent) {
-                return DropdownMenuEndIconDelegate.this.m143x5f2e2537(view, motionEvent);
+                return DropdownMenuEndIconDelegate.this.m145x5f2e2537(view, motionEvent);
             }
         });
         if (IS_LOLLIPOP) {
             this.autoCompleteTextView.setOnDismissListener(new AutoCompleteTextView.OnDismissListener() { // from class: com.google.android.material.textfield.DropdownMenuEndIconDelegate$$ExternalSyntheticLambda6
                 @Override // android.widget.AutoCompleteTextView.OnDismissListener
                 public final void onDismiss() {
-                    DropdownMenuEndIconDelegate.this.m144x3aefa0f8();
+                    DropdownMenuEndIconDelegate.this.m146x3aefa0f8();
                 }
             });
         }
@@ -257,7 +257,7 @@ class DropdownMenuEndIconDelegate extends EndIconDelegate {
     }
 
     /* renamed from: lambda$setUpDropdownShowHideBehavior$4$com-google-android-material-textfield-DropdownMenuEndIconDelegate, reason: not valid java name */
-    /* synthetic */ boolean m143x5f2e2537(View view, MotionEvent event) {
+    /* synthetic */ boolean m145x5f2e2537(View view, MotionEvent event) {
         if (event.getAction() == 1) {
             if (isDropdownPopupActive()) {
                 this.dropdownPopupDirty = false;
@@ -269,7 +269,7 @@ class DropdownMenuEndIconDelegate extends EndIconDelegate {
     }
 
     /* renamed from: lambda$setUpDropdownShowHideBehavior$5$com-google-android-material-textfield-DropdownMenuEndIconDelegate, reason: not valid java name */
-    /* synthetic */ void m144x3aefa0f8() {
+    /* synthetic */ void m146x3aefa0f8() {
         updateDropdownPopupDirty();
         setEndIconChecked(false);
     }
@@ -318,14 +318,14 @@ class DropdownMenuEndIconDelegate extends EndIconDelegate {
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.google.android.material.textfield.DropdownMenuEndIconDelegate$$ExternalSyntheticLambda3
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                DropdownMenuEndIconDelegate.this.m139x6b943a83(valueAnimator);
+                DropdownMenuEndIconDelegate.this.m141x6b943a83(valueAnimator);
             }
         });
         return animator;
     }
 
     /* renamed from: lambda$getAlphaAnimator$6$com-google-android-material-textfield-DropdownMenuEndIconDelegate, reason: not valid java name */
-    /* synthetic */ void m139x6b943a83(ValueAnimator animation) {
+    /* synthetic */ void m141x6b943a83(ValueAnimator animation) {
         float alpha = ((Float) animation.getAnimatedValue()).floatValue();
         this.endIconView.setAlpha(alpha);
     }

@@ -200,7 +200,7 @@ class MaterialCardViewHelper {
         this.iconAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.google.android.material.card.MaterialCardViewHelper$$ExternalSyntheticLambda0
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                MaterialCardViewHelper.this.m60xa4d79c2b(valueAnimator);
+                MaterialCardViewHelper.this.m62xa4d79c2b(valueAnimator);
             }
         });
         this.iconAnimator.setInterpolator(this.iconFadeAnimInterpolator);
@@ -215,7 +215,7 @@ class MaterialCardViewHelper {
     }
 
     /* renamed from: lambda$animateCheckedIcon$0$com-google-android-material-card-MaterialCardViewHelper, reason: not valid java name */
-    /* synthetic */ void m60xa4d79c2b(ValueAnimator animation) {
+    /* synthetic */ void m62xa4d79c2b(ValueAnimator animation) {
         float progress = ((Float) animation.getAnimatedValue()).floatValue();
         int alpha = (int) (255.0f * progress);
         this.checkedIcon.setAlpha(alpha);

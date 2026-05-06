@@ -25,8 +25,8 @@ public final class TimeoutKt {
     }
 
     /* renamed from: withTimeout-KLykuaI, reason: not valid java name */
-    public static final <T> Object m1654withTimeoutKLykuaI(long timeout, Function2<? super CoroutineScope, ? super Continuation<? super T>, ? extends Object> function2, Continuation<? super T> continuation) {
-        return withTimeout(DelayKt.m1645toDelayMillisLRDsOJo(timeout), function2, continuation);
+    public static final <T> Object m1656withTimeoutKLykuaI(long timeout, Function2<? super CoroutineScope, ? super Continuation<? super T>, ? extends Object> function2, Continuation<? super T> continuation) {
+        return withTimeout(DelayKt.m1647toDelayMillisLRDsOJo(timeout), function2, continuation);
     }
 
     /* JADX WARN: Removed duplicated region for block: B:11:0x002e  */
@@ -133,8 +133,8 @@ public final class TimeoutKt {
     }
 
     /* renamed from: withTimeoutOrNull-KLykuaI, reason: not valid java name */
-    public static final <T> Object m1655withTimeoutOrNullKLykuaI(long timeout, Function2<? super CoroutineScope, ? super Continuation<? super T>, ? extends Object> function2, Continuation<? super T> continuation) {
-        return withTimeoutOrNull(DelayKt.m1645toDelayMillisLRDsOJo(timeout), function2, continuation);
+    public static final <T> Object m1657withTimeoutOrNullKLykuaI(long timeout, Function2<? super CoroutineScope, ? super Continuation<? super T>, ? extends Object> function2, Continuation<? super T> continuation) {
+        return withTimeoutOrNull(DelayKt.m1647toDelayMillisLRDsOJo(timeout), function2, continuation);
     }
 
     private static final <U, T extends U> Object setupTimeout(TimeoutCoroutine<U, ? super T> timeoutCoroutine, Function2<? super CoroutineScope, ? super Continuation<? super T>, ? extends Object> function2) {

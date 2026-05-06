@@ -66,7 +66,7 @@ class TimePickerView extends ConstraintLayout implements TimePickerControls {
         this.toggle.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() { // from class: com.google.android.material.timepicker.TimePickerView$$ExternalSyntheticLambda0
             @Override // com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener
             public final void onButtonChecked(MaterialButtonToggleGroup materialButtonToggleGroup, int i, boolean z) {
-                TimePickerView.this.m150x9f44237d(materialButtonToggleGroup, i, z);
+                TimePickerView.this.m152x9f44237d(materialButtonToggleGroup, i, z);
             }
         });
         this.minuteView = (Chip) findViewById(R.id.material_minute_tv);
@@ -77,7 +77,7 @@ class TimePickerView extends ConstraintLayout implements TimePickerControls {
     }
 
     /* renamed from: lambda$new$0$com-google-android-material-timepicker-TimePickerView, reason: not valid java name */
-    /* synthetic */ void m150x9f44237d(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+    /* synthetic */ void m152x9f44237d(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
         if (isChecked && this.onPeriodChangeListener != null) {
             int period = checkedId == R.id.material_clock_period_pm_button ? 1 : 0;
             this.onPeriodChangeListener.onPeriodChange(period);

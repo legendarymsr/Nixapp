@@ -24,9 +24,9 @@ public final class ThreadPoolDispatcherKt {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(nThreads, new ThreadFactory() { // from class: kotlinx.coroutines.ThreadPoolDispatcherKt$$ExternalSyntheticLambda0
             @Override // java.util.concurrent.ThreadFactory
             public final Thread newThread(Runnable runnable) {
-                Thread m1653newFixedThreadPoolContext$lambda1;
-                m1653newFixedThreadPoolContext$lambda1 = ThreadPoolDispatcherKt.m1653newFixedThreadPoolContext$lambda1(nThreads, name, threadNo, runnable);
-                return m1653newFixedThreadPoolContext$lambda1;
+                Thread m1655newFixedThreadPoolContext$lambda1;
+                m1655newFixedThreadPoolContext$lambda1 = ThreadPoolDispatcherKt.m1655newFixedThreadPoolContext$lambda1(nThreads, name, threadNo, runnable);
+                return m1655newFixedThreadPoolContext$lambda1;
             }
         });
         return ExecutorsKt.from((ExecutorService) executor);
@@ -34,7 +34,7 @@ public final class ThreadPoolDispatcherKt {
 
     /* JADX INFO: Access modifiers changed from: private */
     /* renamed from: newFixedThreadPoolContext$lambda-1, reason: not valid java name */
-    public static final Thread m1653newFixedThreadPoolContext$lambda1(int $nThreads, String $name, AtomicInteger $threadNo, Runnable runnable) {
+    public static final Thread m1655newFixedThreadPoolContext$lambda1(int $nThreads, String $name, AtomicInteger $threadNo, Runnable runnable) {
         Thread t = new Thread(runnable, $nThreads == 1 ? $name : $name + '-' + $threadNo.incrementAndGet());
         t.setDaemon(true);
         return t;

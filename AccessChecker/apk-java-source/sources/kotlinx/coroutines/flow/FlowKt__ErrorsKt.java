@@ -18,7 +18,7 @@ import kotlinx.coroutines.internal.StackTraceRecoveryKt;
 /* loaded from: classes.dex */
 final /* synthetic */ class FlowKt__ErrorsKt {
     /* renamed from: catch, reason: not valid java name */
-    public static final <T> Flow<T> m1692catch(Flow<? extends T> flow, Function3<? super FlowCollector<? super T>, ? super Throwable, ? super Continuation<? super Unit>, ? extends Object> function3) {
+    public static final <T> Flow<T> m1694catch(Flow<? extends T> flow, Function3<? super FlowCollector<? super T>, ? super Throwable, ? super Continuation<? super Unit>, ? extends Object> function3) {
         return new FlowKt__ErrorsKt$catch$$inlined$unsafeFlow$1(flow, function3);
     }
 

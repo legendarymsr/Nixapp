@@ -377,14 +377,14 @@ public class TextInputLayout extends LinearLayout implements ViewTreeObserver.On
             this.editText.post(new Runnable() { // from class: com.google.android.material.textfield.TextInputLayout$$ExternalSyntheticLambda0
                 @Override // java.lang.Runnable
                 public final void run() {
-                    TextInputLayout.this.m146xa47602b9();
+                    TextInputLayout.this.m148xa47602b9();
                 }
             });
         }
     }
 
     /* renamed from: lambda$onGlobalLayout$1$com-google-android-material-textfield-TextInputLayout, reason: not valid java name */
-    /* synthetic */ void m146xa47602b9() {
+    /* synthetic */ void m148xa47602b9() {
         this.editText.requestLayout();
     }
 

@@ -17,14 +17,14 @@ public interface ComparableTimeMark extends TimeMark, Comparable<ComparableTimeM
 
     @Override // kotlin.time.TimeMark
     /* renamed from: minus-LRDsOJo */
-    ComparableTimeMark mo1471minusLRDsOJo(long duration);
+    ComparableTimeMark mo1473minusLRDsOJo(long duration);
 
     /* renamed from: minus-UwyO8pc */
-    long mo1472minusUwyO8pc(ComparableTimeMark other);
+    long mo1474minusUwyO8pc(ComparableTimeMark other);
 
     @Override // kotlin.time.TimeMark
     /* renamed from: plus-LRDsOJo */
-    ComparableTimeMark mo1473plusLRDsOJo(long duration);
+    ComparableTimeMark mo1475plusLRDsOJo(long duration);
 
     /* compiled from: TimeSource.kt */
     @Metadata(k = 3, mv = {1, 8, 0}, xi = ConstraintLayout.LayoutParams.Table.LAYOUT_CONSTRAINT_VERTICAL_CHAINSTYLE)
@@ -38,13 +38,13 @@ public interface ComparableTimeMark extends TimeMark, Comparable<ComparableTimeM
         }
 
         /* renamed from: minus-LRDsOJo, reason: not valid java name */
-        public static ComparableTimeMark m1476minusLRDsOJo(ComparableTimeMark $this, long duration) {
-            return $this.mo1473plusLRDsOJo(Duration.m1533unaryMinusUwyO8pc(duration));
+        public static ComparableTimeMark m1478minusLRDsOJo(ComparableTimeMark $this, long duration) {
+            return $this.mo1475plusLRDsOJo(Duration.m1535unaryMinusUwyO8pc(duration));
         }
 
         public static int compareTo(ComparableTimeMark $this, ComparableTimeMark other) {
             Intrinsics.checkNotNullParameter(other, "other");
-            return Duration.m1480compareToLRDsOJo($this.mo1472minusUwyO8pc(other), Duration.INSTANCE.m1583getZEROUwyO8pc());
+            return Duration.m1482compareToLRDsOJo($this.mo1474minusUwyO8pc(other), Duration.INSTANCE.m1585getZEROUwyO8pc());
         }
     }
 }

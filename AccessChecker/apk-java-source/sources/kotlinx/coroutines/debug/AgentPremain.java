@@ -26,17 +26,17 @@ public final class AgentPremain {
     }
 
     static {
-        Object m155constructorimpl;
+        Object m157constructorimpl;
         AgentPremain agentPremain = INSTANCE;
         try {
             Result.Companion companion = Result.INSTANCE;
             String property = System.getProperty("kotlinx.coroutines.debug.enable.creation.stack.trace");
-            m155constructorimpl = Result.m155constructorimpl(property != null ? Boolean.valueOf(Boolean.parseBoolean(property)) : null);
+            m157constructorimpl = Result.m157constructorimpl(property != null ? Boolean.valueOf(Boolean.parseBoolean(property)) : null);
         } catch (Throwable th) {
             Result.Companion companion2 = Result.INSTANCE;
-            m155constructorimpl = Result.m155constructorimpl(ResultKt.createFailure(th));
+            m157constructorimpl = Result.m157constructorimpl(ResultKt.createFailure(th));
         }
-        Boolean bool = (Boolean) (Result.m161isFailureimpl(m155constructorimpl) ? null : m155constructorimpl);
+        Boolean bool = (Boolean) (Result.m163isFailureimpl(m157constructorimpl) ? null : m157constructorimpl);
         enableCreationStackTraces = bool != null ? bool.booleanValue() : DebugProbesImpl.INSTANCE.getEnableCreationStackTraces();
     }
 
@@ -70,7 +70,7 @@ public final class AgentPremain {
         try {
             Signal.handle(new Signal("TRAP"), new SignalHandler() { // from class: kotlinx.coroutines.debug.AgentPremain$$ExternalSyntheticLambda0
                 public final void handle(Signal signal) {
-                    AgentPremain.m1684installSignalHandler$lambda1(signal);
+                    AgentPremain.m1686installSignalHandler$lambda1(signal);
                 }
             });
         } catch (Throwable th) {
@@ -79,7 +79,7 @@ public final class AgentPremain {
 
     /* JADX INFO: Access modifiers changed from: private */
     /* renamed from: installSignalHandler$lambda-1, reason: not valid java name */
-    public static final void m1684installSignalHandler$lambda1(Signal it) {
+    public static final void m1686installSignalHandler$lambda1(Signal it) {
         if (DebugProbesImpl.INSTANCE.isInstalled$kotlinx_coroutines_core()) {
             DebugProbesImpl.INSTANCE.dumpCoroutines(System.out);
         } else {

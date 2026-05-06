@@ -21,27 +21,27 @@ public final class UIntRange extends UIntProgression implements ClosedRange<UInt
 
     @Deprecated(message = "Can throw an exception when it's impossible to represent the value with UInt type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     /* renamed from: getEndExclusive-pVg5ArA$annotations, reason: not valid java name */
-    public static /* synthetic */ void m1394getEndExclusivepVg5ArA$annotations() {
+    public static /* synthetic */ void m1396getEndExclusivepVg5ArA$annotations() {
     }
 
     @Override // kotlin.ranges.ClosedRange
     public /* bridge */ /* synthetic */ boolean contains(UInt uInt) {
-        return m1395containsWZ4Q5Ns(uInt.getData());
+        return m1397containsWZ4Q5Ns(uInt.getData());
     }
 
     @Override // kotlin.ranges.OpenEndRange
     public /* bridge */ /* synthetic */ UInt getEndExclusive() {
-        return UInt.m244boximpl(m1396getEndExclusivepVg5ArA());
+        return UInt.m246boximpl(m1398getEndExclusivepVg5ArA());
     }
 
     @Override // kotlin.ranges.ClosedRange
     public /* bridge */ /* synthetic */ UInt getEndInclusive() {
-        return UInt.m244boximpl(m1397getEndInclusivepVg5ArA());
+        return UInt.m246boximpl(m1399getEndInclusivepVg5ArA());
     }
 
     @Override // kotlin.ranges.ClosedRange
     public /* bridge */ /* synthetic */ UInt getStart() {
-        return UInt.m244boximpl(m1398getStartpVg5ArA());
+        return UInt.m246boximpl(m1400getStartpVg5ArA());
     }
 
     private UIntRange(int start, int endInclusive) {
@@ -49,25 +49,25 @@ public final class UIntRange extends UIntProgression implements ClosedRange<UInt
     }
 
     /* renamed from: getStart-pVg5ArA, reason: not valid java name */
-    public int m1398getStartpVg5ArA() {
+    public int m1400getStartpVg5ArA() {
         return getFirst();
     }
 
     /* renamed from: getEndInclusive-pVg5ArA, reason: not valid java name */
-    public int m1397getEndInclusivepVg5ArA() {
+    public int m1399getEndInclusivepVg5ArA() {
         return getLast();
     }
 
     /* renamed from: getEndExclusive-pVg5ArA, reason: not valid java name */
-    public int m1396getEndExclusivepVg5ArA() {
+    public int m1398getEndExclusivepVg5ArA() {
         if (getLast() == -1) {
             throw new IllegalStateException("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.".toString());
         }
-        return UInt.m250constructorimpl(getLast() + 1);
+        return UInt.m252constructorimpl(getLast() + 1);
     }
 
     /* renamed from: contains-WZ4Q5Ns, reason: not valid java name */
-    public boolean m1395containsWZ4Q5Ns(int value) {
+    public boolean m1397containsWZ4Q5Ns(int value) {
         int compare;
         int compare2;
         compare = Integer.compare(getFirst() ^ Integer.MIN_VALUE, value ^ Integer.MIN_VALUE);
@@ -102,7 +102,7 @@ public final class UIntRange extends UIntProgression implements ClosedRange<UInt
 
     @Override // kotlin.ranges.UIntProgression
     public String toString() {
-        return ((Object) UInt.m296toStringimpl(getFirst())) + ".." + ((Object) UInt.m296toStringimpl(getLast()));
+        return ((Object) UInt.m298toStringimpl(getFirst())) + ".." + ((Object) UInt.m298toStringimpl(getLast()));
     }
 
     /* compiled from: UIntRange.kt */

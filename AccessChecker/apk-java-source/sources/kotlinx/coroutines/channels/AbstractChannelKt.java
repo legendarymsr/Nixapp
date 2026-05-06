@@ -36,10 +36,10 @@ public final class AbstractChannelKt {
     }
 
     private static final <E> Object toResult(Object $this$toResult) {
-        return $this$toResult instanceof Closed ? ChannelResult.INSTANCE.m1680closedJP2dKIU(((Closed) $this$toResult).closeCause) : ChannelResult.INSTANCE.m1682successJP2dKIU($this$toResult);
+        return $this$toResult instanceof Closed ? ChannelResult.INSTANCE.m1682closedJP2dKIU(((Closed) $this$toResult).closeCause) : ChannelResult.INSTANCE.m1684successJP2dKIU($this$toResult);
     }
 
     private static final <E> Object toResult(Closed<?> closed) {
-        return ChannelResult.INSTANCE.m1680closedJP2dKIU(closed.closeCause);
+        return ChannelResult.INSTANCE.m1682closedJP2dKIU(closed.closeCause);
     }
 }

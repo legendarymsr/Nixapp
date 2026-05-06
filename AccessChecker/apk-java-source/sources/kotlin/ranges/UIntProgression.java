@@ -31,7 +31,7 @@ public class UIntProgression implements Iterable<UInt>, KMappedMarker {
             throw new IllegalArgumentException("Step must be greater than Int.MIN_VALUE to avoid overflow on negation.");
         }
         this.first = start;
-        this.last = UProgressionUtilKt.m1376getProgressionLastElementNkh28Cs(start, endInclusive, step);
+        this.last = UProgressionUtilKt.m1378getProgressionLastElementNkh28Cs(start, endInclusive, step);
         this.step = step;
     }
 
@@ -86,10 +86,10 @@ public class UIntProgression implements Iterable<UInt>, KMappedMarker {
         StringBuilder append;
         int i;
         if (this.step > 0) {
-            append = new StringBuilder().append((Object) UInt.m296toStringimpl(this.first)).append("..").append((Object) UInt.m296toStringimpl(this.last)).append(" step ");
+            append = new StringBuilder().append((Object) UInt.m298toStringimpl(this.first)).append("..").append((Object) UInt.m298toStringimpl(this.last)).append(" step ");
             i = this.step;
         } else {
-            append = new StringBuilder().append((Object) UInt.m296toStringimpl(this.first)).append(" downTo ").append((Object) UInt.m296toStringimpl(this.last)).append(" step ");
+            append = new StringBuilder().append((Object) UInt.m298toStringimpl(this.first)).append(" downTo ").append((Object) UInt.m298toStringimpl(this.last)).append(" step ");
             i = -this.step;
         }
         return append.append(i).toString();
@@ -106,7 +106,7 @@ public class UIntProgression implements Iterable<UInt>, KMappedMarker {
         }
 
         /* renamed from: fromClosedRange-Nkh28Cs, reason: not valid java name */
-        public final UIntProgression m1392fromClosedRangeNkh28Cs(int rangeStart, int rangeEnd, int step) {
+        public final UIntProgression m1394fromClosedRangeNkh28Cs(int rangeStart, int rangeEnd, int step) {
             return new UIntProgression(rangeStart, rangeEnd, step, null);
         }
     }

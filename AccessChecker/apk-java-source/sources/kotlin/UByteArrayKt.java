@@ -14,11 +14,11 @@ public final class UByteArrayKt {
         for (int i = 0; i < size; i++) {
             bArr[i] = init.invoke(Integer.valueOf(i)).getData();
         }
-        return UByteArray.m226constructorimpl(bArr);
+        return UByteArray.m228constructorimpl(bArr);
     }
 
     /* renamed from: ubyteArrayOf-GBYM_sE, reason: not valid java name */
-    private static final byte[] m242ubyteArrayOfGBYM_sE(byte... elements) {
+    private static final byte[] m244ubyteArrayOfGBYM_sE(byte... elements) {
         Intrinsics.checkNotNullParameter(elements, "elements");
         return elements;
     }

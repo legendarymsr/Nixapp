@@ -14,22 +14,22 @@ public final class SegmentOrClosed<S extends Segment<S>> {
     private final Object value;
 
     /* renamed from: box-impl, reason: not valid java name */
-    public static final /* synthetic */ SegmentOrClosed m1709boximpl(Object obj) {
+    public static final /* synthetic */ SegmentOrClosed m1711boximpl(Object obj) {
         return new SegmentOrClosed(obj);
     }
 
     /* renamed from: constructor-impl, reason: not valid java name */
-    public static <S extends Segment<S>> Object m1710constructorimpl(Object obj) {
+    public static <S extends Segment<S>> Object m1712constructorimpl(Object obj) {
         return obj;
     }
 
     /* renamed from: equals-impl, reason: not valid java name */
-    public static boolean m1711equalsimpl(Object obj, Object obj2) {
+    public static boolean m1713equalsimpl(Object obj, Object obj2) {
         return (obj2 instanceof SegmentOrClosed) && Intrinsics.areEqual(obj, ((SegmentOrClosed) obj2).getValue());
     }
 
     /* renamed from: equals-impl0, reason: not valid java name */
-    public static final boolean m1712equalsimpl0(Object obj, Object obj2) {
+    public static final boolean m1714equalsimpl0(Object obj, Object obj2) {
         return Intrinsics.areEqual(obj, obj2);
     }
 
@@ -37,7 +37,7 @@ public final class SegmentOrClosed<S extends Segment<S>> {
     }
 
     /* renamed from: hashCode-impl, reason: not valid java name */
-    public static int m1714hashCodeimpl(Object obj) {
+    public static int m1716hashCodeimpl(Object obj) {
         if (obj == null) {
             return 0;
         }
@@ -45,20 +45,20 @@ public final class SegmentOrClosed<S extends Segment<S>> {
     }
 
     /* renamed from: toString-impl, reason: not valid java name */
-    public static String m1716toStringimpl(Object obj) {
+    public static String m1718toStringimpl(Object obj) {
         return "SegmentOrClosed(value=" + obj + ')';
     }
 
     public boolean equals(Object obj) {
-        return m1711equalsimpl(this.value, obj);
+        return m1713equalsimpl(this.value, obj);
     }
 
     public int hashCode() {
-        return m1714hashCodeimpl(this.value);
+        return m1716hashCodeimpl(this.value);
     }
 
     public String toString() {
-        return m1716toStringimpl(this.value);
+        return m1718toStringimpl(this.value);
     }
 
     /* renamed from: unbox-impl, reason: not valid java name and from getter */
@@ -71,12 +71,12 @@ public final class SegmentOrClosed<S extends Segment<S>> {
     }
 
     /* renamed from: isClosed-impl, reason: not valid java name */
-    public static final boolean m1715isClosedimpl(Object arg0) {
+    public static final boolean m1717isClosedimpl(Object arg0) {
         return arg0 == ConcurrentLinkedListKt.CLOSED;
     }
 
     /* renamed from: getSegment-impl, reason: not valid java name */
-    public static final S m1713getSegmentimpl(Object arg0) {
+    public static final S m1715getSegmentimpl(Object arg0) {
         if (arg0 == ConcurrentLinkedListKt.CLOSED) {
             throw new IllegalStateException("Does not contain segment".toString());
         }

@@ -21,7 +21,7 @@ public final class ConcurrentLinkedListKt {
                 ConcurrentLinkedListNode this_$iv = cur;
                 Object it$iv = this_$iv.get_next();
                 if (it$iv == CLOSED) {
-                    return SegmentOrClosed.m1710constructorimpl(CLOSED);
+                    return SegmentOrClosed.m1712constructorimpl(CLOSED);
                 }
                 Segment next = (Segment) ((ConcurrentLinkedListNode) it$iv);
                 if (next != null) {
@@ -36,7 +36,7 @@ public final class ConcurrentLinkedListKt {
                     }
                 }
             } else {
-                return SegmentOrClosed.m1710constructorimpl(cur);
+                return SegmentOrClosed.m1712constructorimpl(cur);
             }
         }
     }

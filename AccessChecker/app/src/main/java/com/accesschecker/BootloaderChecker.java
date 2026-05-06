@@ -1,41 +1,46 @@
 package com.accesschecker;
 
+import android.os.Build;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyInfo;
+import android.security.keystore.KeyProperties;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Method;
+import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BootloaderChecker {
 
-    public enum Status { LOCKED, UNLOCKED, UNKNOWN }
-
+    public enum Status           { LOCKED, UNLOCKED, UNKNOWN }
     public enum VerifiedBootState { GREEN, YELLOW, ORANGE, RED, UNKNOWN }
 
     public static class Result {
-        public Status status = Status.UNKNOWN;
-        public VerifiedBootState verifiedBoot = VerifiedBootState.UNKNOWN;
-        public boolean dmVerityEnabled = false;
-        public String encryptionState = "unknown";
-        public String encryptionType  = "unknown";
-        public boolean debuggable = false;
-        public boolean propertiesMasked = false;
-        public final List<String> lines = new ArrayList<>();
+        public Status            status          = Status.UNKNOWN;
+        public VerifiedBootState verifiedBoot    = VerifiedBootState.UNKNOWN;
+        public boolean           dmVerityEnabled = false;
+        public String            encryptionState = "unknown";
+        public String            encryptionType  = "unknown";
+        public boolean           debuggable      = false;
+        public boolean           propertiesMasked = false;
+        public boolean           testKeys        = false;
+        public String            hwAttestation   = "unknown";  // "hardware-backed" / "software-only" / "unavailable"
+        public int               confidence      = 0;          // 0-100
+        public final List<String> lines          = new ArrayList<>();
     }
 
-    /**
-     * @param rootResult pass the already-completed RootChecker result so we can
-     *                   use confirmed root as a bootloader-unlock signal. Magisk,
-     *                   KernelSU, and APatch all require an unlocked bootloader.
-     */
     public static Result check(RootChecker.Result rootResult) {
         Result r = new Result();
 
-        // ── 1. /proc/cmdline ─────────────────────────────────────────────
+        // ── 1. /proc/cmdline ──────────────────────────────────────────────
         // Magisk patches the property system via resetprop but does NOT rewrite
-        // the raw kernel cmdline. On devices that pass bootloader state via cmdline
-        // (not DTB) this is the ground truth.
+        // the raw kernel cmdline. On DTB-based devices this field may be absent.
         String cmdline = readProcCmdline();
         if (cmdline != null) {
             if      (cmdline.contains("androidboot.verifiedbootstate=green"))
@@ -47,12 +52,9 @@ public class BootloaderChecker {
             else if (cmdline.contains("androidboot.verifiedbootstate=red"))
                 r.verifiedBoot = VerifiedBootState.RED;
 
-            if      (cmdline.contains("androidboot.flash.locked=0"))
-                r.status = Status.UNLOCKED;
-            else if (cmdline.contains("androidboot.flash.locked=1"))
-                r.status = Status.LOCKED;
+            if      (cmdline.contains("androidboot.flash.locked=0")) r.status = Status.UNLOCKED;
+            else if (cmdline.contains("androidboot.flash.locked=1")) r.status = Status.LOCKED;
 
-            // orange verified boot state → user-signed / custom → unlocked
             if (r.status == Status.UNKNOWN && r.verifiedBoot == VerifiedBootState.ORANGE)
                 r.status = Status.UNLOCKED;
 
@@ -60,7 +62,7 @@ public class BootloaderChecker {
                     || cmdline.contains("androidboot.veritymode");
         }
 
-        // ── 2. System properties (fill gaps; unreliable when Magisk is present) ──
+        // ── 2. System properties (may be masked by Magisk/Tricky Store) ──
         String propVerifiedBoot = getProp("ro.boot.verifiedbootstate");
         String propFlashLocked  = getProp("ro.boot.flash.locked");
         String cryptoState      = getProp("ro.crypto.state");
@@ -78,45 +80,46 @@ public class BootloaderChecker {
             }
         }
         if (r.status == Status.UNKNOWN) {
-            if ("0".equals(propFlashLocked))      r.status = Status.UNLOCKED;
+            if      ("0".equals(propFlashLocked)) r.status = Status.UNLOCKED;
             else if ("1".equals(propFlashLocked)) r.status = Status.LOCKED;
             if (r.status == Status.UNKNOWN && r.verifiedBoot == VerifiedBootState.ORANGE)
                 r.status = Status.UNLOCKED;
         }
 
-        // ── 3. Root manager inference (most reliable on Magisk-patched devices) ─
+        // ── 3. Root manager inference ─────────────────────────────────────
         // Magisk / KernelSU / APatch all require an unlocked bootloader to install.
-        // If su -c id returned uid=0 AND a root manager package is present, the
-        // bootloader is provably unlocked regardless of what properties/cmdline say.
         boolean rootManagerConfirmed = rootResult != null
-                && rootResult.execTestPassed
-                && rootResult.rootManager != null;
+                && rootResult.execTestPassed && rootResult.rootManager != null;
+        boolean rootManagerDetected  = rootResult != null && rootResult.rootManager != null;
+        // Native checks add even stronger evidence
+        boolean rootNativeConfirmed  = rootResult != null
+                && (rootResult.nativeSuPassed || rootResult.magiskSocketFound
+                    || rootResult.kernelSuVfs  || rootResult.apatchVfs);
 
-        // Even just a detected root manager package (even without exec test passing,
-        // e.g. if the app is on Magisk Denylist) is a strong signal.
-        boolean rootManagerDetected = rootResult != null
-                && rootResult.rootManager != null;
-
-        if (rootManagerConfirmed) {
+        if (rootManagerConfirmed || rootNativeConfirmed) {
             if (r.status == Status.LOCKED) r.propertiesMasked = true;
             r.status = Status.UNLOCKED;
-            // Green verified boot means Google's signing keys — impossible on an unlocked BL.
-            // Magisk masked the property; correct it to orange (user-signed / custom).
             if (r.verifiedBoot == VerifiedBootState.GREEN) {
-                r.verifiedBoot = VerifiedBootState.ORANGE;
+                r.verifiedBoot   = VerifiedBootState.ORANGE;
                 r.propertiesMasked = true;
             }
         } else if (rootManagerDetected && r.status == Status.LOCKED) {
-            // Package present but exec test failed (Magisk Denylist hiding su from us).
-            // Still treat as unlocked — the package can't install without it.
             r.propertiesMasked = true;
             r.status = Status.UNLOCKED;
-            if (r.verifiedBoot == VerifiedBootState.GREEN) {
+            if (r.verifiedBoot == VerifiedBootState.GREEN)
                 r.verifiedBoot = VerifiedBootState.ORANGE;
-            }
         }
 
-        // ── 4. Remaining fields ───────────────────────────────────────────
+        // ── 4. Build.TAGS (test-keys = custom/unsigned build) ────────────
+        r.testKeys = "test-keys".equals(Build.TAGS);
+
+        // ── 5. Hardware-backed key attestation ────────────────────────────
+        // Works offline — no internet or Play Services required.
+        // On devices with an unlocked bootloader the TEE is still accessible,
+        // but the attestation certificate won't chain to Google's root CA.
+        r.hwAttestation = checkHardwareAttestation();
+
+        // ── 6. Remaining fields ───────────────────────────────────────────
         if (!r.dmVerityEnabled && "enforcing".equalsIgnoreCase(verityMode))
             r.dmVerityEnabled = true;
 
@@ -126,32 +129,82 @@ public class BootloaderChecker {
                                "block".equalsIgnoreCase(cryptoType) ? "FDE" : cryptoType;
 
         r.debuggable = "1".equals(debuggableProp)
-                || "userdebug".equals(buildType)
-                || "eng".equals(buildType);
+                || "userdebug".equals(buildType) || "eng".equals(buildType);
+
+        // ── Confidence score ──────────────────────────────────────────────
+        int conf = 0;
+        if (r.status == Status.UNLOCKED) {
+            conf += 40;
+            if (rootManagerConfirmed || rootNativeConfirmed) conf += 30;
+            else if (rootManagerDetected)                    conf += 20;
+            if (r.propertiesMasked)                         conf += 20;
+            if (r.verifiedBoot == VerifiedBootState.ORANGE) conf += 10;
+        }
+        r.confidence = Math.min(100, conf);
 
         // ── Detail lines ──────────────────────────────────────────────────
-        r.lines.add("cmdline flash.locked  : " + extractCmdline(cmdline, "androidboot.flash.locked"));
-        r.lines.add("prop flash.locked     : " + nvl(propFlashLocked));
-        r.lines.add("cmdline verifiedboot  : " + extractCmdline(cmdline, "androidboot.verifiedbootstate"));
-        r.lines.add("prop verifiedboot     : " + nvl(propVerifiedBoot));
-        r.lines.add("verified boot state   : " + r.verifiedBoot.name().toLowerCase());
-        r.lines.add("dm-verity             : " + (r.dmVerityEnabled ? "enabled" : "not confirmed"));
-        r.lines.add("encryption            : " + r.encryptionState
-                + (!"unknown".equals(r.encryptionType) ? " (" + r.encryptionType + ")" : ""));
-        r.lines.add("build type            : " + nvl(buildType));
-        r.lines.add("debuggable            : " + r.debuggable);
-        if (rootManagerDetected)
-            r.lines.add("root manager          : " + rootResult.rootManager
-                    + (rootResult.rootManagerVersion != null
-                       ? " v" + rootResult.rootManagerVersion : "")
-                    + " (requires unlocked BL)");
+        r.lines.add("[" + (cmdline != null ? "INFO" : "MISS") + "] /proc/cmdline         : "
+                + (cmdline != null ? "readable" : "unavailable (DTB device)"));
+        r.lines.add("cmdline flash.locked   : " + extractCmdline(cmdline, "androidboot.flash.locked"));
+        r.lines.add("prop flash.locked      : " + nvl(propFlashLocked));
+        r.lines.add("cmdline verifiedboot   : " + extractCmdline(cmdline, "androidboot.verifiedbootstate"));
+        r.lines.add("prop verifiedboot      : " + nvl(propVerifiedBoot));
         if (r.propertiesMasked)
-            r.lines.add("NOTE: props masked by Magisk — BL + verified boot corrected");
+            r.lines.add("[FAIL] prop masking      : Magisk/Tricky Store detected — props corrected");
+        r.lines.add("verified boot state    : " + r.verifiedBoot.name().toLowerCase());
+        r.lines.add("dm-verity              : " + (r.dmVerityEnabled ? "enabled" : "not confirmed"));
+        r.lines.add("encryption             : " + r.encryptionState
+                + (!"unknown".equals(r.encryptionType) ? " (" + r.encryptionType + ")" : ""));
+        r.lines.add("build type             : " + nvl(buildType));
+        r.lines.add("build tags             : " + Build.TAGS
+                + (r.testKeys ? "  ← CUSTOM/UNSIGNED" : ""));
+        r.lines.add("debuggable             : " + r.debuggable);
+        r.lines.add("hw attestation         : " + r.hwAttestation);
+        if (rootManagerDetected)
+            r.lines.add("root manager           : " + rootResult.rootManager
+                    + (rootResult.rootManagerVersion != null ? " v" + rootResult.rootManagerVersion : "")
+                    + " (requires unlocked BL)");
 
         return r;
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────
+    // ── Hardware-backed key attestation ───────────────────────────────────────
+    // Generates a temporary EC key pair in AndroidKeyStore and checks whether
+    // it is stored inside the device's TEE or StrongBox hardware module.
+    private static String checkHardwareAttestation() {
+        try {
+            String alias = "ac_attest_tmp";
+            KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
+            ks.load(null);
+
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                    KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore");
+            kpg.initialize(new KeyGenParameterSpec.Builder(
+                    alias,
+                    KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY)
+                    .setDigests(KeyProperties.DIGEST_SHA256)
+                    .build());
+            kpg.generateKeyPair();
+
+            PrivateKey pk = (PrivateKey) ks.getKey(alias, null);
+            KeyFactory kf = KeyFactory.getInstance(pk.getAlgorithm(), "AndroidKeyStore");
+            KeyInfo ki = kf.getKeySpec(pk, KeyInfo.class);
+
+            boolean hwBacked;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                hwBacked = ki.getSecurityLevel() != KeyProperties.SECURITY_LEVEL_SOFTWARE;
+            } else {
+                hwBacked = ki.isInsideSecureHardware();
+            }
+
+            ks.deleteEntry(alias);
+            return hwBacked ? "hardware-backed (TEE/StrongBox)" : "software-only";
+        } catch (Exception e) {
+            return "unavailable: " + e.getClass().getSimpleName();
+        }
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
     static String getProp(String key) {
         try {

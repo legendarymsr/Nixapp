@@ -1,10 +1,17 @@
 package com.accesschecker;
 
+import android.os.Build;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyInfo;
 import androidx.core.os.EnvironmentCompat;
 import com.accesschecker.RootChecker;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.lang.reflect.Method;
+import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +26,9 @@ public class BootloaderChecker {
         public String encryptionType = EnvironmentCompat.MEDIA_UNKNOWN;
         public boolean debuggable = false;
         public boolean propertiesMasked = false;
+        public boolean testKeys = false;
+        public String hwAttestation = EnvironmentCompat.MEDIA_UNKNOWN;
+        public int confidence = 0;
         public final List<String> lines = new ArrayList();
     }
 
@@ -42,7 +52,6 @@ public class BootloaderChecker {
         char c;
         Result r = new Result();
         String cmdline = readProcCmdline();
-        boolean z = true;
         if (cmdline != null) {
             if (cmdline.contains("androidboot.verifiedbootstate=green")) {
                 r.verifiedBoot = VerifiedBootState.GREEN;
@@ -132,7 +141,8 @@ public class BootloaderChecker {
         }
         boolean rootManagerConfirmed = (rootResult == null || !rootResult.execTestPassed || rootResult.rootManager == null) ? false : true;
         boolean rootManagerDetected = (rootResult == null || rootResult.rootManager == null) ? false : true;
-        if (rootManagerConfirmed) {
+        boolean rootNativeConfirmed = rootResult != null && (rootResult.nativeSuPassed || rootResult.magiskSocketFound || rootResult.kernelSuVfs || rootResult.apatchVfs);
+        if (rootManagerConfirmed || rootNativeConfirmed) {
             if (r.status == Status.LOCKED) {
                 r.propertiesMasked = true;
             }
@@ -148,6 +158,8 @@ public class BootloaderChecker {
                 r.verifiedBoot = VerifiedBootState.ORANGE;
             }
         }
+        r.testKeys = "test-keys".equals(Build.TAGS);
+        r.hwAttestation = checkHardwareAttestation();
         if (!r.dmVerityEnabled && "enforcing".equalsIgnoreCase(verityMode)) {
             r.dmVerityEnabled = true;
         }
@@ -160,26 +172,67 @@ public class BootloaderChecker {
             }
             r.encryptionType = str;
         }
-        if (!"1".equals(debuggableProp) && !"userdebug".equals(buildType) && !"eng".equals(buildType)) {
-            z = false;
+        r.debuggable = "1".equals(debuggableProp) || "userdebug".equals(buildType) || "eng".equals(buildType);
+        int conf = 0;
+        if (r.status == Status.UNLOCKED) {
+            conf = 0 + 40;
+            if (rootManagerConfirmed || rootNativeConfirmed) {
+                conf += 30;
+            } else if (rootManagerDetected) {
+                conf += 20;
+            }
+            if (r.propertiesMasked) {
+                conf += 20;
+            }
+            if (r.verifiedBoot == VerifiedBootState.ORANGE) {
+                conf += 10;
+            }
         }
-        r.debuggable = z;
-        r.lines.add("cmdline flash.locked  : " + extractCmdline(cmdline, "androidboot.flash.locked"));
-        r.lines.add("prop flash.locked     : " + nvl(propFlashLocked));
-        r.lines.add("cmdline verifiedboot  : " + extractCmdline(cmdline, "androidboot.verifiedbootstate"));
-        r.lines.add("prop verifiedboot     : " + nvl(propVerifiedBoot));
-        r.lines.add("verified boot state   : " + r.verifiedBoot.name().toLowerCase());
-        r.lines.add("dm-verity             : " + (r.dmVerityEnabled ? "enabled" : "not confirmed"));
-        r.lines.add("encryption            : " + r.encryptionState + (!EnvironmentCompat.MEDIA_UNKNOWN.equals(r.encryptionType) ? " (" + r.encryptionType + ")" : ""));
-        r.lines.add("build type            : " + nvl(buildType));
-        r.lines.add("debuggable            : " + r.debuggable);
-        if (rootManagerDetected) {
-            r.lines.add("root manager          : " + rootResult.rootManager + (rootResult.rootManagerVersion != null ? " v" + rootResult.rootManagerVersion : "") + " (requires unlocked BL)");
-        }
+        r.confidence = Math.min(100, conf);
+        r.lines.add("[" + (cmdline != null ? "INFO" : "MISS") + "] /proc/cmdline         : " + (cmdline != null ? "readable" : "unavailable (DTB device)"));
+        r.lines.add("cmdline flash.locked   : " + extractCmdline(cmdline, "androidboot.flash.locked"));
+        r.lines.add("prop flash.locked      : " + nvl(propFlashLocked));
+        r.lines.add("cmdline verifiedboot   : " + extractCmdline(cmdline, "androidboot.verifiedbootstate"));
+        r.lines.add("prop verifiedboot      : " + nvl(propVerifiedBoot));
         if (r.propertiesMasked) {
-            r.lines.add("NOTE: props masked by Magisk — BL + verified boot corrected");
+            r.lines.add("[FAIL] prop masking      : Magisk/Tricky Store detected — props corrected");
+        }
+        r.lines.add("verified boot state    : " + r.verifiedBoot.name().toLowerCase());
+        r.lines.add("dm-verity              : " + (r.dmVerityEnabled ? "enabled" : "not confirmed"));
+        r.lines.add("encryption             : " + r.encryptionState + (!EnvironmentCompat.MEDIA_UNKNOWN.equals(r.encryptionType) ? " (" + r.encryptionType + ")" : ""));
+        r.lines.add("build type             : " + nvl(buildType));
+        r.lines.add("build tags             : " + Build.TAGS + (r.testKeys ? "  ← CUSTOM/UNSIGNED" : ""));
+        r.lines.add("debuggable             : " + r.debuggable);
+        r.lines.add("hw attestation         : " + r.hwAttestation);
+        if (rootManagerDetected) {
+            r.lines.add("root manager           : " + rootResult.rootManager + (rootResult.rootManagerVersion != null ? " v" + rootResult.rootManagerVersion : "") + " (requires unlocked BL)");
         }
         return r;
+    }
+
+    private static String checkHardwareAttestation() {
+        try {
+            KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
+            ks.load(null);
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC", "AndroidKeyStore");
+            boolean hwBacked = true;
+            kpg.initialize(new KeyGenParameterSpec.Builder("ac_attest_tmp", 12).setDigests("SHA-256").build());
+            kpg.generateKeyPair();
+            PrivateKey pk = (PrivateKey) ks.getKey("ac_attest_tmp", null);
+            KeyFactory kf = KeyFactory.getInstance(pk.getAlgorithm(), "AndroidKeyStore");
+            KeyInfo ki = (KeyInfo) kf.getKeySpec(pk, KeyInfo.class);
+            if (Build.VERSION.SDK_INT >= 31) {
+                if (ki.getSecurityLevel() == 0) {
+                    hwBacked = false;
+                }
+            } else {
+                hwBacked = ki.isInsideSecureHardware();
+            }
+            ks.deleteEntry("ac_attest_tmp");
+            return hwBacked ? "hardware-backed (TEE/StrongBox)" : "software-only";
+        } catch (Exception e) {
+            return "unavailable: " + e.getClass().getSimpleName();
+        }
     }
 
     static String getProp(String key) {

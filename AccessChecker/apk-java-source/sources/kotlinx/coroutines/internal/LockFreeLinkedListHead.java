@@ -12,7 +12,7 @@ import kotlin.jvm.internal.Intrinsics;
 public class LockFreeLinkedListHead extends LockFreeLinkedListNode {
     @Override // kotlinx.coroutines.internal.LockFreeLinkedListNode
     /* renamed from: remove, reason: collision with other method in class */
-    public /* bridge */ /* synthetic */ boolean mo1706remove() {
+    public /* bridge */ /* synthetic */ boolean mo1708remove() {
         return ((Boolean) remove()).booleanValue();
     }
 

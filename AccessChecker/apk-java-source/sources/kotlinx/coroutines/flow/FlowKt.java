@@ -108,8 +108,8 @@ public final class FlowKt {
     }
 
     /* renamed from: catch, reason: not valid java name */
-    public static final <T> Flow<T> m1685catch(Flow<? extends T> flow, Function3<? super FlowCollector<? super T>, ? super Throwable, ? super Continuation<? super Unit>, ? extends Object> function3) {
-        return FlowKt__ErrorsKt.m1692catch(flow, function3);
+    public static final <T> Flow<T> m1687catch(Flow<? extends T> flow, Function3<? super FlowCollector<? super T>, ? super Throwable, ? super Continuation<? super Unit>, ? extends Object> function3) {
+        return FlowKt__ErrorsKt.m1694catch(flow, function3);
     }
 
     public static final <T> Object catchImpl(Flow<? extends T> flow, FlowCollector<? super T> flowCollector, Continuation<? super Throwable> continuation) {
@@ -233,8 +233,8 @@ public final class FlowKt {
     }
 
     /* renamed from: debounce-HG0u8IE, reason: not valid java name */
-    public static final <T> Flow<T> m1686debounceHG0u8IE(Flow<? extends T> flow, long timeout) {
-        return FlowKt__DelayKt.m1688debounceHG0u8IE(flow, timeout);
+    public static final <T> Flow<T> m1688debounceHG0u8IE(Flow<? extends T> flow, long timeout) {
+        return FlowKt__DelayKt.m1690debounceHG0u8IE(flow, timeout);
     }
 
     public static final <T> Flow<T> debounceDuration(Flow<? extends T> flow, Function1<? super T, Duration> function1) {
@@ -530,8 +530,8 @@ public final class FlowKt {
     }
 
     /* renamed from: sample-HG0u8IE, reason: not valid java name */
-    public static final <T> Flow<T> m1687sampleHG0u8IE(Flow<? extends T> flow, long period) {
-        return FlowKt__DelayKt.m1689sampleHG0u8IE(flow, period);
+    public static final <T> Flow<T> m1689sampleHG0u8IE(Flow<? extends T> flow, long period) {
+        return FlowKt__DelayKt.m1691sampleHG0u8IE(flow, period);
     }
 
     public static final <T, R> Flow<R> scan(Flow<? extends T> flow, R r, Function3<? super R, ? super T, ? super Continuation<? super R>, ? extends Object> function3) {

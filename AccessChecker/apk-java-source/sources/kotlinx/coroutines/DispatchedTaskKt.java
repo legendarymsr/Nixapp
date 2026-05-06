@@ -47,7 +47,7 @@ public final class DispatchedTaskKt {
             CoroutineDispatcher dispatcher = ((DispatchedContinuation) delegate).dispatcher;
             CoroutineContext context = delegate.getContext();
             if (dispatcher.isDispatchNeeded(context)) {
-                dispatcher.mo1707dispatch(context, dispatchedTask);
+                dispatcher.mo1709dispatch(context, dispatchedTask);
                 return;
             } else {
                 resumeUnconfined(dispatchedTask);
@@ -62,7 +62,7 @@ public final class DispatchedTaskKt {
         Object state = dispatchedTask.takeState$kotlinx_coroutines_core();
         Throwable exception = dispatchedTask.getExceptionalResult$kotlinx_coroutines_core(state);
         Result.Companion companion = Result.INSTANCE;
-        Object result = Result.m155constructorimpl(exception != null ? ResultKt.createFailure(exception) : dispatchedTask.getSuccessfulResult$kotlinx_coroutines_core(state));
+        Object result = Result.m157constructorimpl(exception != null ? ResultKt.createFailure(exception) : dispatchedTask.getSuccessfulResult$kotlinx_coroutines_core(state));
         if (!undispatched) {
             continuation.resumeWith(result);
             return;
@@ -135,6 +135,6 @@ public final class DispatchedTaskKt {
         } else {
             th = exception;
         }
-        continuation.resumeWith(Result.m155constructorimpl(ResultKt.createFailure(th)));
+        continuation.resumeWith(Result.m157constructorimpl(ResultKt.createFailure(th)));
     }
 }

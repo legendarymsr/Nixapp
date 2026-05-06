@@ -14,11 +14,11 @@ public final class UShortArrayKt {
         for (int i = 0; i < size; i++) {
             sArr[i] = init.invoke(Integer.valueOf(i)).getData();
         }
-        return UShortArray.m489constructorimpl(sArr);
+        return UShortArray.m491constructorimpl(sArr);
     }
 
     /* renamed from: ushortArrayOf-rL5Bavg, reason: not valid java name */
-    private static final short[] m505ushortArrayOfrL5Bavg(short... elements) {
+    private static final short[] m507ushortArrayOfrL5Bavg(short... elements) {
         Intrinsics.checkNotNullParameter(elements, "elements");
         return elements;
     }

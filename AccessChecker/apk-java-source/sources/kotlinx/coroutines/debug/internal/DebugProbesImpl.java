@@ -105,7 +105,7 @@ public final class DebugProbesImpl {
     }
 
     private final Function1<Boolean, Unit> getDynamicAttach() {
-        Object m155constructorimpl;
+        Object m157constructorimpl;
         Object newInstance;
         try {
             Result.Companion companion = Result.INSTANCE;
@@ -115,14 +115,14 @@ public final class DebugProbesImpl {
             newInstance = ctor.newInstance(new Object[0]);
         } catch (Throwable th) {
             Result.Companion companion2 = Result.INSTANCE;
-            m155constructorimpl = Result.m155constructorimpl(ResultKt.createFailure(th));
+            m157constructorimpl = Result.m157constructorimpl(ResultKt.createFailure(th));
         }
         if (newInstance != null) {
-            m155constructorimpl = Result.m155constructorimpl((Function1) TypeIntrinsics.beforeCheckcastToFunctionOfArity(newInstance, 1));
-            if (Result.m161isFailureimpl(m155constructorimpl)) {
-                m155constructorimpl = null;
+            m157constructorimpl = Result.m157constructorimpl((Function1) TypeIntrinsics.beforeCheckcastToFunctionOfArity(newInstance, 1));
+            if (Result.m163isFailureimpl(m157constructorimpl)) {
+                m157constructorimpl = null;
             }
-            return (Function1) m155constructorimpl;
+            return (Function1) m157constructorimpl;
         }
         throw new NullPointerException("null cannot be cast to non-null type kotlin.Function1<kotlin.Boolean, kotlin.Unit>");
     }
@@ -596,22 +596,22 @@ public final class DebugProbesImpl {
     }
 
     private final List<StackTraceElement> enhanceStackTraceWithThreadDumpImpl(String state, Thread thread, List<StackTraceElement> coroutineTrace) {
-        Object m155constructorimpl;
+        Object m157constructorimpl;
         if (!Intrinsics.areEqual(state, DebugCoroutineInfoImplKt.RUNNING) || thread == null) {
             return coroutineTrace;
         }
         try {
             Result.Companion companion = Result.INSTANCE;
             DebugProbesImpl debugProbesImpl = this;
-            m155constructorimpl = Result.m155constructorimpl(thread.getStackTrace());
+            m157constructorimpl = Result.m157constructorimpl(thread.getStackTrace());
         } catch (Throwable th) {
             Result.Companion companion2 = Result.INSTANCE;
-            m155constructorimpl = Result.m155constructorimpl(ResultKt.createFailure(th));
+            m157constructorimpl = Result.m157constructorimpl(ResultKt.createFailure(th));
         }
-        if (Result.m161isFailureimpl(m155constructorimpl)) {
-            m155constructorimpl = null;
+        if (Result.m163isFailureimpl(m157constructorimpl)) {
+            m157constructorimpl = null;
         }
-        StackTraceElement[] actualTrace = (StackTraceElement[]) m155constructorimpl;
+        StackTraceElement[] actualTrace = (StackTraceElement[]) m157constructorimpl;
         if (actualTrace == null) {
             return coroutineTrace;
         }

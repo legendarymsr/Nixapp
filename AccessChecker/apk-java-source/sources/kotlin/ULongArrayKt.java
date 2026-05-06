@@ -14,11 +14,11 @@ public final class ULongArrayKt {
         for (int i = 0; i < size; i++) {
             jArr[i] = init.invoke(Integer.valueOf(i)).getData();
         }
-        return ULongArray.m384constructorimpl(jArr);
+        return ULongArray.m386constructorimpl(jArr);
     }
 
     /* renamed from: ulongArrayOf-QwZRm1k, reason: not valid java name */
-    private static final long[] m400ulongArrayOfQwZRm1k(long... elements) {
+    private static final long[] m402ulongArrayOfQwZRm1k(long... elements) {
         Intrinsics.checkNotNullParameter(elements, "elements");
         return elements;
     }

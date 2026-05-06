@@ -40,8 +40,8 @@ public final class LimitedDispatcher extends CoroutineDispatcher implements Runn
 
     @Override // kotlinx.coroutines.Delay
     /* renamed from: scheduleResumeAfterDelay */
-    public void mo1708scheduleResumeAfterDelay(long timeMillis, CancellableContinuation<? super Unit> continuation) {
-        this.$$delegate_0.mo1708scheduleResumeAfterDelay(timeMillis, continuation);
+    public void mo1710scheduleResumeAfterDelay(long timeMillis, CancellableContinuation<? super Unit> continuation) {
+        this.$$delegate_0.mo1710scheduleResumeAfterDelay(timeMillis, continuation);
     }
 
     /* JADX WARN: Multi-variable type inference failed */
@@ -73,7 +73,7 @@ public final class LimitedDispatcher extends CoroutineDispatcher implements Runn
                 }
                 fairnessCounter++;
                 if (fairnessCounter >= 16 && this.dispatcher.isDispatchNeeded(this)) {
-                    this.dispatcher.mo1707dispatch(this, this);
+                    this.dispatcher.mo1709dispatch(this, this);
                     return;
                 }
             } else {
@@ -93,9 +93,9 @@ public final class LimitedDispatcher extends CoroutineDispatcher implements Runn
 
     @Override // kotlinx.coroutines.CoroutineDispatcher
     /* renamed from: dispatch */
-    public void mo1707dispatch(CoroutineContext context, Runnable block) {
+    public void mo1709dispatch(CoroutineContext context, Runnable block) {
         if (!addAndTryDispatching(block) && tryAllocateWorker()) {
-            this.dispatcher.mo1707dispatch(this, this);
+            this.dispatcher.mo1709dispatch(this, this);
         }
     }
 

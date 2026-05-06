@@ -20,12 +20,12 @@ import kotlin.jvm.internal.Intrinsics;
 class UCollectionsKt___UCollectionsKt {
     public static final byte[] toUByteArray(Collection<UByte> collection) {
         Intrinsics.checkNotNullParameter(collection, "<this>");
-        byte[] result = UByteArray.m225constructorimpl(collection.size());
+        byte[] result = UByteArray.m227constructorimpl(collection.size());
         int index = 0;
         Iterator<UByte> it = collection.iterator();
         while (it.hasNext()) {
             byte element = it.next().getData();
-            UByteArray.m236setVurrAj0(result, index, element);
+            UByteArray.m238setVurrAj0(result, index, element);
             index++;
         }
         return result;
@@ -33,12 +33,12 @@ class UCollectionsKt___UCollectionsKt {
 
     public static final int[] toUIntArray(Collection<UInt> collection) {
         Intrinsics.checkNotNullParameter(collection, "<this>");
-        int[] result = UIntArray.m304constructorimpl(collection.size());
+        int[] result = UIntArray.m306constructorimpl(collection.size());
         int index = 0;
         Iterator<UInt> it = collection.iterator();
         while (it.hasNext()) {
             int element = it.next().getData();
-            UIntArray.m315setVXSXFK8(result, index, element);
+            UIntArray.m317setVXSXFK8(result, index, element);
             index++;
         }
         return result;
@@ -46,12 +46,12 @@ class UCollectionsKt___UCollectionsKt {
 
     public static final long[] toULongArray(Collection<ULong> collection) {
         Intrinsics.checkNotNullParameter(collection, "<this>");
-        long[] result = ULongArray.m383constructorimpl(collection.size());
+        long[] result = ULongArray.m385constructorimpl(collection.size());
         int index = 0;
         Iterator<ULong> it = collection.iterator();
         while (it.hasNext()) {
             long element = it.next().getData();
-            ULongArray.m394setk8EXiF4(result, index, element);
+            ULongArray.m396setk8EXiF4(result, index, element);
             index++;
         }
         return result;
@@ -59,12 +59,12 @@ class UCollectionsKt___UCollectionsKt {
 
     public static final short[] toUShortArray(Collection<UShort> collection) {
         Intrinsics.checkNotNullParameter(collection, "<this>");
-        short[] result = UShortArray.m488constructorimpl(collection.size());
+        short[] result = UShortArray.m490constructorimpl(collection.size());
         int index = 0;
         Iterator<UShort> it = collection.iterator();
         while (it.hasNext()) {
             short element = it.next().getData();
-            UShortArray.m499set01HTLdE(result, index, element);
+            UShortArray.m501set01HTLdE(result, index, element);
             index++;
         }
         return result;
@@ -76,7 +76,7 @@ class UCollectionsKt___UCollectionsKt {
         Iterator<UInt> it = iterable.iterator();
         while (it.hasNext()) {
             int element = it.next().getData();
-            sum = UInt.m250constructorimpl(sum + element);
+            sum = UInt.m252constructorimpl(sum + element);
         }
         return sum;
     }
@@ -87,7 +87,7 @@ class UCollectionsKt___UCollectionsKt {
         Iterator<ULong> it = iterable.iterator();
         while (it.hasNext()) {
             long element = it.next().getData();
-            sum = ULong.m329constructorimpl(sum + element);
+            sum = ULong.m331constructorimpl(sum + element);
         }
         return sum;
     }
@@ -98,7 +98,7 @@ class UCollectionsKt___UCollectionsKt {
         Iterator<UByte> it = iterable.iterator();
         while (it.hasNext()) {
             byte element = it.next().getData();
-            sum = UInt.m250constructorimpl(UInt.m250constructorimpl(element & UByte.MAX_VALUE) + sum);
+            sum = UInt.m252constructorimpl(UInt.m252constructorimpl(element & UByte.MAX_VALUE) + sum);
         }
         return sum;
     }
@@ -109,7 +109,7 @@ class UCollectionsKt___UCollectionsKt {
         Iterator<UShort> it = iterable.iterator();
         while (it.hasNext()) {
             short element = it.next().getData();
-            sum = UInt.m250constructorimpl(UInt.m250constructorimpl(65535 & element) + sum);
+            sum = UInt.m252constructorimpl(UInt.m252constructorimpl(65535 & element) + sum);
         }
         return sum;
     }

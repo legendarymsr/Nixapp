@@ -22,6 +22,14 @@ public class RootChecker {
         public String rootManagerVersion = null;
         public boolean execTestPassed = false;
         public String execOutput = null;
+        public boolean nativeSuPassed = false;
+        public boolean magiskSocketFound = false;
+        public boolean suspiciousMounts = false;
+        public boolean kernelSuVfs = false;
+        public boolean apatchVfs = false;
+        public boolean fuseMounts = false;
+        public String mountDetails = "";
+        public int confidence = 0;
         public final List<String> lines = new ArrayList();
     }
 
@@ -49,7 +57,7 @@ public class RootChecker {
                 break;
             }
         }
-        r.lines.add("su binary    : " + (r.suPath != null ? r.suPath : "not found"));
+        r.lines.add(fmt("su binary       ", r.suPath == null) + (r.suPath != null ? " (" + r.suPath + ")" : ""));
         try {
             Process proc = Runtime.getRuntime().exec(new String[]{"su", "-c", "id"});
             BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -64,8 +72,12 @@ public class RootChecker {
         } catch (Exception e) {
             r.execOutput = "exception: " + e.getMessage();
         }
-        r.lines.add("su -c id     : " + r.execOutput);
-        r.lines.add("uid=0 test   : " + (r.execTestPassed ? "PASS" : "FAIL"));
+        r.lines.add(fmt("su exec (Java)  ", !r.execTestPassed) + " → " + r.execOutput);
+        r.nativeSuPassed = NativeChecker.safeNativeSuExec();
+        if (r.nativeSuPassed) {
+            r.status = Status.GRANTED;
+        }
+        r.lines.add(fmt("su exec (native)", !r.nativeSuPassed));
         PackageManager pm = ctx.getPackageManager();
         for (String[] mgr : ROOT_MANAGERS) {
             try {
@@ -77,10 +89,63 @@ public class RootChecker {
             } catch (PackageManager.NameNotFoundException e2) {
             }
         }
-        r.lines.add("root manager : " + (r.rootManager != null ? r.rootManager + " v" + r.rootManagerVersion : "none detected"));
+        r.lines.add(fmt("root manager    ", r.rootManager == null) + (r.rootManager != null ? " (" + r.rootManager + " v" + r.rootManagerVersion + ")" : ""));
+        r.magiskSocketFound = NativeChecker.safeMagiskSocket();
+        if (r.magiskSocketFound) {
+            r.status = Status.GRANTED;
+        }
+        r.lines.add(fmt("magisk socket   ", !r.magiskSocketFound));
+        r.kernelSuVfs = NativeChecker.safeKernelSU();
+        if (r.kernelSuVfs) {
+            r.status = Status.GRANTED;
+        }
+        r.lines.add(fmt("kernelsu vfs    ", !r.kernelSuVfs));
+        r.apatchVfs = NativeChecker.safeAPatch();
+        if (r.apatchVfs) {
+            r.status = Status.GRANTED;
+        }
+        r.lines.add(fmt("apatch vfs      ", !r.apatchVfs));
+        r.suspiciousMounts = NativeChecker.safeMagiskMounts();
+        if (r.suspiciousMounts) {
+            r.status = Status.GRANTED;
+        }
+        r.mountDetails = NativeChecker.safeSuspiciousMounts();
+        r.lines.add(fmt("magisk mounts   ", !r.suspiciousMounts));
+        r.fuseMounts = NativeChecker.safeFuse();
+        r.lines.add(fmt("fuse fs         ", !r.fuseMounts));
+        if (!NativeChecker.isAvailable()) {
+            r.lines.add("NOTE: native library not loaded — socket/mount/maps checks skipped");
+        }
+        int conf = r.execTestPassed ? 0 + 30 : 0;
+        if (r.nativeSuPassed) {
+            conf += 25;
+        }
+        if (r.magiskSocketFound) {
+            conf += 20;
+        }
+        if (r.rootManager != null) {
+            conf += 20;
+        }
+        if (r.suPath != null) {
+            conf += 15;
+        }
+        if (r.kernelSuVfs) {
+            conf += 15;
+        }
+        if (r.apatchVfs) {
+            conf += 15;
+        }
+        if (r.suspiciousMounts) {
+            conf += 10;
+        }
+        r.confidence = Math.min(100, conf);
         if (r.status == Status.UNKNOWN) {
             r.status = Status.DENIED;
         }
         return r;
+    }
+
+    private static String fmt(String label, boolean clean) {
+        return (clean ? "[PASS] " : "[FAIL] ") + label + ":";
     }
 }

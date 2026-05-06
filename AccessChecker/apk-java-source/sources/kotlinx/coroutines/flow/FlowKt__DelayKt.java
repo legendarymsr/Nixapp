@@ -45,8 +45,8 @@ final /* synthetic */ class FlowKt__DelayKt {
     }
 
     /* renamed from: debounce-HG0u8IE, reason: not valid java name */
-    public static final <T> Flow<T> m1688debounceHG0u8IE(Flow<? extends T> flow, long timeout) {
-        return FlowKt.debounce(flow, DelayKt.m1645toDelayMillisLRDsOJo(timeout));
+    public static final <T> Flow<T> m1690debounceHG0u8IE(Flow<? extends T> flow, long timeout) {
+        return FlowKt.debounce(flow, DelayKt.m1647toDelayMillisLRDsOJo(timeout));
     }
 
     public static final <T> Flow<T> debounceDuration(Flow<? extends T> flow, final Function1<? super T, Duration> function1) {
@@ -66,7 +66,7 @@ final /* synthetic */ class FlowKt__DelayKt {
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // kotlin.jvm.functions.Function1
             public final Long invoke(T t) {
-                return Long.valueOf(DelayKt.m1645toDelayMillisLRDsOJo(function1.invoke(t).getRawValue()));
+                return Long.valueOf(DelayKt.m1647toDelayMillisLRDsOJo(function1.invoke(t).getRawValue()));
             }
         });
     }
@@ -100,7 +100,7 @@ final /* synthetic */ class FlowKt__DelayKt {
     }
 
     /* renamed from: sample-HG0u8IE, reason: not valid java name */
-    public static final <T> Flow<T> m1689sampleHG0u8IE(Flow<? extends T> flow, long period) {
-        return FlowKt.sample(flow, DelayKt.m1645toDelayMillisLRDsOJo(period));
+    public static final <T> Flow<T> m1691sampleHG0u8IE(Flow<? extends T> flow, long period) {
+        return FlowKt.sample(flow, DelayKt.m1647toDelayMillisLRDsOJo(period));
     }
 }

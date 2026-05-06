@@ -20,7 +20,7 @@ public final class CancellableKt {
         try {
             Continuation intercepted = IntrinsicsKt.intercepted(IntrinsicsKt.createCoroutineUnintercepted(function1, continuation));
             Result.Companion companion = Result.INSTANCE;
-            DispatchedContinuationKt.resumeCancellableWith$default(intercepted, Result.m155constructorimpl(Unit.INSTANCE), null, 2, null);
+            DispatchedContinuationKt.resumeCancellableWith$default(intercepted, Result.m157constructorimpl(Unit.INSTANCE), null, 2, null);
         } catch (Throwable e$iv) {
             dispatcherFailure(continuation, e$iv);
         }
@@ -37,7 +37,7 @@ public final class CancellableKt {
         try {
             Continuation intercepted = IntrinsicsKt.intercepted(IntrinsicsKt.createCoroutineUnintercepted(function2, r, continuation));
             Result.Companion companion = Result.INSTANCE;
-            DispatchedContinuationKt.resumeCancellableWith(intercepted, Result.m155constructorimpl(Unit.INSTANCE), function1);
+            DispatchedContinuationKt.resumeCancellableWith(intercepted, Result.m157constructorimpl(Unit.INSTANCE), function1);
         } catch (Throwable e$iv) {
             dispatcherFailure(continuation, e$iv);
         }
@@ -47,7 +47,7 @@ public final class CancellableKt {
         try {
             Continuation intercepted = IntrinsicsKt.intercepted(continuation);
             Result.Companion companion = Result.INSTANCE;
-            DispatchedContinuationKt.resumeCancellableWith$default(intercepted, Result.m155constructorimpl(Unit.INSTANCE), null, 2, null);
+            DispatchedContinuationKt.resumeCancellableWith$default(intercepted, Result.m157constructorimpl(Unit.INSTANCE), null, 2, null);
         } catch (Throwable e$iv) {
             dispatcherFailure(continuation2, e$iv);
         }
@@ -63,7 +63,7 @@ public final class CancellableKt {
 
     private static final void dispatcherFailure(Continuation<?> continuation, Throwable e) {
         Result.Companion companion = Result.INSTANCE;
-        continuation.resumeWith(Result.m155constructorimpl(ResultKt.createFailure(e)));
+        continuation.resumeWith(Result.m157constructorimpl(ResultKt.createFailure(e)));
         throw e;
     }
 }

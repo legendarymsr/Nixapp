@@ -63,7 +63,7 @@ public final class HandlerContext extends HandlerDispatcher implements Delay {
 
     @Override // kotlinx.coroutines.CoroutineDispatcher
     /* renamed from: dispatch */
-    public void mo1707dispatch(CoroutineContext context, Runnable block) {
+    public void mo1709dispatch(CoroutineContext context, Runnable block) {
         if (!this.handler.post(block)) {
             cancelOnRejection(context, block);
         }
@@ -71,7 +71,7 @@ public final class HandlerContext extends HandlerDispatcher implements Delay {
 
     @Override // kotlinx.coroutines.Delay
     /* renamed from: scheduleResumeAfterDelay */
-    public void mo1708scheduleResumeAfterDelay(long timeMillis, final CancellableContinuation<? super Unit> continuation) {
+    public void mo1710scheduleResumeAfterDelay(long timeMillis, final CancellableContinuation<? super Unit> continuation) {
         final Runnable block = new Runnable() { // from class: kotlinx.coroutines.android.HandlerContext$scheduleResumeAfterDelay$$inlined$Runnable$1
             @Override // java.lang.Runnable
             public final void run() {
@@ -110,7 +110,7 @@ public final class HandlerContext extends HandlerDispatcher implements Delay {
             return new DisposableHandle() { // from class: kotlinx.coroutines.android.HandlerContext$$ExternalSyntheticLambda0
                 @Override // kotlinx.coroutines.DisposableHandle
                 public final void dispose() {
-                    HandlerContext.m1657invokeOnTimeout$lambda3(HandlerContext.this, block);
+                    HandlerContext.m1659invokeOnTimeout$lambda3(HandlerContext.this, block);
                 }
             };
         }
@@ -120,13 +120,13 @@ public final class HandlerContext extends HandlerDispatcher implements Delay {
 
     /* JADX INFO: Access modifiers changed from: private */
     /* renamed from: invokeOnTimeout$lambda-3, reason: not valid java name */
-    public static final void m1657invokeOnTimeout$lambda3(HandlerContext this$0, Runnable $block) {
+    public static final void m1659invokeOnTimeout$lambda3(HandlerContext this$0, Runnable $block) {
         this$0.handler.removeCallbacks($block);
     }
 
     private final void cancelOnRejection(CoroutineContext context, Runnable block) {
         JobKt.cancel(context, new CancellationException("The task was rejected, the handler underlying the dispatcher '" + this + "' was closed"));
-        Dispatchers.getIO().mo1707dispatch(context, block);
+        Dispatchers.getIO().mo1709dispatch(context, block);
     }
 
     @Override // kotlinx.coroutines.MainCoroutineDispatcher, kotlinx.coroutines.CoroutineDispatcher

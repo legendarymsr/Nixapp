@@ -12,31 +12,31 @@ import kotlin.ULong;
 /* loaded from: classes.dex */
 public final class UProgressionUtilKt {
     /* renamed from: differenceModulo-WZ9TVnA, reason: not valid java name */
-    private static final int m1373differenceModuloWZ9TVnA(int a, int b, int c) {
+    private static final int m1375differenceModuloWZ9TVnA(int a, int b, int c) {
         int compare;
         int ac = UByte$$ExternalSyntheticBackport0.m(a, c);
         int bc = UByte$$ExternalSyntheticBackport0.m(b, c);
         compare = Integer.compare(ac ^ Integer.MIN_VALUE, bc ^ Integer.MIN_VALUE);
-        return UInt.m250constructorimpl(compare >= 0 ? ac - bc : UInt.m250constructorimpl(ac - bc) + c);
+        return UInt.m252constructorimpl(compare >= 0 ? ac - bc : UInt.m252constructorimpl(ac - bc) + c);
     }
 
     /* renamed from: differenceModulo-sambcqE, reason: not valid java name */
-    private static final long m1374differenceModulosambcqE(long a, long b, long c) {
+    private static final long m1376differenceModulosambcqE(long a, long b, long c) {
         int compare;
         long ac = UByte$$ExternalSyntheticBackport3.m(a, c);
         long bc = UByte$$ExternalSyntheticBackport3.m(b, c);
         compare = Long.compare(ac ^ Long.MIN_VALUE, bc ^ Long.MIN_VALUE);
-        return ULong.m329constructorimpl(compare >= 0 ? ac - bc : ULong.m329constructorimpl(ac - bc) + c);
+        return ULong.m331constructorimpl(compare >= 0 ? ac - bc : ULong.m331constructorimpl(ac - bc) + c);
     }
 
     /* renamed from: getProgressionLastElement-Nkh28Cs, reason: not valid java name */
-    public static final int m1376getProgressionLastElementNkh28Cs(int start, int end, int step) {
+    public static final int m1378getProgressionLastElementNkh28Cs(int start, int end, int step) {
         int compare;
         int compare2;
         if (step > 0) {
             compare2 = Integer.compare(start ^ Integer.MIN_VALUE, end ^ Integer.MIN_VALUE);
             if (compare2 < 0) {
-                return UInt.m250constructorimpl(end - m1373differenceModuloWZ9TVnA(end, start, UInt.m250constructorimpl(step)));
+                return UInt.m252constructorimpl(end - m1375differenceModuloWZ9TVnA(end, start, UInt.m252constructorimpl(step)));
             }
         } else {
             if (step >= 0) {
@@ -44,20 +44,20 @@ public final class UProgressionUtilKt {
             }
             compare = Integer.compare(start ^ Integer.MIN_VALUE, end ^ Integer.MIN_VALUE);
             if (compare > 0) {
-                return UInt.m250constructorimpl(m1373differenceModuloWZ9TVnA(start, end, UInt.m250constructorimpl(-step)) + end);
+                return UInt.m252constructorimpl(m1375differenceModuloWZ9TVnA(start, end, UInt.m252constructorimpl(-step)) + end);
             }
         }
         return end;
     }
 
     /* renamed from: getProgressionLastElement-7ftBX0g, reason: not valid java name */
-    public static final long m1375getProgressionLastElement7ftBX0g(long start, long end, long step) {
+    public static final long m1377getProgressionLastElement7ftBX0g(long start, long end, long step) {
         int compare;
         int compare2;
         if (step > 0) {
             compare2 = Long.compare(start ^ Long.MIN_VALUE, end ^ Long.MIN_VALUE);
             if (compare2 < 0) {
-                return ULong.m329constructorimpl(end - m1374differenceModulosambcqE(end, start, ULong.m329constructorimpl(step)));
+                return ULong.m331constructorimpl(end - m1376differenceModulosambcqE(end, start, ULong.m331constructorimpl(step)));
             }
         } else {
             if (step >= 0) {
@@ -65,7 +65,7 @@ public final class UProgressionUtilKt {
             }
             compare = Long.compare(start ^ Long.MIN_VALUE, end ^ Long.MIN_VALUE);
             if (compare > 0) {
-                return ULong.m329constructorimpl(m1374differenceModulosambcqE(start, end, ULong.m329constructorimpl(-step)) + end);
+                return ULong.m331constructorimpl(m1376differenceModulosambcqE(start, end, ULong.m331constructorimpl(-step)) + end);
             }
         }
         return end;

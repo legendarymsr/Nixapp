@@ -14,11 +14,11 @@ public final class UIntArrayKt {
         for (int i = 0; i < size; i++) {
             iArr[i] = init.invoke(Integer.valueOf(i)).getData();
         }
-        return UIntArray.m305constructorimpl(iArr);
+        return UIntArray.m307constructorimpl(iArr);
     }
 
     /* renamed from: uintArrayOf--ajY-9A, reason: not valid java name */
-    private static final int[] m321uintArrayOfajY9A(int... elements) {
+    private static final int[] m323uintArrayOfajY9A(int... elements) {
         Intrinsics.checkNotNullParameter(elements, "elements");
         return elements;
     }
