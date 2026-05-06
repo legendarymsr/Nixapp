@@ -144,11 +144,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void runShizukuCheck(boolean updateScore) {
         ShizukuChecker.Result result = ShizukuChecker.check(this);
-        // Cross-reference run mode with root result
-        if (result.running) {
-            result.runMode = (rootResult != null
-                    && rootResult.status == RootChecker.Status.GRANTED) ? "root" : "adb";
-        }
         applyShizukuResult(result);
         if (updateScore) maybeUpdateScore();
     }

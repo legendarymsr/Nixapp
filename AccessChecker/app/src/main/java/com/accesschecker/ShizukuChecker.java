@@ -1,9 +1,11 @@
 package com.accesschecker;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class ShizukuChecker {
 
         // ── 1. Is Shizuku installed? ──────────────────────────────────────
         try {
-            PackageInfo pi = ctx.getPackageManager().getPackageInfo(SHIZUKU_PKG, 0);
+            ctx.getPackageManager().getPackageInfo(SHIZUKU_PKG, 0);
             r.installed = true;
         } catch (PackageManager.NameNotFoundException e) {
             r.installed = false;
@@ -77,7 +79,6 @@ public class ShizukuChecker {
         // ── 4. Permission ─────────────────────────────────────────────────
         try {
             if (Shizuku.isPreV11()) {
-                // Pre-v11: permission is always granted if binder is alive
                 r.hasPermission = true;
             } else {
                 r.hasPermission = Shizuku.checkSelfPermission()
@@ -88,9 +89,68 @@ public class ShizukuChecker {
         }
         r.lines.add("permission: " + (r.hasPermission ? "granted" : "not granted"));
 
-        // ── 5. Status ─────────────────────────────────────────────────────
+        // ── 5. Run mode: scan /proc for the Shizuku server process ────────
+        // Shizuku running via ADB  → server process UID = 2000 (shell)
+        // Shizuku running via root → server process UID = 0    (root)
+        r.runMode = detectRunMode();
+
+        // ── 6. Status ─────────────────────────────────────────────────────
         r.status = r.hasPermission ? Status.AVAILABLE_PERMITTED : Status.AVAILABLE_DENIED;
 
         return r;
+    }
+
+    /**
+     * Walks /proc looking for a process whose comm or cmdline contains "shizuku",
+     * then reads its real UID from /proc/[pid]/status.
+     */
+    static String detectRunMode() {
+        File procDir = new File("/proc");
+        File[] entries = procDir.listFiles(f -> f.isDirectory() && f.getName().matches("\\d+"));
+        if (entries == null) return null;
+
+        for (File pidDir : entries) {
+            try {
+                // /proc/[pid]/comm — short process name (max 15 chars, no nulls)
+                String comm = readFirstLine(new File(pidDir, "comm"));
+                // /proc/[pid]/cmdline — full argv, args separated by null bytes
+                String cmdline = readFirstLine(new File(pidDir, "cmdline"));
+                if (cmdline != null) cmdline = cmdline.replace('\0', ' ');
+
+                boolean isShizuku = (comm != null && comm.contains("shizuku"))
+                        || (cmdline != null && cmdline.contains("shizuku"));
+                if (!isShizuku) continue;
+
+                int uid = readUid(new File(pidDir, "status"));
+                if (uid == 0)    return "root";
+                if (uid == 2000) return "adb";
+                // Some other uid — still Shizuku, report it
+                return "uid:" + uid;
+            } catch (Exception ignored) {}
+        }
+        return null;
+    }
+
+    private static String readFirstLine(File f) {
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            return br.readLine();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** Reads the first (real) UID from /proc/[pid]/status — the "Uid:" line. */
+    private static int readUid(File statusFile) throws Exception {
+        try (BufferedReader br = new BufferedReader(new FileReader(statusFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("Uid:")) {
+                    // Format: "Uid:\t<real>\t<effective>\t<saved>\t<fs>"
+                    String[] parts = line.split("\\s+");
+                    return Integer.parseInt(parts[1]);
+                }
+            }
+        }
+        return -1;
     }
 }
