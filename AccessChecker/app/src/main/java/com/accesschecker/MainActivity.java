@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 maybeUpdateScore();
             });
 
-            BootloaderChecker.Result boot = BootloaderChecker.check();
+            BootloaderChecker.Result boot = BootloaderChecker.check(root);
             mainHandler.post(() -> {
                 applyBootResult(boot);
                 maybeUpdateScore();

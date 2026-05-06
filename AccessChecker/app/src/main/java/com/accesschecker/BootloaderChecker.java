@@ -20,20 +20,25 @@ public class BootloaderChecker {
         public String encryptionState = "unknown";
         public String encryptionType  = "unknown";
         public boolean debuggable = false;
-        public boolean propertiesMayBeMasked = false;
+        public boolean propertiesMasked = false;
         public final List<String> lines = new ArrayList<>();
     }
 
-    public static Result check() {
+    /**
+     * @param rootResult pass the already-completed RootChecker result so we can
+     *                   use confirmed root as a bootloader-unlock signal. Magisk,
+     *                   KernelSU, and APatch all require an unlocked bootloader.
+     */
+    public static Result check(RootChecker.Result rootResult) {
         Result r = new Result();
 
-        // ── 1. /proc/cmdline first — Magisk patches the property system ──
-        // but does NOT rewrite the raw kernel cmdline that init reads from.
-        // Reading it here gives us the ground truth before any prop hooks.
+        // ── 1. /proc/cmdline ─────────────────────────────────────────────
+        // Magisk patches the property system via resetprop but does NOT rewrite
+        // the raw kernel cmdline. On devices that pass bootloader state via cmdline
+        // (not DTB) this is the ground truth.
         String cmdline = readProcCmdline();
         if (cmdline != null) {
-            // Verified boot state from cmdline
-            if (cmdline.contains("androidboot.verifiedbootstate=green"))
+            if      (cmdline.contains("androidboot.verifiedbootstate=green"))
                 r.verifiedBoot = VerifiedBootState.GREEN;
             else if (cmdline.contains("androidboot.verifiedbootstate=yellow"))
                 r.verifiedBoot = VerifiedBootState.YELLOW;
@@ -42,26 +47,20 @@ public class BootloaderChecker {
             else if (cmdline.contains("androidboot.verifiedbootstate=red"))
                 r.verifiedBoot = VerifiedBootState.RED;
 
-            // Bootloader lock from cmdline
-            if (cmdline.contains("androidboot.flash.locked=1"))
-                r.status = Status.LOCKED;
-            else if (cmdline.contains("androidboot.flash.locked=0"))
+            if      (cmdline.contains("androidboot.flash.locked=0"))
                 r.status = Status.UNLOCKED;
+            else if (cmdline.contains("androidboot.flash.locked=1"))
+                r.status = Status.LOCKED;
 
-            // Infer lock from verified boot state (orange = custom/unlocked)
-            if (r.status == Status.UNKNOWN) {
-                if (r.verifiedBoot == VerifiedBootState.GREEN ||
-                        r.verifiedBoot == VerifiedBootState.YELLOW)
-                    r.status = Status.LOCKED;
-                else if (r.verifiedBoot == VerifiedBootState.ORANGE)
-                    r.status = Status.UNLOCKED;
-            }
+            // orange verified boot state → user-signed / custom → unlocked
+            if (r.status == Status.UNKNOWN && r.verifiedBoot == VerifiedBootState.ORANGE)
+                r.status = Status.UNLOCKED;
 
             r.dmVerityEnabled = cmdline.contains("dm-verity")
                     || cmdline.contains("androidboot.veritymode");
         }
 
-        // ── 2. SystemProperties via reflection (fill gaps / compare) ──────
+        // ── 2. System properties (fill gaps; unreliable when Magisk is present) ──
         String propVerifiedBoot = getProp("ro.boot.verifiedbootstate");
         String propFlashLocked  = getProp("ro.boot.flash.locked");
         String cryptoState      = getProp("ro.crypto.state");
@@ -70,7 +69,6 @@ public class BootloaderChecker {
         String buildType        = getProp("ro.build.type");
         String debuggableProp   = getProp("ro.debuggable");
 
-        // Fill in verified boot from props only if cmdline gave nothing
         if (r.verifiedBoot == VerifiedBootState.UNKNOWN && propVerifiedBoot != null) {
             switch (propVerifiedBoot.toLowerCase()) {
                 case "green":  r.verifiedBoot = VerifiedBootState.GREEN;  break;
@@ -79,58 +77,53 @@ public class BootloaderChecker {
                 case "red":    r.verifiedBoot = VerifiedBootState.RED;    break;
             }
         }
-
-        // Fill in lock status from props only if cmdline gave nothing
         if (r.status == Status.UNKNOWN) {
-            if ("1".equals(propFlashLocked))      r.status = Status.LOCKED;
-            else if ("0".equals(propFlashLocked)) r.status = Status.UNLOCKED;
-            if (r.status == Status.UNKNOWN) {
-                if (r.verifiedBoot == VerifiedBootState.GREEN ||
-                        r.verifiedBoot == VerifiedBootState.YELLOW)
-                    r.status = Status.LOCKED;
-                else if (r.verifiedBoot == VerifiedBootState.ORANGE)
-                    r.status = Status.UNLOCKED;
-            }
+            if ("0".equals(propFlashLocked))      r.status = Status.UNLOCKED;
+            else if ("1".equals(propFlashLocked)) r.status = Status.LOCKED;
+            if (r.status == Status.UNKNOWN && r.verifiedBoot == VerifiedBootState.ORANGE)
+                r.status = Status.UNLOCKED;
         }
 
-        // ── 3. Detect Magisk property masking ────────────────────────────
-        // If cmdline says one thing and props say another, props are masked.
-        boolean cmdlineSaysLocked   = cmdline != null && cmdline.contains("androidboot.flash.locked=1");
-        boolean cmdlineSaysUnlocked = cmdline != null && cmdline.contains("androidboot.flash.locked=0");
-        boolean propSaysLocked      = "1".equals(propFlashLocked);
-        if (cmdlineSaysUnlocked && propSaysLocked) {
-            r.propertiesMayBeMasked = true;
-        }
-        // Also flag if root is known but verified boot claims green via props yet cmdline says orange
-        if ("orange".equalsIgnoreCase(propVerifiedBoot) == false
-                && r.verifiedBoot == VerifiedBootState.ORANGE) {
-            r.propertiesMayBeMasked = true;
-        }
+        // ── 3. Root manager inference (most reliable on Magisk-patched devices) ─
+        // Magisk / KernelSU / APatch all require an unlocked bootloader to install.
+        // If su -c id returned uid=0 AND a root manager package is present, the
+        // bootloader is provably unlocked regardless of what properties/cmdline say.
+        boolean rootManagerConfirmed = rootResult != null
+                && rootResult.execTestPassed
+                && rootResult.rootManager != null;
 
-        // ── 4. Additional signals ─────────────────────────────────────────
-        // Magisk data dir — existence confirms root+Magisk (almost always unlocked BL)
-        boolean magiskDataExists = new File("/data/adb/magisk.db").exists()
-                || new File("/data/adb/magisk").isDirectory();
-        if (magiskDataExists && r.status == Status.LOCKED) {
-            // Magisk present but BL claims locked — high likelihood of prop masking
-            r.propertiesMayBeMasked = true;
+        // Even just a detected root manager package (even without exec test passing,
+        // e.g. if the app is on Magisk Denylist) is a strong signal.
+        boolean rootManagerDetected = rootResult != null
+                && rootResult.rootManager != null;
+
+        if (rootManagerConfirmed) {
+            if (r.status == Status.LOCKED) r.propertiesMasked = true;
+            r.status = Status.UNLOCKED;
+        } else if (rootManagerDetected && r.status == Status.LOCKED) {
+            // Package present but exec test failed (Magisk Denylist hiding su from us).
+            // Still treat as unlocked — the package can't install without it.
+            r.propertiesMasked = true;
             r.status = Status.UNLOCKED;
         }
 
+        // ── 4. Remaining fields ───────────────────────────────────────────
         if (!r.dmVerityEnabled && "enforcing".equalsIgnoreCase(verityMode))
             r.dmVerityEnabled = true;
 
         r.encryptionState = cryptoState != null ? cryptoState : "unknown";
         if (cryptoType != null)
-            r.encryptionType = "file".equalsIgnoreCase(cryptoType) ? "FBE" :
+            r.encryptionType = "file".equalsIgnoreCase(cryptoType)  ? "FBE" :
                                "block".equalsIgnoreCase(cryptoType) ? "FDE" : cryptoType;
-        r.debuggable = "1".equals(debuggableProp) || "userdebug".equals(buildType)
+
+        r.debuggable = "1".equals(debuggableProp)
+                || "userdebug".equals(buildType)
                 || "eng".equals(buildType);
 
         // ── Detail lines ──────────────────────────────────────────────────
-        r.lines.add("cmdline flash.locked  : " + extractCmdlineValue(cmdline, "androidboot.flash.locked"));
+        r.lines.add("cmdline flash.locked  : " + extractCmdline(cmdline, "androidboot.flash.locked"));
         r.lines.add("prop flash.locked     : " + nvl(propFlashLocked));
-        r.lines.add("cmdline verifiedboot  : " + extractCmdlineValue(cmdline, "androidboot.verifiedbootstate"));
+        r.lines.add("cmdline verifiedboot  : " + extractCmdline(cmdline, "androidboot.verifiedbootstate"));
         r.lines.add("prop verifiedboot     : " + nvl(propVerifiedBoot));
         r.lines.add("verified boot state   : " + r.verifiedBoot.name().toLowerCase());
         r.lines.add("dm-verity             : " + (r.dmVerityEnabled ? "enabled" : "not confirmed"));
@@ -138,8 +131,13 @@ public class BootloaderChecker {
                 + (!"unknown".equals(r.encryptionType) ? " (" + r.encryptionType + ")" : ""));
         r.lines.add("build type            : " + nvl(buildType));
         r.lines.add("debuggable            : " + r.debuggable);
-        if (r.propertiesMayBeMasked)
-            r.lines.add("NOTE: props may be masked by Magisk");
+        if (rootManagerDetected)
+            r.lines.add("root manager          : " + rootResult.rootManager
+                    + (rootResult.rootManagerVersion != null
+                       ? " v" + rootResult.rootManagerVersion : "")
+                    + " (requires unlocked BL)");
+        if (r.propertiesMasked)
+            r.lines.add("NOTE: props masked by Magisk — BL inferred from root manager");
 
         return r;
     }
@@ -152,25 +150,21 @@ public class BootloaderChecker {
             Method m = cls.getMethod("get", String.class, String.class);
             String val = (String) m.invoke(null, key, "");
             return (val == null || val.isEmpty()) ? null : val;
-        } catch (Exception e) {
-            return null;
-        }
+        } catch (Exception e) { return null; }
     }
 
     private static String readProcCmdline() {
         try (BufferedReader br = new BufferedReader(new FileReader("/proc/cmdline"))) {
             return br.readLine();
-        } catch (Exception e) {
-            return null;
-        }
+        } catch (Exception e) { return null; }
     }
 
-    private static String extractCmdlineValue(String cmdline, String key) {
+    private static String extractCmdline(String cmdline, String key) {
         if (cmdline == null) return "unavailable";
         int idx = cmdline.indexOf(key + "=");
-        if (idx < 0) return "not present";
+        if (idx < 0) return "not present in cmdline";
         int start = idx + key.length() + 1;
-        int end = cmdline.indexOf(' ', start);
+        int end   = cmdline.indexOf(' ', start);
         return end < 0 ? cmdline.substring(start) : cmdline.substring(start, end);
     }
 
